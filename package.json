@@ -6,10 +6,10 @@
   "keywords": ["Drboum", "Utilities", "Drboum Library"],
   "description": "Drboum non ecs utilities library.",
   "dependencies": {
-    "Unity.Mathematics": "1.2.6",
-    "Unity.InputSystem":"1.0.0",
-    "Unity.Collections":"1.2.3",
-    "Unity.Properties":"1.8.3",
-    "Unity.Burst":"1.7.1"
+    "com.unity.mathematics": "1.2.6",
+    "com.unity.inputSystem":"1.0.0",
+    "com.unity.collections":"1.2.3",
+    "com.unity.properties":"1.8.3-preview",
+    "com.unity.burst":"1.7.1"
    }
 }
