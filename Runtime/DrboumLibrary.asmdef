@@ -1,0 +1,28 @@
+{
+    "name": "DrboumLibrary",
+    "rootNamespace": "",
+    "references": [
+        "GUID:a5baed0c9693541a5bd947d336ec7659",
+        "Unity.Mathematics",
+        "Unity.InputSystem",
+        "GUID:734d92eba21c94caba915361bd5ac177",
+        "Unity.Collections",
+        "Unity.Properties",
+        "Unity.Burst"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.modules.terrain",
+            "expression": "1.0",
+            "define": "UNITY_TERRAIN_EXIST"
+        }
+    ],
+    "noEngineReferences": false
+}

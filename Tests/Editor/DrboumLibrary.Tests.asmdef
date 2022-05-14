@@ -1,0 +1,30 @@
+{
+  "name": "DrboumLibrary.Tests",
+  "rootNamespace": "",
+  "references": [
+    "UnityEngine.TestRunner",
+    "UnityEditor.TestRunner",
+    "Unity.Collections",
+    "Unity.Entities",
+    "Unity.Mathematics.Extensions",
+    "Unity.Mathematics",
+    "Unity.Burst",
+    "Unity.Transforms",
+    "DrboumLibrary"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": true,
+  "overrideReferences": true,
+  "precompiledReferences": [
+    "nunit.framework.dll"
+  ],
+  "autoReferenced": false,
+  "defineConstraints": [
+    "UNITY_INCLUDE_TESTS"
+  ],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
