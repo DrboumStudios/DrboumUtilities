@@ -9,7 +9,7 @@
     "com.unity.mathematics": "1.2.6",
     "com.unity.inputsystem":"1.3.0",
     "com.unity.collections":"1.2.3",
-    "com.unity.properties":"1.8.3-preview",
+    "com.unity.properties":"1.7.0-preview",
     "com.unity.burst":"1.7.1"
    }
 }
