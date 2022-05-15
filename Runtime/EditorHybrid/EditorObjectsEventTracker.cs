@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 namespace Drboum.Utilities.Runtime.EditorHybrid {
-    public static class MonoBehaviourEditorEventTracker<T> {
+    public static class EditorObjectsEventTracker<T> {
         public delegate void MonoBehaviourCallBack(T instance);
 
         public static event MonoBehaviourCallBack RegisterOnDisable  = delegate { };
@@ -9,6 +9,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid {
         public static event MonoBehaviourCallBack RegisterOnValidate = delegate { };
         public static event MonoBehaviourCallBack RegisterOnStart    = delegate { };
         public static event MonoBehaviourCallBack RegisterOnDestroy  = delegate { };
+        public static event MonoBehaviourCallBack RegisterOnUpdate   = delegate { };
 
         [Conditional("UNITY_EDITOR")]
         public static void InvokeOnAwake(T instance) => RegisterOnAwake(instance);
@@ -22,6 +23,8 @@ namespace Drboum.Utilities.Runtime.EditorHybrid {
         public static void InvokeOnDisable(T instance) => RegisterOnDisable(instance);
         [Conditional("UNITY_EDITOR")]
         public static void InvokeOnDestroy(T instance) => RegisterOnDestroy(instance);
- 
+        [Conditional("UNITY_EDITOR")]
+        public static void InvokeOnUpdate(T instance) => RegisterOnUpdate(instance);
+
     }
 }

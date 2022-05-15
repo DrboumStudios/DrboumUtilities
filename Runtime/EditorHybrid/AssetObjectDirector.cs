@@ -1,12 +1,13 @@
 ﻿using System.IO;
 using Drboum.Utilities.Runtime.Animation;
-using Drboum.Utilities.Runtime.Attributes;
+using Drboum.Utilities.Runtime.Attributes;using Drboum.Utilities.Runtime.EditorHybrid;
 using Drboum.Utilities.Runtime.Interfaces;
 using UnityEditor;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
-#if UNITY_EDITOR
-#endif
+public static class AssetObjectDirectorManager {
+    
+}
 namespace Drboum.Utilities.Runtime.EditorHybrid {
     [RequireComponent(typeof(EditorObjectTracker))]
     [ExecuteInEditMode]
