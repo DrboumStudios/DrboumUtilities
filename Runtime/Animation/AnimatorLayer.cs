@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using DrboumLibrary.Attributes;
-using DrboumLibrary.Serialization;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor.Animations;
@@ -10,7 +9,7 @@ namespace DrboumLibrary.Animation {
 #if UNITY_EDITOR
     [CreateAssetMenu(fileName = "AnimatorLayer", menuName = nameof(DrboumLibrary) + "/Animation/AnimatorLayer")]
 #endif
-    public class AnimatorLayer : ScriptableObjectAssetReference {
+    public class AnimatorLayer : ScriptableObject {
 
         [SerializeField] [InspectorReadOnly] private int   _layerId = -1;
         [SerializeField] [InspectorReadOnly] private float _defaultWeight;

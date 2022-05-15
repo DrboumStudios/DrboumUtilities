@@ -1,6 +1,5 @@
 ﻿using System;
 using DrboumLibrary.Attributes;
-using DrboumLibrary.Serialization;
 using UnityEngine;
 #if UNITY_EDITOR
 
@@ -11,7 +10,7 @@ namespace DrboumLibrary.Animation {
 #if UNITY_EDITOR
     [CreateAssetMenu(fileName = "AnimatorParameter", menuName = nameof(DrboumLibrary) + "/Animation/AnimatorParameter")]
 #endif
-    public class AnimatorParameter : ScriptableObject, IUnityObjectReference, IAnimatorParameter,
+    public class AnimatorParameter : ScriptableObject, IAnimatorParameter,
         IEquatable<AnimatorParameter> {
 
         [SerializeField]                     protected string                          parameterName;
