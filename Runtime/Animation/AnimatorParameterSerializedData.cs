@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Unity.Plastic.Newtonsoft.Json;
 using UnityEngine;
 namespace DrboumLibrary.Animation {
     [StructLayout(LayoutKind.Explicit)]
@@ -11,7 +10,7 @@ namespace DrboumLibrary.Animation {
         [FieldOffset(0)] public bool  ValueAsBool;
     }
     public struct AnimatorParameterSerializedData : IAnimatorParameter {
-        [JsonProperty] private AnimatorParameterValue          _animParamVal;
+        private AnimatorParameterValue          _animParamVal;
         public                 AnimatorParameter               AnimatorParameter;
         public                 int                             HashId        => AnimatorParameter.HashId;
         public                 AnimatorControllerParameterType ParameterType => AnimatorParameter.ParameterType;
