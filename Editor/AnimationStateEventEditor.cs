@@ -1,11 +1,12 @@
-﻿using DrboumLibrary.Animation.AnimationStates;
+﻿using Drboum.Utilities.Runtime;
+using Drboum.Utilities.Runtime.Animation;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
-namespace DrboumLibrary.Editors {
+namespace Drboum.Utilities.Editor {
 
     [CustomEditor(typeof(AnimationStateEvent), true)]
-    public class AnimationStateEventEditor : Editor {
+    public class AnimationStateEventEditor : UnityEditor.Editor {
         private void OnEnable()
         {
             MapAnimatorStateToAnimationState();

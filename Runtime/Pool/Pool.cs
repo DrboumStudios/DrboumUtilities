@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
-namespace DrboumLibrary.Pool {
+namespace Drboum.Utilities.Runtime.Pool {
     public class Pool<T> where T : class {
         private readonly Stack<T>            _objects;
         private          IInstanceCreator<T> _instanceCreator;

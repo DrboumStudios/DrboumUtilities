@@ -1,6 +1,6 @@
 ﻿using System;
 using UnityEngine;
-namespace DrboumLibrary.Attributes {
+namespace Drboum.Utilities.Runtime.Attributes {
     public enum PropertyDeclaringType : byte {
         Component,
         ScriptableObject

@@ -1,6 +1,6 @@
-﻿using DrboumLibrary.Interfaces;
+﻿using Drboum.Utilities.Runtime.Interfaces;
 using UnityEngine;
-namespace DrboumLibrary.Pool {
+namespace Drboum.Utilities.Runtime.Pool {
 
     public interface IMemoryManager {
         ReusablePoolManager ReusablePoolManager { get; }

@@ -1,10 +1,10 @@
-using DrboumLibrary;
+using Drboum.Utilities.Runtime;
+using Drboum.Utilities.Runtime.Collections;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
-namespace DrboumLibrary.Tests {
-
+namespace Drboum.Utilities.Tests.Editor {
     public class ArrayHelperTests {
         [Test]
         public void FlatNativeArray2DGetSetValue()
@@ -97,51 +97,50 @@ namespace DrboumLibrary.Tests {
             }
         }
     }
-
-}
-public class CollectionExtTests {
-    private const string _waypointMapFormat = "test" + "successfullymapped: id {0} of length {1}";
-    [Test]
-    public void BytesAsFixedStringZeroTestOutput()
-    {
-        byte i = 0;
-        Assert.AreEqual(0.ToString(), i.ToFixedStringAsByte<FixedString32Bytes, byte>().ToString());
-    }
-    [Test]
-    public unsafe void Bytes16ToFixedStringIsComplete()
-    {
-        byte               maxValue          = 255;
-        int                charCountPerValue = maxValue.ToString().Length;
-        var                buffer            = CreateBytesForType<GuidWrapper>(maxValue);
-        int                sizeOf            = sizeof(GuidWrapper);
-        int                countPerValue     = charCountPerValue * sizeOf;
-        int                separatorCount    = sizeOf         - 1;
-        int                total             = separatorCount + countPerValue;
-        var fstring           = buffer.ToFixedString();
-
-        LogHelper.LogInfoMessage(fstring.ToString(), "TEST");
-        Assert.AreEqual(total, fstring.Length);
-    }
-    private static unsafe T CreateBytesForType<T>()
-        where T : unmanaged
-    {
-        T id = default;
-
-        var ptr = (byte*)UnsafeUtility.AddressOf(ref id);
-        for ( byte i = 0; i < sizeof(T); i++ ) {
-            ptr[i] = i;
+    public class CollectionExtTests {
+        private const string _waypointMapFormat = "test" + "successfullymapped: id {0} of length {1}";
+        [Test]
+        public void BytesAsFixedStringZeroTestOutput()
+        {
+            byte i = 0;
+            Assert.AreEqual(0.ToString(), i.ToFixedStringAsByte<FixedString32Bytes, byte>().ToString());
         }
-        return id;
-    }
-    private static unsafe T CreateBytesForType<T>(byte fixedValue)
-        where T : unmanaged
-    {
-        T content = default;
+        [Test]
+        public unsafe void Bytes16ToFixedStringIsComplete()
+        {
+            byte               maxValue          = 255;
+            int                charCountPerValue = maxValue.ToString().Length;
+            var                buffer            = CreateBytesForType<GuidWrapper>(maxValue);
+            int                sizeOf            = sizeof(GuidWrapper);
+            int                countPerValue     = charCountPerValue * sizeOf;
+            int                separatorCount    = sizeOf         - 1;
+            int                total             = separatorCount + countPerValue;
+            var fstring           = buffer.ToFixedString();
 
-        var ptr = (byte*)UnsafeUtility.AddressOf(ref content);
-        for ( byte i = 0; i < sizeof(T); i++ ) {
-            ptr[i] = fixedValue;
+            LogHelper.LogInfoMessage(fstring.ToString(), "TEST");
+            Assert.AreEqual(total, fstring.Length);
         }
-        return content;
+        private static unsafe T CreateBytesForType<T>()
+            where T : unmanaged
+        {
+            T id = default;
+
+            var ptr = (byte*)UnsafeUtility.AddressOf(ref id);
+            for ( byte i = 0; i < sizeof(T); i++ ) {
+                ptr[i] = i;
+            }
+            return id;
+        }
+        private static unsafe T CreateBytesForType<T>(byte fixedValue)
+            where T : unmanaged
+        {
+            T content = default;
+
+            var ptr = (byte*)UnsafeUtility.AddressOf(ref content);
+            for ( byte i = 0; i < sizeof(T); i++ ) {
+                ptr[i] = fixedValue;
+            }
+            return content;
+        }
     }
 }

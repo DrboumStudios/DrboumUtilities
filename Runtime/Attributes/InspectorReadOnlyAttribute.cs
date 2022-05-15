@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-namespace DrboumLibrary.Attributes {
+namespace Drboum.Utilities.Runtime.Attributes {
 
     public class InspectorReadOnlyAttribute : PropertyAttribute { }
 }

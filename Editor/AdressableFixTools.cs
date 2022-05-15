@@ -1,10 +1,11 @@
 #if ADRESSABLES_EXIST
 using System;
 using System.Collections.Generic;
+using Drboum.Utilities.Runtime;
 using UnityEditor;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEngine;
-namespace DrboumLibrary.Editors {
+namespace Drboum.Utilities.Editor {
 
     public static class AdressableFixTools {
         private const string AdressableAssetsDataFolderPath = "Assets/AddressableAssetsData/AssetGroups";
@@ -18,7 +19,7 @@ namespace DrboumLibrary.Editors {
 
         static AdressableFixTools()
         {
-            _addressableAssetGroupBuffer       = new List<AddressableAssetGroup>();
+            _addressableAssetGroupBuffer = new List<AddressableAssetGroup>();
             _addressableAssetGroupSchemaBuffer = new List<AddressableAssetGroupSchema>();
             _adressablesFolders = new[] {
                 AdressableAssetsDataFolderPath
@@ -36,10 +37,12 @@ namespace DrboumLibrary.Editors {
             UnityObjectEditorHelper.FindAllAssetInstances(_addressableAssetGroupSchemaBuffer,
                 _adressablesSchemaFolders);
             List<AddressableAssetGroup> addressableAssetGroup = _addressableAssetGroupBuffer;
-            for ( var i = 0; i < addressableAssetGroup.Count; i++ ) {
+            for ( var i = 0; i < addressableAssetGroup.Count; i++ )
+            {
                 AddressableAssetGroup adrAssetGrp = addressableAssetGroup[i];
 
-                if ( adrAssetGrp.Schemas.Count == 0 ) {
+                if ( adrAssetGrp.Schemas.Count == 0 )
+                {
                     AddAdressableGroupSchemaTo(adrAssetGrp, ref reportNumber);
                 }
             }
@@ -52,7 +55,8 @@ namespace DrboumLibrary.Editors {
             UnityObjectEditorHelper.FindAllAssetInstances(_addressableAssetGroupBuffer, _adressablesFolders);
             UnityObjectEditorHelper.FindAllAssetInstances(_addressableAssetGroupSchemaBuffer,
                 _adressablesSchemaFolders);
-            for ( var i = 0; i < _addressableAssetGroupBuffer.Count; i++ ) {
+            for ( var i = 0; i < _addressableAssetGroupBuffer.Count; i++ )
+            {
                 AddressableAssetGroup adrAssetGrp = _addressableAssetGroupBuffer[i];
                 adrAssetGrp.ClearSchemas(false);
                 AddAdressableGroupSchemaTo(adrAssetGrp, ref reportNumber);
@@ -63,10 +67,12 @@ namespace DrboumLibrary.Editors {
         private static void AddAdressableGroupSchemaTo(AddressableAssetGroup adrAssetGrp, ref int reportNumber)
         {
             List<AddressableAssetGroupSchema> addressableAssetGroupSchemaBuffer = _addressableAssetGroupSchemaBuffer;
-            for ( var ii = 0; ii < addressableAssetGroupSchemaBuffer.Count; ii++ ) {
-                AddressableAssetGroupSchema schema  = addressableAssetGroupSchemaBuffer[ii];
-                int                         indexof = schema.name.IndexOf(adrAssetGrp.name, StringComparison.InvariantCulture);
-                if ( indexof == 0 ) {
+            for ( var ii = 0; ii < addressableAssetGroupSchemaBuffer.Count; ii++ )
+            {
+                AddressableAssetGroupSchema schema = addressableAssetGroupSchemaBuffer[ii];
+                int indexof = schema.name.IndexOf(adrAssetGrp.name, StringComparison.InvariantCulture);
+                if ( indexof == 0 )
+                {
                     reportNumber++;
                     adrAssetGrp.AddSchema(schema);
                 }

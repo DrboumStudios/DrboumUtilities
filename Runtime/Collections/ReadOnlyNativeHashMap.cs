@@ -1,6 +1,6 @@
 ﻿using System;
 using Unity.Collections;
-namespace DrboumLibrary {
+namespace Drboum.Utilities.Runtime.Collections {
     public struct ReadOnlyNativeHashMap<TKey, TValue>
         where TKey : struct, IEquatable<TKey>
         where TValue : struct {

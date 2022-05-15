@@ -1,5 +1,5 @@
 ﻿#if UNITY_RENDERPIPELINES_CORE_EXIST
-     using System;
+using System;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.Rendering;

@@ -5,7 +5,7 @@ using System.Text;
 using UnityEditor;
 using UnityEditor.Compilation;
 using Debug = UnityEngine.Debug;
-namespace DrboumLibrary.Editors {
+namespace Drboum.Utilities.Editor {
     [InitializeOnLoad]
     public class AsmdefDebug {
 

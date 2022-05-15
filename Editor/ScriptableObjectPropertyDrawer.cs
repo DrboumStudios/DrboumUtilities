@@ -1,10 +1,12 @@
 ﻿#if UNITY_EDITOR
+using Drboum.Utilities.Runtime;
+using Drboum.Utilities.Runtime.EditorHybrid;
 using UnityEditor;
 using UnityEngine;
-namespace DrboumLibrary.Editors {
+namespace Drboum.Utilities.Editor {
     [CustomPropertyDrawer(typeof(EditableScriptableObject), true)]
     public class ScriptableObjectPropertyDrawer : PropertyDrawer {
-        private Editor _editor;
+        private UnityEditor.Editor _editor;
 
         protected bool OpenNewWindow {
             get;
@@ -46,12 +48,12 @@ namespace DrboumLibrary.Editors {
         protected virtual void Initialize(SerializedProperty property, Rect position)
         {
             property.isExpanded = EditorGUI.Foldout(position, false, GUIContent.none);
-            _editor             = Editor.CreateEditor(property.objectReferenceValue, null);
+            _editor             = UnityEditor.Editor.CreateEditor(property.objectReferenceValue, null);
         }
     }
 
     [CanEditMultipleObjects]
     [CustomEditor(typeof(MonoBehaviour), true)]
-    public class MonoBehaviorUpdatedEditor : Editor { }
+    public class MonoBehaviorUpdatedEditor : UnityEditor.Editor { }
 }
 #endif

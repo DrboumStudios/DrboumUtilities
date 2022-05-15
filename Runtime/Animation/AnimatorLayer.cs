@@ -1,14 +1,9 @@
 ﻿using System.Collections.Generic;
-using DrboumLibrary.Attributes;
+using Drboum.Utilities.Runtime.Attributes;
 using UnityEngine;
-#if UNITY_EDITOR
-using UnityEditor.Animations;
-#endif
 
-namespace DrboumLibrary.Animation {
-#if UNITY_EDITOR
-    [CreateAssetMenu(fileName = "AnimatorLayer", menuName = nameof(DrboumLibrary) + "/Animation/AnimatorLayer")]
-#endif
+namespace Drboum.Utilities.Runtime.Animation {
+    [CreateAssetMenu(fileName = "AnimatorLayer", menuName = nameof(Drboum) + "/" + nameof(Utilities) + "/" + nameof(Animation) + "/" + nameof(AnimatorLayer))]
     public class AnimatorLayer : ScriptableObject {
 
         [SerializeField] [InspectorReadOnly] private int   _layerId = -1;
@@ -42,21 +37,22 @@ namespace DrboumLibrary.Animation {
         public AnimatorLayerPersistence AsStruct(Animator animator)
         {
             return new AnimatorLayerPersistence {
-                animatorLayer        = this,
-                Weigth               = GetLayerWeight(animator),
+                animatorLayer = this,
+                Weigth = GetLayerWeight(animator),
                 currentAnimatorState = animator.GetCurrentAnimatorStateInfo(_layerId)
             };
         }
 
 #if UNITY_EDITOR
-        [SerializeField] private AnimatorController animatorController;
-        public                   AnimatorController AnimatorController => animatorController;
+        [SerializeField] private UnityEditor.Animations.AnimatorController animatorController;
+        public                   UnityEditor.Animations.AnimatorController AnimatorController => animatorController;
 #endif
 #if UNITY_EDITOR
         public static void SyncLayerIndexes(List<AnimatorLayer> _animatorLayerBuffer, string[] _folders)
         {
             UnityObjectEditorHelper.FindAllAssetInstances(_animatorLayerBuffer, _folders);
-            for ( var i = 0; i < _animatorLayerBuffer.Count; i++ ) {
+            for ( var i = 0; i < _animatorLayerBuffer.Count; i++ )
+            {
                 AnimatorLayer animatorLayer = _animatorLayerBuffer[i];
                 animatorLayer.SyncLayerIndex();
             }
@@ -66,16 +62,19 @@ namespace DrboumLibrary.Animation {
         [ContextMenu(nameof(SyncLayerIndex))]
         public void SyncLayerIndex()
         {
-            if ( animatorController == null ) {
+            if ( animatorController == null )
+            {
                 return;
             }
 
-            for ( var i = 0; i < animatorController.layers.Length; i++ ) {
-                AnimatorControllerLayer layer = animatorController.layers[i];
+            for ( var i = 0; i < animatorController.layers.Length; i++ )
+            {
+                UnityEditor.Animations.AnimatorControllerLayer layer = animatorController.layers[i];
                 SyncedLayerIndex = layer.syncedLayerIndex;
-                if ( Equals(layer.name, name) ) {
+                if ( Equals(layer.name, name) )
+                {
                     _defaultWeight = layer.defaultWeight;
-                    _layerId       = i;
+                    _layerId = i;
                     break;
                 }
             }
@@ -85,32 +84,5 @@ namespace DrboumLibrary.Animation {
             SyncLayerIndex();
         }
 #endif
-    }
-    public struct AnimatorLayerPersistence {
-        public AnimatorLayer           animatorLayer;
-        public float                   Weigth;
-        public AnimatorStateSerialized currentAnimatorState;
-    }
-    public struct AnimatorStateSerialized {
-
-        public int FullPathHash;
-        //
-        // Summary:
-        //     The hash is generated using Animator.StringToHash. The hash does not include
-        //     the name of the parent layer.
-        public int ShortNameHash;
-        //
-        // Summary:
-        //     Normalized time of the State.
-        public float NormalizedTime;
-
-        public static implicit operator AnimatorStateSerialized(AnimatorStateInfo animatorStateInfo)
-        {
-            return new AnimatorStateSerialized {
-                FullPathHash   = animatorStateInfo.fullPathHash,
-                NormalizedTime = animatorStateInfo.normalizedTime,
-                ShortNameHash  = animatorStateInfo.shortNameHash
-            };
-        }
     }
 }

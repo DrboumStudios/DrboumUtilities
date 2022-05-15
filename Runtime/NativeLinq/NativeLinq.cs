@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using DrboumLibrary.NativeLinq;
-using JetBrains.Annotations;
+using Drboum.Utilities.Runtime.NativeLinq;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
-using Unity.Mathematics;
-using static CollectionCustomHelper;
 
 public static partial class NativeLinqExtensions {
     public static EquatablePredicate<T> CreateEquatablePredicate<T>(T lookupValue)
@@ -69,7 +65,7 @@ public static partial class NativeLinqExtensions {
     /// <example> NativePredicate implementation of IEquatable => <see cref="EquatablePredicate{T,TEquatable}"/></example>
     /// <returns>a modified version of the same array source with the result from the query, the returned array share the same memory as the <paramref name="source"/> disposing the source will invalid the returned array too, therefore its not necessary to dispose the returned array, disposing the returned array will not affect the <paramref name="source"/> array</returns>
     public static NativeArray<T> WhereNative<TNativePredicate, T>(this in NativeArray<T> source, in TNativePredicate predicate, Allocator allocator,
-        int                                                                              expectedMatches = 2)
+        int expectedMatches = 2)
         where T : unmanaged
         where TNativePredicate : struct, INativePredicate<T>
     {
@@ -99,11 +95,11 @@ public static partial class NativeLinqExtensions {
     /// <typeparam name="TConverter"></typeparam>
     /// <returns></returns>
     public static NativeList<TConvertResult> SelectNative<T, TConvertResult, TNativePredicate, TConverter>(
-        this in NativeArray<T>   source,
-        in      TNativePredicate predicate,
-        in      TConverter       converter,
-        Allocator                allocator,
-        in TConvertResult        dummyConvertValueTypeForGenerics = default)
+        this in NativeArray<T> source,
+        in TNativePredicate predicate,
+        in TConverter converter,
+        Allocator allocator,
+        in TConvertResult dummyConvertValueTypeForGenerics = default)
         where T : struct
         where TConvertResult : unmanaged
         where TNativePredicate : struct, INativePredicate<T>
@@ -122,9 +118,9 @@ public static partial class NativeLinqExtensions {
     }
     public static NativeList<TConvertResult> SelectNative<T, TConvertResult, TConverter>(
         this in NativeArray<T> source,
-        in      TConverter     converter,
-        Allocator              allocator,
-        in TConvertResult      dummyConvertValueTypeForGenerics)
+        in TConverter converter,
+        Allocator allocator,
+        in TConvertResult dummyConvertValueTypeForGenerics)
         where T : struct
         where TConvertResult : unmanaged
         where TConverter : struct, IConverter<T, TConvertResult>
@@ -148,12 +144,12 @@ public static partial class NativeLinqExtensions {
     /// <typeparam name="TNativeList"></typeparam>
     /// <returns></returns>
     public static NativeList<TConvertResult> SelectNative<T, TConvertResult, TNativePredicate, TConverter, TNativeList>(
-        this ref TNativeList      source,
-        in       TNativePredicate predicate,
-        in       TConverter       converter,
-        Allocator                 allocator,
-        TConvertResult            dummyConvertValueTypeForGenerics = default,
-        int                       resultListInitialCapacity        = -1)
+        this ref TNativeList source,
+        in TNativePredicate predicate,
+        in TConverter converter,
+        Allocator allocator,
+        TConvertResult dummyConvertValueTypeForGenerics = default,
+        int resultListInitialCapacity = -1)
         where T : struct
         where TConvertResult : unmanaged
         where TNativePredicate : struct, INativePredicate<T>
@@ -177,10 +173,10 @@ public static partial class NativeLinqExtensions {
     }
     public static NativeList<TConvertResult> SelectNative<T, TConvertResult, TConverter, TNativeList>(
         this ref TNativeList source,
-        in       TConverter  converter,
-        Allocator            allocator,
-        in TConvertResult    dummyConvertValueTypeForGenerics,
-        int                  resultListInitialCapacity = -1)
+        in TConverter converter,
+        Allocator allocator,
+        in TConvertResult dummyConvertValueTypeForGenerics,
+        int resultListInitialCapacity = -1)
         where T : struct
         where TConvertResult : unmanaged
         where TNativeList : struct, INativeList<T>
@@ -366,7 +362,7 @@ public static partial class NativeLinqExtensions {
         where T : struct
     {
         var aggregatedArray = new NativeArray<T>(source1.Length + source2.Length, allocator);
-        var offset          = 0;
+        var offset = 0;
 
         aggregatedArray.AggregateInternal(ref source1, ref offset);
         aggregatedArray.AggregateInternal(ref source2, ref offset);
@@ -377,7 +373,7 @@ public static partial class NativeLinqExtensions {
         where T : struct
     {
         var aggregatedArray = new NativeArray<T>(source1.Length + source2.Length + source3.Length, allocator);
-        var offset          = 0;
+        var offset = 0;
 
         aggregatedArray.AggregateInternal(ref source1, ref offset);
         aggregatedArray.AggregateInternal(ref source2, ref offset);
@@ -394,7 +390,7 @@ public static partial class NativeLinqExtensions {
         where T : struct
     {
         var aggregatedArray = new NativeArray<T>(aggregateArrayLength, allocator);
-        var offset          = 0;
+        var offset = 0;
 
         int sizeOf = UnsafeUtility.SizeOf<T>();
         for ( int i = 0; i < length * sizeOf; i += sizeOf )

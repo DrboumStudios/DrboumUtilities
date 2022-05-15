@@ -1,20 +1,19 @@
 ﻿#if UNITY_EDITOR
-using DrboumLibrary.Attributes;
+using Drboum.Utilities.Runtime.Attributes;
 using UnityEditor;
 using UnityEngine;
-namespace DrboumLibrary.Editors.Attributes {
+namespace Drboum.Utilities.Editor.Attributes {
 
-    [CustomPropertyDrawer(typeof(InspectorMessageAttribute))]
     /// <summary>
     /// This class allows the display of a message box (warning, info, error...) next to a property (before or after)
     /// </summary>
+    [CustomPropertyDrawer(typeof(InspectorMessageAttribute))]
     public class InspectorMessageAttributeDrawer : PropertyDrawer {
 
         // determines the space after the help box, the space before the text box, and the width of the help box icon
-        private const int spaceBeforeTheTextBox = 5;
-
-        private const int spaceAfterTheTextBox = 10;
-        private const int iconWidth            = 55;
+        private const int SPACE_BEFORE_THE_TEXT_BOX = 5;
+        private const int SPACE_AFTER_THE_TEXT_BOX  = 10;
+        private const int ICON_WIDTH                = 55;
 
         private InspectorMessageAttribute informationAttribute => (InspectorMessageAttribute)attribute;
 
@@ -34,7 +33,7 @@ namespace DrboumLibrary.Editors.Attributes {
                 // we position the message before the property
                 helpPosition.height = DetermineTextboxHeight(informationAttribute.Message);
 
-                textFieldPosition.y      += helpPosition.height + spaceBeforeTheTextBox;
+                textFieldPosition.y      += helpPosition.height + SPACE_BEFORE_THE_TEXT_BOX;
                 textFieldPosition.height =  GetPropertyHeight(prop, label);
             }
             else {
@@ -44,7 +43,7 @@ namespace DrboumLibrary.Editors.Attributes {
                 helpPosition.height = DetermineTextboxHeight(informationAttribute.Message);
                 // we add the complete property height (property + helpbox, as overridden in this very script), and substract both to get just the property
                 helpPosition.y += GetPropertyHeight(prop, label)                       -
-                                  DetermineTextboxHeight(informationAttribute.Message) - spaceAfterTheTextBox;
+                                  DetermineTextboxHeight(informationAttribute.Message) - SPACE_AFTER_THE_TEXT_BOX;
             }
 
             EditorGUI.HelpBox(helpPosition, informationAttribute.Message, informationAttribute.Type);
@@ -60,7 +59,7 @@ namespace DrboumLibrary.Editors.Attributes {
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             return EditorGUI.GetPropertyHeight(property) + DetermineTextboxHeight(informationAttribute.Message) +
-                   spaceAfterTheTextBox                  + spaceBeforeTheTextBox;
+                   SPACE_AFTER_THE_TEXT_BOX                  + SPACE_BEFORE_THE_TEXT_BOX;
         }
 
         /// <summary>
@@ -73,7 +72,7 @@ namespace DrboumLibrary.Editors.Attributes {
             var style = new GUIStyle(EditorStyles.helpBox);
             style.richText = true;
 
-            float newHeight = style.CalcHeight(new GUIContent(message), EditorGUIUtility.currentViewWidth - iconWidth);
+            float newHeight = style.CalcHeight(new GUIContent(message), EditorGUIUtility.currentViewWidth - ICON_WIDTH);
             return newHeight;
         }
     }

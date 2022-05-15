@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using Unity.Collections;
 using Unity.Jobs;
-namespace DrboumLibrary {
+namespace Drboum.Utilities.Runtime.Collections {
     public struct NativeArray3D<T> : INativeDisposable, IEquatable<NativeArray<T>> where T : struct {
         internal NativeArray<T> _flatNativeArray;
 

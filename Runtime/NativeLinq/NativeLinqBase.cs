@@ -1,6 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
-namespace DrboumLibrary.NativeLinq {
+namespace Drboum.Utilities.Runtime.NativeLinq {
 
     public interface INativePredicate<T>
         where T : struct {

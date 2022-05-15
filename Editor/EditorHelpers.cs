@@ -1,5 +1,5 @@
 ﻿#if UNITY_EDITOR
-namespace DrboumLibrary.Editors {
+namespace Drboum.Utilities.Editor {
     public static class EditorHelpers { }
 }
 #endif

@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
-using DrboumLibrary.Attributes;
+using Drboum.Utilities.Runtime;
+using Drboum.Utilities.Runtime.Attributes;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
-namespace DrboumLibrary.Editors {
+namespace Drboum.Utilities.Editor {
     /// <summary>
     ///     Drawer for the RequireInterface attribute.
     /// </summary>

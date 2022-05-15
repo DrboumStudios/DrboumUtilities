@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-namespace DrboumLibrary.Interfaces {
+namespace Drboum.Utilities.Runtime.Interfaces {
     public interface IHandleGameObjectLifeCycle : IEnableInstance, IDisableInstance {
         GameObject GameObjectRef { get; }
 

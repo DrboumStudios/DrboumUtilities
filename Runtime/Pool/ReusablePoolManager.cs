@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using DrboumLibrary.Interfaces;
+using Drboum.Utilities.Runtime.Interfaces;
 using UnityEngine;
-namespace DrboumLibrary.Pool {
+namespace Drboum.Utilities.Runtime.Pool {
     public class ReusablePoolManager {
         private readonly Dictionary<int, Pool<IReusableInstance>> _objectPools;
         public ReusablePoolManager()

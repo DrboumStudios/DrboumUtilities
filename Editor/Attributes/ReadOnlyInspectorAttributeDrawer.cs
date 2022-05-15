@@ -1,8 +1,8 @@
 ﻿#if UNITY_EDITOR
-using DrboumLibrary.Attributes;
+using Drboum.Utilities.Runtime.Attributes;
 using UnityEditor;
 using UnityEngine;
-namespace DrboumLibrary.Editors.Attributes {
+namespace Drboum.Utilities.Editor.Attributes {
 
     [CustomPropertyDrawer(typeof(InspectorReadOnlyAttribute))]
     public class ReadOnlyInspectorAttributeDrawer : PropertyDrawer {

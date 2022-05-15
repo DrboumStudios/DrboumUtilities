@@ -1,4 +1,4 @@
-﻿namespace DrboumLibrary.Interfaces {
+﻿namespace Drboum.Utilities.Runtime.Interfaces {
     public interface IConvertStruct<In, Out>
         where In : struct
         where Out : struct {

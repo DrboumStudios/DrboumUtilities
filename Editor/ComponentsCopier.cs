@@ -1,6 +1,6 @@
 ﻿using UnityEditor;
 using UnityEngine;
-namespace DrboumLibrary.Editors {
+namespace Drboum.Utilities.Editor {
     /// <summary>
     /// A simple little editor extension to copy and paste all components
     /// Help from http:       //answers.unity3d.com/questions/541045/copy-all-components-from-one-character-to-another.html

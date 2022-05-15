@@ -1,10 +1,8 @@
 ﻿using System;
-using DrboumLibrary.Attributes;
+using Drboum.Utilities.Runtime.Collections;
 using Unity.Collections;
 using Unity.Properties;
-using UnityEngine;
-using UnityEngine.Serialization;
-namespace DrboumLibrary.Inputs {
+namespace Drboum.Utilities.Runtime.Inputs {
     [Serializable]
     public struct ButtonInput {
         public const              string             TO_STRING_FORMAT         = nameof(PressedThisTick) + "= {0},  " + nameof(IsPressed) + "= {1}";

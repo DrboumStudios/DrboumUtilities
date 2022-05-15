@@ -1,12 +1,12 @@
 ﻿#if UNITY_EDITOR
 using System.IO;
-using DrboumLibrary.Animation;
+using Drboum.Utilities.Runtime.Animation;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
-namespace DrboumLibrary.Editors {
+namespace Drboum.Utilities.Editor {
     [CustomEditor(typeof(AnimatorController))]
-    public class AnimatorControllerEditor : Editor {
+    public class AnimatorControllerEditor : UnityEditor.Editor {
         public string destinationFolder;
 
         public override void OnInspectorGUI()

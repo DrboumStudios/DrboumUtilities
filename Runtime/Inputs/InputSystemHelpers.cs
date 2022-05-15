@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using DrboumLibrary.Inputs;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.InputSystem.InputAction;
 
-namespace DrboumLibrary {
+namespace Drboum.Utilities.Runtime.Inputs {
     [Flags]
     public enum SubscribeToInputActionPhase : uint {
         All       = uint.MaxValue,

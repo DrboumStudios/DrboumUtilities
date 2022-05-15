@@ -1,14 +1,10 @@
 ﻿using System;
-using DrboumLibrary.Attributes;
+using Drboum.Utilities.Runtime.Attributes;
 using UnityEngine;
+
+namespace Drboum.Utilities.Runtime.Animation {
 #if UNITY_EDITOR
-
-
-#endif
-
-namespace DrboumLibrary.Animation {
-#if UNITY_EDITOR
-    [CreateAssetMenu(fileName = "AnimatorParameter", menuName = nameof(DrboumLibrary) + "/Animation/AnimatorParameter")]
+    [CreateAssetMenu(fileName = nameof(AnimatorParameter), menuName = nameof(Drboum)+"/" +nameof(Utilities)+ "/"+nameof(Animation)+"/"+nameof(AnimatorParameter))]
 #endif
     public class AnimatorParameter : ScriptableObject, IAnimatorParameter,
         IEquatable<AnimatorParameter> {

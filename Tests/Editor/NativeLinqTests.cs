@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Linq;
-using DrboumLibrary.NativeLinq;
+using Drboum.Utilities.Runtime.NativeLinq;
 using NUnit.Framework;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
-using static CollectionCustomHelper;
 using static NativeLinqExtensions;
-namespace DrboumLibrary.Tests {
+using static CollectionCustomHelper;
+namespace Drboum.Utilities.Tests.Editor {
     public class NativeLinqTests {
         private const int INITIAL_DEFAULT_LENGTH = 10;
         internal static void CreateFloat3TestData(out NativeArray<float3> nativeArray, Allocator allocator = Allocator.Temp, int length = INITIAL_DEFAULT_LENGTH)

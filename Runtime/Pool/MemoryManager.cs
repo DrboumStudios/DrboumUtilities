@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using DrboumLibrary.Interfaces;
+using Drboum.Utilities.Runtime.Interfaces;
 using UnityEngine;
-namespace DrboumLibrary.Pool {
+namespace Drboum.Utilities.Runtime.Pool {
     public class MemoryManager : IMemoryManager {
         private const int DefaultPoolLength = 5;
         public static readonly PoolSettings DefaultSettings = new PoolSettings {

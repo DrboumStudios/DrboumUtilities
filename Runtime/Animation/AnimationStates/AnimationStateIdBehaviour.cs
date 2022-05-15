@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-namespace DrboumLibrary.Animation.AnimationStates {
+namespace Drboum.Utilities.Runtime.Animation {
     
     public class AnimationStateIdBehaviour : StateMachineBehaviour {
         public AnimationStateId Id;

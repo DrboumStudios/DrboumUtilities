@@ -1,9 +1,9 @@
 ﻿using System;
-using DrboumLibrary.Interfaces;
+using Drboum.Utilities.Runtime.Interfaces;
 using Unity.Collections;
 using Unity.Properties;
-using static DrboumLibrary.InputSystemHelper;
-namespace DrboumLibrary.Inputs {
+using static Drboum.Utilities.Runtime.Inputs.InputSystemHelper;
+namespace Drboum.Utilities.Runtime.Inputs {
     public struct ButtonInputCollection<TCollection, TButtonNamesContainer> : IProvideFixedString
         where TCollection : unmanaged, INativeList<ButtonInput> {
 

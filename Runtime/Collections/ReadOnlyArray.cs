@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-namespace DrboumLibrary {
+namespace Drboum.Utilities.Runtime.Collections {
     /// <summary>
     ///     Read-only access to an array or to a slice of an array.
     /// </summary>

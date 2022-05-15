@@ -1,29 +1,30 @@
 {
-  "name": "DrboumLibrary.Editor",
-  "rootNamespace": "",
-  "references": [
-    "DrboumLibrary"
-  ],
-  "includePlatforms": [
-    "Editor"
-  ],
-  "excludePlatforms": [],
-  "allowUnsafeCode": false,
-  "overrideReferences": false,
-  "precompiledReferences": [],
-  "autoReferenced": true,
-  "defineConstraints": [],
-  "versionDefines": [
-    {
-      "name": "com.unity.addressables",
-      "expression": "1.0",
-      "define": "ADRESSABLES_EXIST"
-    },
-    {
-      "name": "com.unity.renderpipelines.core.runtime",
-      "expression": "1.0",
-      "define": "UNITY_RENDERPIPELINES_CORE_EXIST"
-    }
-  ],
-  "noEngineReferences": false
+    "name": "Utilities.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:4422a37c5b4882b4693b54d30d43e191",
+        "GUID:69448af7b92c7f342b298e06a37122aa"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.addressables",
+            "expression": "1.0",
+            "define": "ADRESSABLES_EXIST"
+        },
+        {
+            "name": "com.unity.renderpipelines.core.runtime",
+            "expression": "10.0",
+            "define": "UNITY_RENDERPIPELINES_CORE_EXIST"
+        }
+    ],
+    "noEngineReferences": false
 }

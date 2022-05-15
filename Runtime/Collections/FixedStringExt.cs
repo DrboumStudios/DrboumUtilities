@@ -1,7 +1,8 @@
-﻿using Unity.Collections;
+﻿using Drboum.Utilities.Runtime.Collections;
+using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
-using DefaultFloatFixedStringType= Unity.Collections.FixedString64Bytes;
+using DefaultFloatFixedStringType = Unity.Collections.FixedString64Bytes;
 public static unsafe class FixedStringExt {
     private const           char                DEFAULT_LABEL_SEPARATOR    = '=';
     private const           char                DEFAULT_VALUE_SEPARATOR    = ',';
@@ -24,7 +25,7 @@ public static unsafe class FixedStringExt {
         where TValue : unmanaged
     {
         int size = sizeof(TValue);
-        var ptr  = (byte*)UnsafeUtility.AddressOf(ref bytes);
+        var ptr = (byte*)UnsafeUtility.AddressOf(ref bytes);
         for ( var i = 0; i < size - 1; i++ )
         {
             AppendByteAsFixedString<TFstring, TValue>(ref fstring, ptr[i]);
@@ -86,7 +87,7 @@ public static unsafe class FixedStringExt {
         fixedString.Append(value);
     }
     public static void AppendFixedString<T>(this float value, ref T fixedString, char valueChar,
-        char                                           labelSeparator = DEFAULT_VALUE_SEPARATOR)
+        char labelSeparator = DEFAULT_VALUE_SEPARATOR)
         where T : struct, INativeList<byte>, IUTF8Bytes
     {
         fixedString.Append(valueChar);
@@ -101,8 +102,8 @@ public static unsafe class FixedStringExt {
 
         return fixedString;
     }
-    public static void AppendFixedString<T>(this float2 value,                                    ref T fixedString,
-        char                                            labelSeparator = DEFAULT_LABEL_SEPARATOR, char  valueSeparator = DEFAULT_VALUE_SEPARATOR)
+    public static void AppendFixedString<T>(this float2 value, ref T fixedString,
+        char labelSeparator = DEFAULT_LABEL_SEPARATOR, char valueSeparator = DEFAULT_VALUE_SEPARATOR)
         where T : struct, INativeList<byte>, IUTF8Bytes
     {
 
@@ -112,7 +113,7 @@ public static unsafe class FixedStringExt {
 
     }
     public static FixedString32Bytes ToFixedString(this float3 value, char labelSeparator = DEFAULT_LABEL_SEPARATOR,
-        char                                                   valueSeparator = DEFAULT_VALUE_SEPARATOR)
+        char valueSeparator = DEFAULT_VALUE_SEPARATOR)
     {
         FixedString32Bytes fixedString = default;
 
@@ -120,8 +121,8 @@ public static unsafe class FixedStringExt {
 
         return fixedString;
     }
-    public static void AppendFixedString<T>(this float3 value,                                    ref T fixedString,
-        char                                            labelSeparator = DEFAULT_LABEL_SEPARATOR, char  valueSeparator = DEFAULT_VALUE_SEPARATOR)
+    public static void AppendFixedString<T>(this float3 value, ref T fixedString,
+        char labelSeparator = DEFAULT_LABEL_SEPARATOR, char valueSeparator = DEFAULT_VALUE_SEPARATOR)
         where T : struct, INativeList<byte>, IUTF8Bytes
     {
 
@@ -130,14 +131,14 @@ public static unsafe class FixedStringExt {
         value.z.AppendFixedString(ref fixedString, 'z', labelSeparator);
     }
     public static FixedString64Bytes ToFixedString(this float4 value, char labelSeparator = DEFAULT_LABEL_SEPARATOR,
-        char                                                   valueSeparator = DEFAULT_VALUE_SEPARATOR)
+        char valueSeparator = DEFAULT_VALUE_SEPARATOR)
     {
         FixedString64Bytes fixedString = default;
         value.AppendFixedString(ref fixedString, labelSeparator, valueSeparator);
         return fixedString;
     }
-    public static void AppendFixedString<T>(this float4 value,                                    ref T fixedString,
-        char                                            labelSeparator = DEFAULT_LABEL_SEPARATOR, char  valueSeparator = DEFAULT_VALUE_SEPARATOR)
+    public static void AppendFixedString<T>(this float4 value, ref T fixedString,
+        char labelSeparator = DEFAULT_LABEL_SEPARATOR, char valueSeparator = DEFAULT_VALUE_SEPARATOR)
         where T : struct, INativeList<byte>, IUTF8Bytes
     {
         AppendFixedString(value.xyz, ref fixedString, labelSeparator, valueSeparator);
@@ -159,7 +160,7 @@ public static unsafe class FixedStringExt {
         return fixedString;
     }
     public static void AppendFixedString<T>(this int value, ref T fixedString, char valueChar,
-        char                                         labelSeparator = DEFAULT_LABEL_SEPARATOR)
+        char labelSeparator = DEFAULT_LABEL_SEPARATOR)
         where T : struct, INativeList<byte>, IUTF8Bytes
     {
         fixedString.Append(valueChar);
@@ -167,8 +168,8 @@ public static unsafe class FixedStringExt {
         fixedString.Append(value);
     }
 
-    public static void AppendFixedString<T>(this int2 value,                                    ref T fixedString,
-        char                                          labelSeparator = DEFAULT_LABEL_SEPARATOR, char  valueSeparator = DEFAULT_VALUE_SEPARATOR)
+    public static void AppendFixedString<T>(this int2 value, ref T fixedString,
+        char labelSeparator = DEFAULT_LABEL_SEPARATOR, char valueSeparator = DEFAULT_VALUE_SEPARATOR)
         where T : struct, INativeList<byte>, IUTF8Bytes
     {
 
@@ -176,16 +177,16 @@ public static unsafe class FixedStringExt {
         fixedString.Append(valueSeparator);
         value.y.AppendFixedString(ref fixedString, 'y', labelSeparator);
     }
-    public static void AppendFixedString<T>(this int3 value,                                    ref T fixedString,
-        char                                          labelSeparator = DEFAULT_LABEL_SEPARATOR, char  valueSeparator = DEFAULT_VALUE_SEPARATOR)
+    public static void AppendFixedString<T>(this int3 value, ref T fixedString,
+        char labelSeparator = DEFAULT_LABEL_SEPARATOR, char valueSeparator = DEFAULT_VALUE_SEPARATOR)
         where T : struct, INativeList<byte>, IUTF8Bytes
     {
         AppendFixedString(value.xy, ref fixedString, labelSeparator, valueSeparator);
         fixedString.Append(valueSeparator);
         AppendFixedString(value.z, ref fixedString, 'z', labelSeparator);
     }
-    public static void AppendFixedString<T>(this int4 value,                                    ref T fixedString,
-        char                                          labelSeparator = DEFAULT_LABEL_SEPARATOR, char  valueSeparator = DEFAULT_VALUE_SEPARATOR)
+    public static void AppendFixedString<T>(this int4 value, ref T fixedString,
+        char labelSeparator = DEFAULT_LABEL_SEPARATOR, char valueSeparator = DEFAULT_VALUE_SEPARATOR)
         where T : struct, INativeList<byte>, IUTF8Bytes
     {
         AppendFixedString(value.xyz, ref fixedString, labelSeparator, valueSeparator);
@@ -205,7 +206,7 @@ public static unsafe class FixedStringExt {
         fixedString.Append(value ? TRUE : FALSE);
     }
     public static void AppendFixedString<T>(this bool value, ref T fixedString, char valueChar,
-        char                                          labelSeparator = DEFAULT_LABEL_SEPARATOR)
+        char labelSeparator = DEFAULT_LABEL_SEPARATOR)
         where T : struct, INativeList<byte>, IUTF8Bytes
     {
         fixedString.Append(valueChar);
@@ -213,24 +214,24 @@ public static unsafe class FixedStringExt {
         value.AppendFixedString(ref fixedString);
     }
 
-    public static void AppendFixedString<T>(this bool2 value,                                    ref T fixedString,
-        char                                           labelSeparator = DEFAULT_LABEL_SEPARATOR, char  valueSeparator = DEFAULT_VALUE_SEPARATOR)
+    public static void AppendFixedString<T>(this bool2 value, ref T fixedString,
+        char labelSeparator = DEFAULT_LABEL_SEPARATOR, char valueSeparator = DEFAULT_VALUE_SEPARATOR)
         where T : struct, INativeList<byte>, IUTF8Bytes
     {
         AppendFixedString(value.x, ref fixedString, 'x', labelSeparator);
         fixedString.Append(valueSeparator);
         AppendFixedString(value.y, ref fixedString, 'y', labelSeparator);
     }
-    public static void AppendFixedString<T>(this bool3 value,                                    ref T fixedString,
-        char                                           labelSeparator = DEFAULT_LABEL_SEPARATOR, char  valueSeparator = DEFAULT_VALUE_SEPARATOR)
+    public static void AppendFixedString<T>(this bool3 value, ref T fixedString,
+        char labelSeparator = DEFAULT_LABEL_SEPARATOR, char valueSeparator = DEFAULT_VALUE_SEPARATOR)
         where T : struct, INativeList<byte>, IUTF8Bytes
     {
         AppendFixedString(value.xy, ref fixedString, labelSeparator, valueSeparator);
         fixedString.Append(valueSeparator);
         AppendFixedString(value.z, ref fixedString, 'z', labelSeparator);
     }
-    public static void AppendFixedString<T>(this bool4 value,                                    ref T fixedString,
-        char                                           labelSeparator = DEFAULT_LABEL_SEPARATOR, char  valueSeparator = DEFAULT_VALUE_SEPARATOR)
+    public static void AppendFixedString<T>(this bool4 value, ref T fixedString,
+        char labelSeparator = DEFAULT_LABEL_SEPARATOR, char valueSeparator = DEFAULT_VALUE_SEPARATOR)
         where T : struct, INativeList<byte>, IUTF8Bytes
     {
         AppendFixedString(value.xyz, ref fixedString, labelSeparator, valueSeparator);

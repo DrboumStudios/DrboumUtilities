@@ -1,12 +1,12 @@
 ﻿using System;
-using DrboumLibrary.Attributes;
+using Drboum.Utilities.Runtime.Attributes;
+using UnityEditor;
+using UnityEditor.Experimental.SceneManagement;
 using UnityEngine;
 using Object = UnityEngine.Object;
 #if UNITY_EDITOR
-using UnityEditor;
-using UnityEditor.Experimental.SceneManagement;
 #endif
-namespace DrboumLibrary.Animation {
+namespace Drboum.Utilities.Runtime.Animation {
     /// <summary>
     ///     Detect if a gameobject is being copied or duplicated while identifying it uniquely.
     ///     is used to bind a scene object to an asset for example

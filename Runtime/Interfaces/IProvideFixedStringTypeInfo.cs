@@ -1,5 +1,5 @@
 ﻿using Unity.Collections;
-namespace DrboumLibrary.Interfaces {
+namespace Drboum.Utilities.Runtime.Interfaces {
     public interface IProvideFixedStringTypeInfo {
         public ref readonly FixedString64Bytes TypeName { get; }
     }
