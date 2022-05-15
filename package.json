@@ -1,7 +1,7 @@
 {
   "name": "com.drboum.utilities",
   "displayName": "DrboumLibraryUtilities",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "unity": "2020.3",
   "keywords": ["Drboum", "Utilities", "Drboum Library"],
   "description": "Drboum non ecs utilities library.",
