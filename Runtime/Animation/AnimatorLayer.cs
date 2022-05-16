@@ -46,8 +46,7 @@ namespace Drboum.Utilities.Runtime.Animation {
 #if UNITY_EDITOR
         [SerializeField] private UnityEditor.Animations.AnimatorController animatorController;
         public                   UnityEditor.Animations.AnimatorController AnimatorController => animatorController;
-#endif
-#if UNITY_EDITOR
+
         public static void SyncLayerIndexes(List<AnimatorLayer> _animatorLayerBuffer, string[] _folders)
         {
             UnityObjectEditorHelper.FindAllAssetInstances(_animatorLayerBuffer, _folders);

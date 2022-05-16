@@ -92,51 +92,51 @@ namespace Drboum.Utilities.Runtime.EditorHybrid {
         }
 #endif
     }
-}
-public readonly struct GameObjectNameChangedListener : IEquatable<GameObjectNameChangedListener> {
-    public readonly Component                 Instance;
-    public readonly Action<Component, string> Execute;
-    public GameObjectNameChangedListener(Component instance, Action<Component, string> execute)
-    {
-        Instance = instance;
-        Execute = execute;
-    }
-    public bool Equals(GameObjectNameChangedListener other)
-    {
-        return Equals(Instance, other.Instance);
-    }
-    public override bool Equals(object obj)
-    {
-        return obj is GameObjectNameChangedListener other && Equals(other);
-    }
-    public override int GetHashCode()
-    {
-        return (Instance != null ? Instance.GetHashCode() : 0);
-    }
-}
-public readonly struct EventInstanceWrapper : IEquatable<EventInstanceWrapper> {
-    public readonly Component         Instance;
-    public readonly Action<Component> Execute;
-
-    public EventInstanceWrapper(Component instance, Action<Component> execute)
-    {
-        Instance = instance;
-        Execute = execute;
-    }
-
-    public bool Equals(EventInstanceWrapper other)
-    {
-        return Equals(Instance, other.Instance);
-    }
-    public override bool Equals(object obj)
-    {
-        return obj is EventInstanceWrapper other && Equals(other);
-    }
-    public override int GetHashCode()
-    {
-        unchecked
+    public readonly struct GameObjectNameChangedListener : IEquatable<GameObjectNameChangedListener> {
+        public readonly Component                 Instance;
+        public readonly Action<Component, string> Execute;
+        public GameObjectNameChangedListener(Component instance, Action<Component, string> execute)
         {
-            return ((Instance != null ? Instance.GetHashCode() : 0) * 397);
+            Instance = instance;
+            Execute = execute;
+        }
+        public bool Equals(GameObjectNameChangedListener other)
+        {
+            return Equals(Instance, other.Instance);
+        }
+        public override bool Equals(object obj)
+        {
+            return obj is GameObjectNameChangedListener other && Equals(other);
+        }
+        public override int GetHashCode()
+        {
+            return (Instance != null ? Instance.GetHashCode() : 0);
+        }
+    }
+    public readonly struct EventInstanceWrapper : IEquatable<EventInstanceWrapper> {
+        public readonly Component         Instance;
+        public readonly Action<Component> Execute;
+
+        public EventInstanceWrapper(Component instance, Action<Component> execute)
+        {
+            Instance = instance;
+            Execute = execute;
+        }
+
+        public bool Equals(EventInstanceWrapper other)
+        {
+            return Equals(Instance, other.Instance);
+        }
+        public override bool Equals(object obj)
+        {
+            return obj is EventInstanceWrapper other && Equals(other);
+        }
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return ((Instance != null ? Instance.GetHashCode() : 0) * 397);
+            }
         }
     }
 }

@@ -1,13 +1,13 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.Experimental.SceneManagement;
+#endif
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-#if UNITY_EDITOR
-using UnityEditor;
-using UnityEditor.Experimental.SceneManagement;
-#endif
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
