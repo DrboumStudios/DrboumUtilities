@@ -27,9 +27,9 @@ namespace Drboum.Utilities.Editor {
         }
         protected virtual void InitializeCallBacks()
         {
-            EditorObjectsEventCallBacks<TAssetObjectDirectorInstance>.RegisterOnStart += Awake;
-            EditorObjectsEventCallBacks<TAssetObjectDirectorInstance>.RegisterOnValidate += OnValidate;
-            EditorObjectsEventCallBacks<TAssetObjectDirectorInstance>.RegisterOnDestroy += OnDestroy;
+            EditorObjectsEventCallBacks<TAssetObjectDirectorInstance>.RegisterOnStart += Instance.Awake;
+            EditorObjectsEventCallBacks<TAssetObjectDirectorInstance>.RegisterOnValidate += Instance.OnValidate;
+            EditorObjectsEventCallBacks<TAssetObjectDirectorInstance>.RegisterOnDestroy += Instance.OnDestroy;
         }
 
 

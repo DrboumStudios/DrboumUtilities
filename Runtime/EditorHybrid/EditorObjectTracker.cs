@@ -12,11 +12,11 @@ namespace Drboum.Utilities.Runtime.EditorHybrid {
     [DisallowMultipleComponent]
     public class EditorObjectTracker : EditorCallBackMonoBehaviour<EditorObjectTracker> {
         protected override EditorObjectTracker self => this;
-
 #if UNITY_EDITOR
 
-        [SerializeField] [InspectorReadOnly] internal int    instanceId;
         [SerializeField] [InspectorReadOnly] internal string assetInstanceGuid;
+
+        [SerializeField] [InspectorReadOnly] internal int    instanceId;
         [SerializeField] [InspectorReadOnly] internal string assetInstanceReadableName;
 
         internal bool skipDuplication;
@@ -27,7 +27,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid {
         internal List<EventInstanceWrapper>          OnCreateComponentEvents       = new List<EventInstanceWrapper>(4);
         internal List<GameObjectNameChangedListener> OnGameObjectNameChangedEvents = new List<GameObjectNameChangedListener>(4);
 
-        public string AssetInstanceGuid => assetInstanceGuid;
+        public                                        string AssetInstanceGuid => assetInstanceGuid;
         internal void _onDuplicate()
         {
             foreach ( EventInstanceWrapper eventInstanceWrapper in OnDuplicateEvents )
@@ -43,12 +43,12 @@ namespace Drboum.Utilities.Runtime.EditorHybrid {
             {
                 eventInstanceWrapper.Execute(eventInstanceWrapper.Instance);
             }
-        }  
+        }
         internal void _onGameObjectNameChanged(string oldName)
         {
             foreach ( var eventInstanceWrapper in OnGameObjectNameChangedEvents )
             {
-                eventInstanceWrapper.Execute(eventInstanceWrapper.Instance,oldName);
+                eventInstanceWrapper.Execute(eventInstanceWrapper.Instance, oldName);
             }
         }
 
@@ -83,7 +83,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid {
         //     remove { _onGameObjectNameChanged -= value; }
         // }
 
-   
+
 
         public static bool IsInPrefabMode(GameObject gameObject)
         {
