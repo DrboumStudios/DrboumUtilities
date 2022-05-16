@@ -406,4 +406,3 @@ public static class LogHelper {
 
 #endif
 }
-}
