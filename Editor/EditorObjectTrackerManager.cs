@@ -1,8 +1,8 @@
 ﻿using System;
-using Drboum.Utilities.Runtime.Animation;
 using Drboum.Utilities.Runtime.EditorHybrid;
 using UnityEditor;
 using UnityEngine;
+
 namespace Drboum.Utilities.Editor {
     public static class EditorObjectTrackerManager {
 
@@ -32,10 +32,10 @@ namespace Drboum.Utilities.Editor {
                     }
                 }
             };
-            EditorObjectsEventTracker<EditorObjectTracker>.RegisterOnStart += Start;
-            EditorObjectsEventTracker<EditorObjectTracker>.RegisterOnValidate += OnValidate;
-            EditorObjectsEventTracker<EditorObjectTracker>.RegisterOnUpdate += Update;
-            EditorObjectsEventTracker<EditorObjectTracker>.RegisterOnDestroy += OnDestroy;
+            EditorObjectsEventCallBacks<EditorObjectTracker>.RegisterOnStart += Start;
+            EditorObjectsEventCallBacks<EditorObjectTracker>.RegisterOnValidate += OnValidate;
+            EditorObjectsEventCallBacks<EditorObjectTracker>.RegisterOnUpdate += Update;
+            EditorObjectsEventCallBacks<EditorObjectTracker>.RegisterOnDestroy += OnDestroy;
         }
         private static void Start(EditorObjectTracker instance)
         {
@@ -125,13 +125,80 @@ namespace Drboum.Utilities.Editor {
                 GenerateNewGuid(out guid);
             }
         }
+
+        public static void RegisterOnDuplicateEvent<T>(this EditorObjectTracker trackerInstance, T instance, Action<Component> action)
+            where T : Component
+        {
+            if ( instance.IsNull() )
+            {
+                return;
+            }
+
+            trackerInstance.OnDuplicateEvents.Add(new EventInstanceWrapper(instance, action));
+        }
+        public static void UnRegisterOnDuplicateEvent<T>(this EditorObjectTracker trackerInstance, T instance)
+            where T : Component
+        {
+            if ( instance.IsNull() )
+            {
+                return;
+            }
+
+            var indexOf = trackerInstance.OnDuplicateEvents.IndexOf(new EventInstanceWrapper(instance,null));
+            if ( indexOf != -1 )
+                trackerInstance.OnDuplicateEvents.RemoveAt(indexOf);
+        }
+        public static void RegisterOnCreateComponentEvent<T>(this EditorObjectTracker trackerInstance, T instance, Action<Component> action)
+            where T : Component
+        {
+            if ( instance.IsNull() )
+            {
+                return;
+            }
+
+            trackerInstance.OnCreateComponentEvents.Add(new EventInstanceWrapper(instance, action));
+        }
+        public static void UnRegisterOnCreateComponentEvent<T>(this EditorObjectTracker trackerInstance, T instance)
+            where T : Component
+        {
+            if ( instance.IsNull() )
+            {
+                return;
+            }
+
+            var indexOf = trackerInstance.OnCreateComponentEvents.IndexOf(new EventInstanceWrapper(instance,null));
+            if ( indexOf != -1 )
+                trackerInstance.OnDuplicateEvents.RemoveAt(indexOf);
+        }
+        public static void RegisterOnGameObjectNameChangedEvent<T>(this EditorObjectTracker trackerInstance, T instance, Action<Component,string> action)
+            where T : Component
+        {
+            if ( instance.IsNull() )
+            {
+                return;
+            }
+
+            trackerInstance.OnGameObjectNameChangedEvents.Add(new GameObjectNameChangedListener(instance, action));
+        }
+        public static void UnRegisterOnGameObjectNameChangedEvent<T>(this EditorObjectTracker trackerInstance, T instance)
+            where T : Component
+        {
+            if ( instance.IsNull() )
+            {
+                return;
+            }
+
+            var indexOf = trackerInstance.OnGameObjectNameChangedEvents.IndexOf(new GameObjectNameChangedListener(instance,null));
+            if ( indexOf != -1 )
+                trackerInstance.OnGameObjectNameChangedEvents.RemoveAt(indexOf);
+        }
         public static void SetAssetGuid<T>(this EditorObjectTracker instance, T obj)
             where T : UnityEngine.Object
         {
             string guid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(obj));
             if ( !string.IsNullOrEmpty(guid) )
             {
-               instance.assetInstanceGuid = guid;
+                instance.assetInstanceGuid = guid;
             }
         }
     }

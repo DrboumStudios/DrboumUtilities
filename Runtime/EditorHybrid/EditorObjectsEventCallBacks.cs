@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 namespace Drboum.Utilities.Runtime.EditorHybrid {
-    public static class EditorObjectsEventTracker<T> {
+    public static class EditorObjectsEventCallBacks<T> {
         public delegate void MonoBehaviourCallBack(T instance);
 
         public static event MonoBehaviourCallBack RegisterOnDisable  = delegate { };
