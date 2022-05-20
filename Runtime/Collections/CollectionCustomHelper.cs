@@ -254,6 +254,23 @@ public static class CollectionCustomHelper {
     {
         return buffer.IsCreated ? buffer.Dispose(dependencies) : default;
     }
+    public static void DisposeIfCreated<T>(this ref NativeHashSet<T> buffer) 
+        where T : unmanaged, IEquatable<T>
+    {
+        if ( buffer.IsCreated )
+        {
+            buffer.Dispose();
+        }
+    }
+    public static JobHandle DisposeIfCreated<T>(this ref NativeHashSet<T> buffer, JobHandle dependencies)
+        where T : unmanaged, IEquatable<T>
+    {
+        if ( buffer.IsCreated )
+        {
+            buffer.Dispose(dependencies);
+        }
+    }
+
     public static void DisposeIfCreated(this ref NativeText nativeText)
     {
         if ( nativeText.IsCreated )

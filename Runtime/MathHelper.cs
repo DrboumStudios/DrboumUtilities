@@ -26,9 +26,33 @@ public static class MathHelper {
         return math.mul(relativeToRotation, offsetPosition);
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static float SmoothStop(float timeCounter)
+    public static float SmoothStart(float t)
     {
-        return (1f - timeCounter) * (1f - timeCounter);
+        return t * t;
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float2 SmoothStart(float2 t)
+    {
+        return t * t;
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float SmoothStop(float t)
+    {
+        float mt = 1f - t;
+        return 1f - mt * mt;
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float2 SmoothStop(float2 t)
+    {
+        float2 mt = 1f - t;
+        return 1f - mt * mt;
+    }
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static float SmoothStep(float t)
+    {
+        //return math.lerp(SmoothStart(t), SmoothStop(t), t);
+        var t2 = t * t;
+        return 3 * t2 - 2 * t2 * t;
     }
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3 Divide(Vector3 vector3, Vector3 by)

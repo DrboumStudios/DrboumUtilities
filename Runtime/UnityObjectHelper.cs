@@ -194,6 +194,6 @@ public static class UnityObjectHelper {
     }
     public static bool IsNull(this Object @object)
     {
-        return @object == null || @object is null;
+        return @object is null || @object == null;
     }
 }
