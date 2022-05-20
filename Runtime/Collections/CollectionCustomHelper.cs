@@ -254,7 +254,7 @@ public static class CollectionCustomHelper {
     {
         return buffer.IsCreated ? buffer.Dispose(dependencies) : default;
     }
-    public static void DisposeIfCreated<T>(this ref NativeHashSet<T> buffer) 
+    public static void DisposeIfCreated<T>(this ref NativeHashSet<T> buffer)
         where T : unmanaged, IEquatable<T>
     {
         if ( buffer.IsCreated )
@@ -267,8 +267,9 @@ public static class CollectionCustomHelper {
     {
         if ( buffer.IsCreated )
         {
-            buffer.Dispose(dependencies);
+            return buffer.Dispose(dependencies);
         }
+        return default;
     }
 
     public static void DisposeIfCreated(this ref NativeText nativeText)
