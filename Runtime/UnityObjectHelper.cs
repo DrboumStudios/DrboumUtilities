@@ -1,5 +1,6 @@
 ﻿using UnityEditor;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Drboum.Utilities.Runtime;
 using UnityEngine;
@@ -195,5 +196,14 @@ public static class UnityObjectHelper {
     public static bool IsNull(this Object @object)
     {
         return @object is null || @object == null;
+    }
+    public static void GetComponentInDirectChildren<T>(this Transform transform,List<T> childrenComponent)
+        where T : Component
+    {
+        foreach ( Transform childTransform in transform )
+        {
+            if ( childTransform.TryGetComponent(out T childNode) )
+                childrenComponent.Add(childNode);
+        }
     }
 }
