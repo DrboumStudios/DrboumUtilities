@@ -12,16 +12,19 @@ namespace Drboum.Utilities.Runtime.Collections {
         private ushort _length;
         public void AddData<T>(T data, out ushort memoryId) where T : unmanaged
         {
-
             int sizeOfNode = sizeof(T);
-            int newLength = _length + sizeOfNode;
-            AssertDoesNotOverflow<T>(newLength);
-            memoryId = _length;
+            AllocateData(sizeOfNode, out memoryId);
             SetData(ref data, memoryId);
+        }
+        public void AllocateData(int sizeOfData, out ushort memoryId)
+        {
+            int newLength = _length + sizeOfData;
+            AssertDoesNotOverflow(newLength);
+            memoryId = _length;
             _length = (ushort)newLength;
         }
         [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
-        private static void AssertDoesNotOverflow<T>(int newLength) where T : unmanaged
+        private static void AssertDoesNotOverflow(int newLength)
         {
             Assert.IsTrue(newLength <= MaxCapacity, "BufferOverflow");
         }
