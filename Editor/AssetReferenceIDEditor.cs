@@ -1,21 +1,22 @@
 ﻿using Drboum.Utilities.Runtime.EditorHybrid;
 using UnityEditor;
 using UnityEngine;
-namespace Drboum.Utilities.Editor;
-
-[CustomEditor(typeof(AssetReferenceID), true)]
-public class AssetReferenceIDEditor : Editor
+namespace Drboum.Utilities.Editor
 {
-    public override void OnInspectorGUI()
+    [CustomEditor(typeof(AssetReferenceID), true)]
+    public class AssetReferenceIDEditor : Editor
     {
-        var assetId = target as AssetReferenceID;
-        if ( !assetId.IsNull() )
+        public override void OnInspectorGUI()
         {
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField(nameof(AssetReferenceID.Guid), GUILayout.Width(50));
-            EditorGUILayout.SelectableLabel(assetId.Guid.ToString(), GUILayout.ExpandWidth(true));
-            EditorGUILayout.EndHorizontal();
+            var assetId = target as AssetReferenceID;
+            if ( !assetId.IsNull() )
+            {
+                EditorGUILayout.BeginHorizontal();
+                EditorGUILayout.LabelField(nameof(AssetReferenceID.Guid), GUILayout.Width(50));
+                EditorGUILayout.SelectableLabel(assetId.Guid.ToString(), GUILayout.ExpandWidth(true));
+                EditorGUILayout.EndHorizontal();
+            }
+            base.OnInspectorGUI();
         }
-        base.OnInspectorGUI();
     }
 }
