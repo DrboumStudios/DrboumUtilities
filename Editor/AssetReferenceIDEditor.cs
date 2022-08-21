@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Drboum.Utilities.Editor
 {
     [CustomEditor(typeof(AssetReferenceID), true)]
-    public class AssetReferenceIDEditor : Editor
+    public class AssetReferenceIDEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
