@@ -11,15 +11,12 @@ namespace Drboum.Utilities.Editor {
         where TAssetInstance : AssetReferenceID, IInitializable<IAuthoring> {
 
         public const    string                                                                   ASSETID_SEPARATOR = "#";
-        protected static AssetObjectDirectorManager<TAssetObjectDirectorInstance, TAssetInstance> Instance {
-            get;
-            private set;
-        }
+        protected static  AssetObjectDirectorManager<TAssetObjectDirectorInstance, TAssetInstance> _instance;
         protected static void CreateStaticInstance<T>()
             where T : AssetObjectDirectorManager<TAssetObjectDirectorInstance, TAssetInstance>, new()
         {
-            Instance = new T();
-            Instance.Initialize();
+            _instance = new T();
+            _instance.Initialize();
         }
         protected AssetObjectDirectorManager() { }
 
@@ -29,9 +26,9 @@ namespace Drboum.Utilities.Editor {
         }
         protected virtual void InitializeCallBacks()
         {
-            EditorObjectsEventCallBacks<TAssetObjectDirectorInstance>.RegisterOnStart += Instance.Awake;
-            EditorObjectsEventCallBacks<TAssetObjectDirectorInstance>.RegisterOnValidate += Instance.OnValidate;
-            EditorObjectsEventCallBacks<TAssetObjectDirectorInstance>.RegisterOnDestroy += Instance.OnDestroy;
+            EditorObjectsEventCallBacks<TAssetObjectDirectorInstance>.RegisterOnStart += _instance.Awake;
+            EditorObjectsEventCallBacks<TAssetObjectDirectorInstance>.RegisterOnValidate += _instance.OnValidate;
+            EditorObjectsEventCallBacks<TAssetObjectDirectorInstance>.RegisterOnDestroy += _instance.OnDestroy;
         }
 
 
