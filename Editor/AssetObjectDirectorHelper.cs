@@ -11,13 +11,15 @@ namespace Drboum.Utilities.Editor {
         where TAssetInstance : AssetReferenceID, IInitializable<IAuthoring> {
 
         public const    string                                                                   ASSETID_SEPARATOR = "#";
-        private static  AssetObjectDirectorManager<TAssetObjectDirectorInstance, TAssetInstance> _instance;
-        internal static AssetObjectDirectorManager<TAssetObjectDirectorInstance, TAssetInstance> Instance => _instance;
+        protected static AssetObjectDirectorManager<TAssetObjectDirectorInstance, TAssetInstance> Instance {
+            get;
+            private set;
+        }
         protected static void CreateStaticInstance<T>()
             where T : AssetObjectDirectorManager<TAssetObjectDirectorInstance, TAssetInstance>, new()
         {
-            _instance = new T();
-            _instance.Initialize();
+            Instance = new T();
+            Instance.Initialize();
         }
         protected AssetObjectDirectorManager() { }
 
