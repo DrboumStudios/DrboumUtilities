@@ -1,7 +1,8 @@
 using UnityEngine;
 namespace Drboum.Utilities.Runtime.EditorHybrid {
-    public abstract class EditorCallBackScriptableObject<T> : ScriptableObject where T : EditorCallBackScriptableObject<T> {
-        protected abstract T self { get; }
+    public abstract class EditorCallBackScriptableObject<T> : ScriptableObject where T : EditorCallBackScriptableObject<T>
+    {
+        protected T self => this as T; 
         protected virtual void Awake() => EditorObjectsEventCallBacks<T>.InvokeOnAwake(self);
         protected virtual void OnEnable() => EditorObjectsEventCallBacks<T>.InvokeOnEnable(self);
         protected virtual void OnValidate() => EditorObjectsEventCallBacks<T>.InvokeOnValidate(self);

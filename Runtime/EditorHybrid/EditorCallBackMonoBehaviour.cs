@@ -1,7 +1,8 @@
 using UnityEngine;
 namespace Drboum.Utilities.Runtime.EditorHybrid {
-    public abstract class EditorCallBackMonoBehaviour<T> : MonoBehaviour where T : EditorCallBackMonoBehaviour<T> {
-        protected abstract T self { get; }
+    public abstract class EditorCallBackMonoBehaviour<T> : MonoBehaviour where T : EditorCallBackMonoBehaviour<T>
+    {
+        protected T self => this as T;
         protected virtual void Awake() => EditorObjectsEventCallBacks<T>.InvokeOnAwake(self);
         protected virtual void OnEnable() => EditorObjectsEventCallBacks<T>.InvokeOnEnable(self);
         protected virtual void Start() => EditorObjectsEventCallBacks<T>.InvokeOnStart(self);

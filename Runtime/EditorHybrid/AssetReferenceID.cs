@@ -11,7 +11,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid {
     }
     
     public abstract class AssetReferenceID : EditorCallBackScriptableObject<AssetReferenceID>, IAssetReferenceID {
-        [SerializeField] [HideInInspector] protected uint4 _guid;
+        [SerializeField] [HideInInspector] protected string _guid;
         [SerializeField] [HideInInspector] internal  int   instanceId;
         internal                                     bool  _skipDuplication;
 
@@ -19,7 +19,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid {
         public virtual bool IsValidAsset => IsValidGuid;
         public GuidWrapper Guid {
             get => _guid;
-            internal set => _guid = value;
+            internal set => _guid = value.GuidValue.ToString("N");
         }
 #if UNITY_EDITOR
         [ContextMenu(nameof(PrintGUIDAsGuidWrapper))]

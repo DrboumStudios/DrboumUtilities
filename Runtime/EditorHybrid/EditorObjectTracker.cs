@@ -11,7 +11,6 @@ namespace Drboum.Utilities.Runtime.EditorHybrid {
     [ExecuteInEditMode]
     [DisallowMultipleComponent]
     public class EditorObjectTracker : EditorCallBackMonoBehaviour<EditorObjectTracker> {
-        protected override EditorObjectTracker self => this;
 #if UNITY_EDITOR
 
         [SerializeField] [InspectorReadOnly] internal string assetInstanceGuid;

@@ -14,6 +14,7 @@ namespace Drboum.Utilities.Runtime {
         [FieldOffset(0)] public        Guid         GuidValue;
         [FieldOffset(0)] public        uint4      HashValue;
         [FieldOffset(0)] public        FixedBytes16 Bytes16Value;
+        [FieldOffset(0)] public        Hash128 Hash128Value;
         [FieldOffset(0)] private fixed byte         _buffer[16];
 
         public byte this[byte index] {
@@ -61,10 +62,11 @@ namespace Drboum.Utilities.Runtime {
         public override bool Equals(object obj)
         {
             return
+                obj is GuidWrapper guidWrapper && Equals(guidWrapper) ||
                 obj is Guid guid               && Equals(guid)    ||
-                obj is Hash128 hash128         && Equals(hash128) ||
-                obj is FixedBytes16 bytes16    && Equals(bytes16) ||
-                obj is GuidWrapper guidWrapper && Equals(guidWrapper)
+                obj is uint4 hashValue         && Equals(hashValue) ||
+                obj is FixedBytes16 bytes16    && Equals(bytes16) || 
+                obj is Hash128 hash128         && Equals(hash128) 
                 ;
         }
         public override int GetHashCode()
@@ -75,10 +77,13 @@ namespace Drboum.Utilities.Runtime {
         {
             return ToFixedString().ToString();
         }
+        public string ToGuidString(string guidFormat="D")
+        {
+            return GuidValue.ToString(guidFormat);
+        }
         public FixedString128Bytes ToFixedString(char separator = '-')
         {
             FixedString128Bytes fstring = default;
-            // fstring.Append(GuidValue.ToString("n"));
             fstring.AppendBytesAsFixedString(ref Bytes16Value, separator);
             return fstring;
         }
@@ -142,6 +147,18 @@ namespace Drboum.Utilities.Runtime {
             @default.GuidValue = guid;
             return @default;
         }
+        public static implicit operator GuidWrapper(string guid)
+        {
+            GuidWrapper @default = default;
+            @default.GuidValue =  new Guid(guid);
+            return @default;
+        }
+        public static implicit operator GuidWrapper(Hash128 guid)
+        {
+            GuidWrapper @default = default;
+            @default.Hash128Value = guid;
+            return @default;
+        }
         public static implicit operator Guid(GuidWrapper bytes16)
         {
             return bytes16.GuidValue;
@@ -156,6 +173,7 @@ namespace Drboum.Utilities.Runtime {
             @default.HashValue = guid;
             return @default;
         }
+      
         [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
         private static void AssertIsAValidSizeArray(byte[] src)
         {

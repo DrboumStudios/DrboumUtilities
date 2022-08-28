@@ -13,11 +13,6 @@ namespace Drboum.Utilities.Runtime.EditorHybrid {
 #if UNITY_EDITOR
         internal EditorObjectTracker _editorObjectTracker;
         internal bool                _subscribed;
-        protected override void OnValidate()
-        {
-            _editorObjectTracker = GetComponent<EditorObjectTracker>();
-            base.OnValidate();
-        }
 #endif
     }
 }
