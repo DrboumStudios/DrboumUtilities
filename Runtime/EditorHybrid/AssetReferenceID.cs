@@ -9,6 +9,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid {
             get;
         }
     }
+    
     public abstract class AssetReferenceID : EditorCallBackScriptableObject<AssetReferenceID>, IAssetReferenceID {
         [SerializeField] [HideInInspector] protected uint4 _guid;
         [SerializeField] [HideInInspector] internal  int   instanceId;
