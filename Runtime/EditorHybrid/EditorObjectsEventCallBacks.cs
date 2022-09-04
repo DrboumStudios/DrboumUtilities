@@ -1,15 +1,15 @@
 ﻿using System.Diagnostics;
 namespace Drboum.Utilities.Runtime.EditorHybrid {
     public static class EditorObjectsEventCallBacks<T> {
-        public delegate void MonoBehaviourCallBack(T instance);
+        public delegate void ObjectInstanceCallBack(T instance);
 
-        public static event MonoBehaviourCallBack RegisterOnDisable  = delegate { };
-        public static event MonoBehaviourCallBack RegisterOnEnable   = delegate { };
-        public static event MonoBehaviourCallBack RegisterOnAwake    = delegate { };
-        public static event MonoBehaviourCallBack RegisterOnValidate = delegate { };
-        public static event MonoBehaviourCallBack RegisterOnStart    = delegate { };
-        public static event MonoBehaviourCallBack RegisterOnDestroy  = delegate { };
-        public static event MonoBehaviourCallBack RegisterOnUpdate   = delegate { };
+        public static event ObjectInstanceCallBack RegisterOnDisable  = delegate { };
+        public static event ObjectInstanceCallBack RegisterOnEnable   = delegate { };
+        public static event ObjectInstanceCallBack RegisterOnAwake    = delegate { };
+        public static event ObjectInstanceCallBack RegisterOnValidate = delegate { };
+        public static event ObjectInstanceCallBack RegisterOnStart    = delegate { };
+        public static event ObjectInstanceCallBack RegisterOnDestroy  = delegate { };
+        public static event ObjectInstanceCallBack RegisterOnUpdate   = delegate { };
 
         [Conditional("UNITY_EDITOR")]
         public static void InvokeOnAwake(T instance) => RegisterOnAwake(instance);
