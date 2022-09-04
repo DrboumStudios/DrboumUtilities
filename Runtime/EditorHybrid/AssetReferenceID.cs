@@ -18,7 +18,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid {
         internal       bool IsValidGuid  => !string.IsNullOrEmpty(_guid);
         public virtual bool IsValidAsset => IsValidGuid;
         public GuidWrapper Guid {
-            get => _guid;
+            get => IsValidGuid ? _guid : default(GuidWrapper);
             internal set => _guid = value.GuidValue.ToString("N");
         }
 #if UNITY_EDITOR

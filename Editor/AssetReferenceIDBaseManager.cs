@@ -5,19 +5,19 @@ using Drboum.Utilities.Runtime.Interfaces;
 using UnityEditor;
 using UnityEngine;
 namespace Drboum.Utilities.Editor {
-    public abstract class AssetReferenceIDEditorManager<TAssetInstance>
+    public abstract class AssetReferenceIDBaseManager<TAssetInstance>
         where TAssetInstance : AssetReferenceID {
 
-        private static  AssetReferenceIDEditorManager<TAssetInstance> _instance;
-        internal static AssetReferenceIDEditorManager<TAssetInstance> Instance => _instance;
+        private static  AssetReferenceIDBaseManager<TAssetInstance> _instance;
+        internal static AssetReferenceIDBaseManager<TAssetInstance> Instance => _instance;
         protected static void CreateStaticInstance<T>()
-            where T : AssetReferenceIDEditorManager<TAssetInstance>,new()
+            where T : AssetReferenceIDBaseManager<TAssetInstance>,new()
         {
             _instance = new T();
             _instance.Initialize();
         }
         
-        protected AssetReferenceIDEditorManager() { }
+        protected AssetReferenceIDBaseManager() { }
 
         protected virtual void Initialize()
         {
@@ -109,7 +109,7 @@ namespace Drboum.Utilities.Editor {
         public static void FixAssetIDIfInvalid<TAssetID>(this TAssetID instance)
             where TAssetID : AssetReferenceID
         {
-            AssetReferenceIDEditorManager<TAssetID>.Instance.FixAssetIDIfInvalid(instance);
+            AssetReferenceIDBaseManager<TAssetID>.Instance.FixAssetIDIfInvalid(instance);
         }
     }
 }
