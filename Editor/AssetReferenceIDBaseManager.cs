@@ -9,7 +9,7 @@ namespace Drboum.Utilities.Editor {
     //This importer is an Override Importer for the .asset extension.
     public abstract class AssetReferenceIDBaseManager<TAssetInstance>: AssetPostprocessor
         where TAssetInstance : AssetReferenceID {
-        static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
+        static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths,bool didDomainReload)
         {
             for ( var index = 0; index < importedAssets.Length; index++ )
             {
