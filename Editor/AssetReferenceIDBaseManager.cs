@@ -1,35 +1,27 @@
 ﻿using System;
 using System.Diagnostics;
+using Drboum.Utilities.Editor;
 using Drboum.Utilities.Runtime;
 using Drboum.Utilities.Runtime.EditorHybrid;
 using Drboum.Utilities.Runtime.Interfaces;
 using UnityEditor;
 using UnityEngine;
-namespace Drboum.Utilities.Editor {
+namespace Drboum.Utilities.Editor
+{
     //This importer is an Override Importer for the .asset extension.
-    public abstract class AssetReferenceIDBaseManager<TAssetInstance>: AssetPostprocessor
-        where TAssetInstance : AssetReferenceID {
-        static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths,bool didDomainReload)
-        {
-            for ( var index = 0; index < importedAssets.Length; index++ )
-            {
-                string str = importedAssets[index];
-                var assetReferenceID = AssetDatabase.LoadAssetAtPath<AssetReferenceID>(str);
-                if ( assetReferenceID != null )
-                {
-                    assetReferenceID.FixAssetIDIfInvalid();
-                }
-            }
-        }
-        private static  AssetReferenceIDBaseManager<TAssetInstance> _instance;
+    public abstract class AssetReferenceIDBaseManager<TAssetInstance>
+        where TAssetInstance : AssetReferenceID
+    {
+
+        private static AssetReferenceIDBaseManager<TAssetInstance> _instance;
         internal static AssetReferenceIDBaseManager<TAssetInstance> Instance => _instance;
         protected static void CreateStaticInstance<T>()
-            where T : AssetReferenceIDBaseManager<TAssetInstance>,new()
+            where T : AssetReferenceIDBaseManager<TAssetInstance>, new()
         {
             _instance = new T();
             _instance.Initialize();
         }
-        
+
         protected AssetReferenceIDBaseManager() { }
 
         protected virtual void Initialize()
@@ -85,7 +77,7 @@ namespace Drboum.Utilities.Editor {
             instance.Guid = union;
             instance.SetDirtySafe();
         }
-        
+
         protected virtual void OnValidate(TAssetInstance instance)
         {
             if ( !instance._skipDuplication && instance.instanceId != 0 )
@@ -114,12 +106,44 @@ namespace Drboum.Utilities.Editor {
         }
 
     }
-    public static class AssetReferenceIDEditorExtensions {
+    public static class AssetReferenceIDEditorExtensions
+    {
         [Conditional("UNITY_EDITOR")]
         public static void FixAssetIDIfInvalid<TAssetID>(this TAssetID instance)
             where TAssetID : AssetReferenceID
         {
             AssetReferenceIDBaseManager<TAssetID>.Instance.FixAssetIDIfInvalid(instance);
+        }
+    }
+    class MyAllPostprocessor : AssetPostprocessor
+    {
+        static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths, bool didDomainReload)
+        {
+            for ( var index = 0; index < importedAssets.Length; index++ )
+            {
+                string str = importedAssets[index];
+                var assetReferenceID = AssetDatabase.LoadAssetAtPath<AssetReferenceID>(str);
+                if ( assetReferenceID != null )
+                {
+                    assetReferenceID.FixAssetIDIfInvalid();
+                }
+                LogHelper.LogDebugMessage($"Reimported Asset of type {assetReferenceID} : {str}");
+            }
+            
+            foreach (string str in deletedAssets)
+            {
+                LogHelper.LogDebugMessage("Deleted Asset: " + str);
+            }
+
+            for (int i = 0; i < movedAssets.Length; i++)
+            {
+                LogHelper.LogDebugMessage("Moved Asset: " + movedAssets[i] + " from: " + movedFromAssetPaths[i]);
+            }
+
+            if (didDomainReload)
+            {
+                LogHelper.LogDebugMessage("Domain has been reloaded");
+            }
         }
     }
 }
