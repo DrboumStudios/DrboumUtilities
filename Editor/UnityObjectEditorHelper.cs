@@ -1,7 +1,5 @@
-﻿#if UNITY_EDITOR
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEditor.Experimental.SceneManagement;
-#endif
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,7 +11,6 @@ using Object = UnityEngine.Object;
 
 public static class UnityObjectEditorHelper {
 
-#if UNITY_EDITOR
     public static bool IsInCurrentPrefabStage(this GameObject gameObject)
     {
         return gameObject.IsInCurrentPrefabStage(out var _);
@@ -303,5 +300,4 @@ public static class UnityObjectEditorHelper {
         Directory.CreateDirectory(folder);
         AssetDatabase.Refresh();
     }
-#endif
 }
