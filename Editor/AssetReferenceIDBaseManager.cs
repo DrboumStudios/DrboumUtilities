@@ -85,11 +85,7 @@ namespace Drboum.Utilities.Editor {
             instance.Guid = union;
             instance.SetDirtySafe();
         }
-        [ContextMenu(nameof(PrintGUIDAsGuidWrapper))]
-        protected void PrintGUIDAsGuidWrapper(TAssetInstance instance)
-        {
-            instance.PrintGUIDAsGuidWrapper();
-        }
+        
         protected virtual void OnValidate(TAssetInstance instance)
         {
             if ( !instance._skipDuplication && instance.instanceId != 0 )
