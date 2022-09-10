@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Drboum.Utilities.Runtime.Attributes;
+﻿using Drboum.Utilities.Runtime.Attributes;
 using UnityEngine;
 
 namespace Drboum.Utilities.Runtime.Animation {
@@ -47,16 +46,7 @@ namespace Drboum.Utilities.Runtime.Animation {
         [SerializeField] private UnityEditor.Animations.AnimatorController animatorController;
         public                   UnityEditor.Animations.AnimatorController AnimatorController => animatorController;
 
-        public static void SyncLayerIndexes(List<AnimatorLayer> _animatorLayerBuffer, string[] _folders)
-        {
-            UnityObjectEditorHelper.FindAllAssetInstances(_animatorLayerBuffer, _folders);
-            for ( var i = 0; i < _animatorLayerBuffer.Count; i++ )
-            {
-                AnimatorLayer animatorLayer = _animatorLayerBuffer[i];
-                animatorLayer.SyncLayerIndex();
-            }
-
-        }
+      
 
         [ContextMenu(nameof(SyncLayerIndex))]
         public void SyncLayerIndex()
