@@ -1,13 +1,26 @@
 ﻿using System;
+using System.Diagnostics;
 using Drboum.Utilities.Runtime;
 using Drboum.Utilities.Runtime.EditorHybrid;
 using Drboum.Utilities.Runtime.Interfaces;
 using UnityEditor;
 using UnityEngine;
 namespace Drboum.Utilities.Editor {
-    public abstract class AssetReferenceIDBaseManager<TAssetInstance>
+    //This importer is an Override Importer for the .asset extension.
+    public abstract class AssetReferenceIDBaseManager<TAssetInstance>: AssetPostprocessor
         where TAssetInstance : AssetReferenceID {
-
+        static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
+        {
+            for ( var index = 0; index < importedAssets.Length; index++ )
+            {
+                string str = importedAssets[index];
+                var assetReferenceID = AssetDatabase.LoadAssetAtPath<AssetReferenceID>(str);
+                if ( assetReferenceID != null )
+                {
+                    assetReferenceID.FixAssetIDIfInvalid();
+                }
+            }
+        }
         private static  AssetReferenceIDBaseManager<TAssetInstance> _instance;
         internal static AssetReferenceIDBaseManager<TAssetInstance> Instance => _instance;
         protected static void CreateStaticInstance<T>()
@@ -28,6 +41,7 @@ namespace Drboum.Utilities.Editor {
         {
             EditorObjectsEventCallBacks<TAssetInstance>.RegisterOnAwake += Awake;
             EditorObjectsEventCallBacks<TAssetInstance>.RegisterOnEnable += OnEnable;
+            EditorObjectsEventCallBacks<TAssetInstance>.RegisterOnValidate += OnValidate;
         }
         protected virtual void InitializeEditorDuplicateProtection()
         {
@@ -58,7 +72,6 @@ namespace Drboum.Utilities.Editor {
         }
         public virtual void FixAssetIDIfInvalid(TAssetInstance instance)
         {
-
             if ( instance.IsValidGuid )
             {
                 return;
@@ -106,6 +119,7 @@ namespace Drboum.Utilities.Editor {
 
     }
     public static class AssetReferenceIDEditorExtensions {
+        [Conditional("UNITY_EDITOR")]
         public static void FixAssetIDIfInvalid<TAssetID>(this TAssetID instance)
             where TAssetID : AssetReferenceID
         {

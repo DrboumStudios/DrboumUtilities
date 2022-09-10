@@ -150,7 +150,7 @@ namespace Drboum.Utilities.Runtime {
         public static implicit operator GuidWrapper(string guid)
         {
             GuidWrapper @default = default;
-            @default.GuidValue =  new Guid(guid);
+            @default.GuidValue = string.IsNullOrWhiteSpace(guid)? default : new Guid(guid);
             return @default;
         }
         public static implicit operator GuidWrapper(Hash128 guid)

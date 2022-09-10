@@ -11,22 +11,15 @@ namespace Drboum.Utilities.Runtime.EditorHybrid {
     }
     
     public abstract class AssetReferenceID : EditorCallBackScriptableObject<AssetReferenceID>, IAssetReferenceID {
-        [SerializeField] [HideInInspector] protected string _guid="";
+        [SerializeField] [HideInInspector] protected string _guid;
         [SerializeField] [HideInInspector] internal  int   instanceId;
         internal                                     bool  _skipDuplication;
 
-        internal       bool IsValidGuid  => !string.IsNullOrEmpty(_guid);
+        internal       bool IsValidGuid  => !string.IsNullOrEmpty(_guid) && !default(GuidWrapper).Equals(_guid);
         public virtual bool IsValidAsset => IsValidGuid;
         public GuidWrapper Guid {
-            get => IsValidGuid ? _guid : default(GuidWrapper);
+            get => _guid;
             internal set => _guid = value.GuidValue.ToString("N");
         }
-#if UNITY_EDITOR
-        [ContextMenu(nameof(PrintGUIDAsGuidWrapper))]
-        internal void PrintGUIDAsGuidWrapper()
-        {
-            LogHelper.LogInfoTypedMessage(Guid, $"{name}");
-        }
-#endif
     }
 }
