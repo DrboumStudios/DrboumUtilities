@@ -9,12 +9,261 @@ using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
-public static class UnityObjectEditorHelper {
+public static class UnityObjectEditorHelper
+{
+
+#if UNITY_EDITOR
+    static Component[] copiedComponents;
+
+    [MenuItem("GameObject/Copy all components %&C")]
+    static void Copy()
+    {
+        if ( UnityEditor.Selection.activeGameObject == null )
+            return;
+
+        copiedComponents = UnityEditor.Selection.activeGameObject.GetComponents<Component>();
+    }
+
+    [MenuItem("GameObject/Paste all components %&P")]
+    static void Paste()
+    {
+        if ( copiedComponents == null )
+        {
+            Debug.LogError("Nothing is copied!");
+            return;
+        }
+
+        foreach ( var targetGameObject in UnityEditor.Selection.gameObjects )
+        {
+            if ( !targetGameObject )
+                continue;
+
+            Undo.RegisterCompleteObjectUndo(targetGameObject,
+                targetGameObject.name + ": Paste All Components"); // sadly does not record PasteComponentValues, i guess
+
+            foreach ( var copiedComponent in copiedComponents )
+            {
+                if ( !copiedComponent )
+                    continue;
+
+                UnityEditorInternal.ComponentUtility.CopyComponent(copiedComponent);
+
+                var targetComponent = targetGameObject.GetComponent(copiedComponent.GetType());
+
+                if ( targetComponent ) // if gameObject already contains the component
+                {
+                    if ( UnityEditorInternal.ComponentUtility.PasteComponentValues(targetComponent) )
+                    {
+                        Debug.Log("Successfully pasted: " + copiedComponent.GetType());
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to copy: " + copiedComponent.GetType());
+                    }
+                }
+                else // if gameObject does not contain the component
+                {
+                    if ( UnityEditorInternal.ComponentUtility.PasteComponentAsNew(targetGameObject) )
+                    {
+                        Debug.Log("Successfully pasted: " + copiedComponent.GetType());
+                    }
+                    else
+                    {
+                        Debug.LogError("Failed to copy: " + copiedComponent.GetType());
+                    }
+                }
+            }
+        }
+        copiedComponents = null; // to prevent wrong pastes in future
+    }
+
+    [MenuItem("GameObject/Reset prefab Instance to parent prefab")]
+    static void RevertPrefabInstanceToBase()
+    {
+        var selection = Selection.gameObjects;
+
+        if ( selection.Length > 0 )
+        {
+            for ( var i = 0; i < selection.Length; i++ )
+            {
+                PrefabUtility.RevertPrefabInstance(selection[i], InteractionMode.AutomatedAction);
+            }
+        }
+        else
+        {
+            Debug.Log("Cannot revert to prefab - nothing selected");
+        }
+    }
+
+    [MenuItem("CONTEXT/Component/Revert prefab overrides to closest parent prefab")]
+    static void Revert(MenuCommand command)
+    {
+        var selection = command.context as Component;
+        if ( selection != null )
+        {
+            PrefabUtility.RevertObjectOverride(selection, InteractionMode.AutomatedAction);
+        }
+        else
+        {
+            Debug.Log("Cannot revert to prefab");
+        }
+    }
+
+    [MenuItem("Tools/" + nameof(SaveAssetsDataBase))]
+    private static void SaveAssetsDataBase()
+    {
+        AssetDatabase.SaveAssets();
+    }
+    [MenuItem("Tools/" + nameof(RefreshAssetDataBase))]
+    private static void RefreshAssetDataBase()
+    {
+        AssetDatabase.Refresh();
+    }
+    public static bool IsPrefabAssetEditor(this GameObject gameObject)
+    {
+#if UNITY_2018_3_OR_NEWER
+        return PrefabUtility.IsPartOfPrefabAsset(gameObject);
+#else
+			return PrefabUtility.GetPrefabType(gameObject) == PrefabType.Prefab;
+#endif
+    }
+
+    public static bool IsPrefabAssetOrOpenInPrefabStage(this GameObject gameObject)
+    {
+#if UNITY_2018_3_OR_NEWER
+        return PrefabUtility.IsPartOfPrefabAsset(gameObject) || PrefabStageUtility.GetPrefabStage(gameObject) != null;
+#else
+			return PrefabUtility.GetPrefabType(gameObject) == PrefabType.Prefab;
+#endif
+    }
+
+    public static bool IsPrefabAssetOrInstance(this GameObject gameObject)
+    {
+#if UNITY_2018_3_OR_NEWER
+        return PrefabUtility.GetPrefabAssetType(gameObject) != PrefabAssetType.NotAPrefab;
+#else
+			var prefabType = PrefabUtility.GetPrefabType(gameObject);
+			return prefabType == PrefabType.Prefab || prefabType == PrefabType.PrefabInstance;
+#endif
+    }
+
+    public static bool IsConnectedPrefabInstance(this GameObject gameObject)
+    {
+#if UNITY_2018_3_OR_NEWER
+        return PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.Connected;
+#else
+			return PrefabUtility.GetPrefabType(gameObject) == PrefabType.PrefabInstance;
+#endif
+    }
+
+    public static bool IsDisconnectedPrefabInstance(this GameObject gameObject)
+    {
+#if UNITY_2018_3_OR_NEWER
+        return PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.Disconnected;
+#else
+			return PrefabUtility.GetPrefabType(gameObject) == PrefabType.DisconnectedPrefabInstance;
+#endif
+    }
+
+    public static bool IsPartOfInstantiatedPrefabInstance(this GameObject gameObject)
+    {
+        for ( var transform = gameObject.transform; transform != null; transform = transform.parent )
+        {
+            if ( transform.name.EndsWith("(Clone)", StringComparison.Ordinal) )
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static bool IsPartOfPrefabVariant(this GameObject gameObject)
+    {
+#if UNITY_2018_3_OR_NEWER
+        return PrefabUtility.IsPartOfVariantPrefab(gameObject);
+#else
+			return false;
+#endif
+    }
+
+    public static bool IsConnectedOrDisconnectedPrefabInstance(this GameObject gameObject)
+    {
+#if UNITY_2018_3_OR_NEWER
+        var prefabStatus = PrefabUtility.GetPrefabInstanceStatus(gameObject);
+        return prefabStatus == PrefabInstanceStatus.Connected || prefabStatus == PrefabInstanceStatus.Disconnected;
+#else
+			var prefabType = PrefabUtility.GetPrefabType(gameObject);
+			return prefabType == PrefabType.PrefabInstance || prefabType == PrefabType.DisconnectedPrefabInstance;
+#endif
+    }
+
+    public static bool IsPrefabInstanceRoot(this GameObject gameObject)
+    {
+#if UNITY_2018_3_OR_NEWER
+        return PrefabUtility.IsAnyPrefabInstanceRoot(gameObject);
+#else
+			return PrefabUtility.GetPrefabType(gameObject) == PrefabType.PrefabInstance && PrefabUtility.FindPrefabRoot(gameObject) == gameObject;
+#endif
+    }
+
+    public static GameObject GetOutermostPrefabInstanceRoot(this GameObject gameObject)
+    {
+#if UNITY_2018_3_OR_NEWER
+        return PrefabUtility.GetOutermostPrefabInstanceRoot(gameObject);
+#else
+			return PrefabUtility.FindPrefabRoot(gameObject);
+#endif
+    }
+
+    public static bool IsOpenInPrefabStage(this GameObject gameObject)
+    {
+#if UNITY_2018_3_OR_NEWER
+        return PrefabStageUtility.GetPrefabStage(gameObject) != null;
+#else
+			return false;
+#endif
+    }
+
+    [MenuItem("CONTEXT/Component/" + nameof(FindAllPrefabWithComponentType))]
+    public static void FindAllPrefabWithComponentType(MenuCommand command)
+    {
+        var component = command.context as Component;
+        var targetType = component.GetType();
+        var matches = new List<Object>(200);
+        var assetGuids = AssetDatabase.FindAssets($"t:Prefab");
+        foreach ( var assetGuid in assetGuids )
+        {
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(assetGuid));
+            if ( prefab != null )
+            {
+                if ( prefab.GetComponentInChildren(targetType, true) )
+                {
+                    matches.Add(prefab);
+                }
+            }
+        }
+
+        Selection.objects = matches.ToArray();
+    }
+#endif
+    public static void CheckAndSetActive(this GameObject gameObject, bool active)
+    {
+        if ( gameObject.activeSelf != active )
+            gameObject.SetActive(active);
+    }
+    public static void CheckAndSetActive(this GameObject[] gameObjects, bool active)
+    {
+        for ( var index = 0; index < gameObjects.Length; index++ )
+        {
+            gameObjects[index].CheckAndSetActive(active);
+        }
+    }
 
     public static bool IsInCurrentPrefabStage(this GameObject gameObject)
     {
         return gameObject.IsInCurrentPrefabStage(out var _);
     }
+    
     public static bool IsInCurrentPrefabStage(this GameObject gameObject, out PrefabStage currentPrefabStage)
     {
         currentPrefabStage = PrefabStageUtility.GetCurrentPrefabStage();
@@ -25,16 +274,6 @@ public static class UnityObjectEditorHelper {
         return EditorUtility.IsPersistent(gameObject) && PrefabUtility.IsPartOfPrefabAsset(gameObject) && gameObject.transform.parent.IsNull();
     }
 
-    [MenuItem("Tools/" + nameof(SaveAssetsDataBase))]
-    public static void SaveAssetsDataBase()
-    {
-        AssetDatabase.SaveAssets();
-    }
-    [MenuItem("Tools/" + nameof(RefreshAssetDataBase))]
-    public static void RefreshAssetDataBase()
-    {
-        AssetDatabase.Refresh();
-    }
     /// <summary>
     ///     Editor Only
     /// </summary>
@@ -76,7 +315,8 @@ public static class UnityObjectEditorHelper {
     {
         return TryLoadAsset(assetGuid.ToString("n"), out path, out asset);
     }
-    public static T GetSingletonAssetInstance<T>(string folderPath) where T : Object
+    public static T GetSingletonAssetInstance<T>(string folderPath)
+        where T : Object
     {
         string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name, new[] {
             folderPath
@@ -94,7 +334,8 @@ public static class UnityObjectEditorHelper {
         return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guids[0]));
 
     }
-    public static T[] FindAllAssetInstances<T>() where T : Object
+    public static T[] FindAllAssetInstances<T>()
+        where T : Object
     {
         string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name);
         var a = new T[guids.Length];
@@ -102,7 +343,8 @@ public static class UnityObjectEditorHelper {
 
         return a;
     }
-    public static T[] FindAllAssetInstances<T>(string[] folderPaths) where T : Object
+    public static T[] FindAllAssetInstances<T>(string[] folderPaths)
+        where T : Object
     {
         string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name, folderPaths);
         var a = new T[guids.Length];
@@ -110,7 +352,8 @@ public static class UnityObjectEditorHelper {
 
         return a;
     }
-    private static void AssignInstances<T>(string[] guids, T[] a) where T : Object
+    private static void AssignInstances<T>(string[] guids, T[] a)
+        where T : Object
     {
         for ( var i = 0; i < guids.Length; i++ )
         {
@@ -119,7 +362,8 @@ public static class UnityObjectEditorHelper {
         }
     }
 
-    public static void FindAllAssetInstances<T>(List<Object> scriptableObjectsResult, Type abstractType,
+    public static void FindAllAssetInstances<T>(List<Object> scriptableObjectsResult,
+        Type abstractType,
         string[] lookupFolders)
         where T : Object
     {
@@ -147,11 +391,13 @@ public static class UnityObjectEditorHelper {
             gameObjects.Add(loadedObject);
         }
     }
-    public static void FindAllAssetInstances<T>(List<T> buffer) where T : Object
+    public static void FindAllAssetInstances<T>(List<T> buffer)
+        where T : Object
     {
         FindAllAssetInstances(buffer, null);
     }
-    public static void FindAllAssetInstances<T>(List<T> buffer, string[] lookupFolders) where T : Object
+    public static void FindAllAssetInstances<T>(List<T> buffer, string[] lookupFolders)
+        where T : Object
     {
         FindAllAssetInstances(buffer, lookupFolders, null);
     }
@@ -176,7 +422,8 @@ public static class UnityObjectEditorHelper {
             GetAssets(buffer, guids);
         }
     }
-    public delegate bool AssetSearchPredicate<T>(string guid, string path, T instance) where T : Object;
+    public delegate bool AssetSearchPredicate<T>(string guid, string path, T instance)
+        where T : Object;
 
     [Conditional("UNITY_EDITOR")]
     public static void OverWriteGuidInMetaFile(this Object assetObject, string assetGuid, ref string path)
@@ -189,7 +436,8 @@ public static class UnityObjectEditorHelper {
         File.WriteAllLines(pathMeta, allLines);
     }
 
-    private static void FillBufferAndEnsureCapacity<T>(List<T> buffer, string[] guids) where T : Object
+    private static void FillBufferAndEnsureCapacity<T>(List<T> buffer, string[] guids)
+        where T : Object
     {
         buffer.Clear();
         if ( buffer.Capacity < guids.Length )
@@ -197,7 +445,8 @@ public static class UnityObjectEditorHelper {
             buffer.Capacity = guids.Length;
         }
     }
-    private static void GetAssets<T>(List<T> buffer, string[] guids) where T : Object
+    private static void GetAssets<T>(List<T> buffer, string[] guids)
+        where T : Object
     {
         for ( var i = 0; i < guids.Length; i++ )
         {
@@ -207,7 +456,8 @@ public static class UnityObjectEditorHelper {
 
         }
     }
-    private static void GetAssets<T>(List<T> buffer, string[] guids, AssetSearchPredicate<T> predicate) where T : Object
+    private static void GetAssets<T>(List<T> buffer, string[] guids, AssetSearchPredicate<T> predicate)
+        where T : Object
     {
         for ( var i = 0; i < guids.Length; i++ )
         {
@@ -225,13 +475,15 @@ public static class UnityObjectEditorHelper {
     /// </summary>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static List<T> FindAllInstancesInScene<T>() where T : Component
+    public static List<T> FindAllInstancesInScene<T>()
+        where T : Component
     {
         var list = new List<T>();
         FindAllInstancesInScene(list, SceneManager.GetActiveScene());
         return list;
     }
-    public static void FindAllInstancesInScene<T>(List<T> instancesBuffer, Scene scene) where T : Component
+    public static void FindAllInstancesInScene<T>(List<T> instancesBuffer, Scene scene)
+        where T : Component
     {
         GameObject[] rootGameObjects = scene.GetRootGameObjects();
         foreach ( GameObject rootGameObject in rootGameObjects )
@@ -270,8 +522,10 @@ public static class UnityObjectEditorHelper {
         FindAllInstancesInScene(new List<GameObject>(SceneManager.GetActiveScene().rootCount), lookupResult,
             interfaceType, SceneManager.GetActiveScene());
     }
-    public static void FindAllInstancesInScene(List<GameObject> rootGameObjects, List<Object> lookupResult,
-        Type interfaceType, Scene scene)
+    public static void FindAllInstancesInScene(List<GameObject> rootGameObjects,
+        List<Object> lookupResult,
+        Type interfaceType,
+        Scene scene)
     {
         scene.GetRootGameObjects(rootGameObjects);
         foreach ( GameObject rootGameObject in rootGameObjects )
