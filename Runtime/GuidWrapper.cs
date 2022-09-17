@@ -41,10 +41,9 @@ namespace Drboum.Utilities.Runtime
             }
         }
 
-        public bool IsDefault()
-        {
-            return GuidValue == default(Guid);
-        }
+        public bool IsDefault => Hash128Value == default;
+
+        internal string GetDisplayString => ToString();
 
         public void SetData(byte[] src)
         {
