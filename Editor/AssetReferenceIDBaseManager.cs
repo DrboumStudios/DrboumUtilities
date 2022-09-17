@@ -70,7 +70,7 @@ namespace Drboum.Utilities.Editor
             }
             GenerateAndAssignNewGuid(instance);
         }
-        protected void GenerateAndAssignNewGuid(TAssetInstance instance)
+        internal void GenerateAndAssignNewGuid(TAssetInstance instance)
         {
             GuidWrapper union = default;
             instance.TryGetAssetGuid(out union.GuidValue);

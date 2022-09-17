@@ -1,5 +1,6 @@
 ﻿using Drboum.Utilities.Runtime.EditorHybrid;
 using UnityEditor;
+
 namespace Drboum.Utilities.Editor
 {
     class AssetReferenceIDAllPostprocessor : AssetPostprocessor
@@ -12,7 +13,7 @@ namespace Drboum.Utilities.Editor
                 var assetReferenceID = AssetDatabase.LoadAssetAtPath<AssetReferenceID>(str);
                 if ( assetReferenceID != null )
                 {
-                    assetReferenceID.FixAssetIDIfInvalid();
+                    AssetReferenceIDBaseManager<AssetReferenceID>.Instance.GenerateAndAssignNewGuid(assetReferenceID);
                 }
             }
         }

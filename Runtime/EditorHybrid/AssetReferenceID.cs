@@ -15,15 +15,17 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
 
     public abstract class AssetReferenceID : EditorCallBackScriptableObject<AssetReferenceID>, IAssetReferenceID, IEquatable<AssetReferenceID>
     {
-        [SerializeField] [HideInInspector] protected string _guid;
+        public const string AssetReferenceExtension = ".asset";
+        
+        [SerializeField] [HideInInspector] protected GuidWrapper _guid;
         [SerializeField] [HideInInspector] internal int instanceId;
         internal bool _skipDuplication;
 
-        internal bool IsValidGuid => !string.IsNullOrEmpty(_guid) && !default(GuidWrapper).Equals(_guid);
+        internal bool IsValidGuid => !default(GuidWrapper).Equals(_guid);
         public virtual bool IsValidAsset => IsValidGuid;
         public GuidWrapper Guid {
             get => _guid;
-            internal set => _guid = value.GuidValue.ToString("N");
+            internal set => _guid = value;
         }
 
         public bool Equals(AssetReferenceID other)
