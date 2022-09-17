@@ -14,9 +14,9 @@ namespace Drboum.Utilities.Runtime
     [Serializable]
     public unsafe struct GuidWrapper : IEquatable<GuidWrapper>
     {
-        [FieldOffset(0)] public Guid GuidValue;
-        [FieldOffset(0)] public uint4 HashValue;
-        [FieldOffset(0)] public FixedBytes16 Bytes16Value;
+        [FieldOffset(0),NonSerialized] public uint4 HashValue;
+        [FieldOffset(0),NonSerialized] public FixedBytes16 Bytes16Value;
+        [FieldOffset(0),NonSerialized] public Guid GuidValue;
         [FieldOffset(0)] public Hash128 Hash128Value;
         [FieldOffset(0)] private fixed byte _buffer[16];
 
