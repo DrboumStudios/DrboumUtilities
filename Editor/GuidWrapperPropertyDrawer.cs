@@ -1,14 +1,14 @@
 ﻿using Drboum.Utilities.Runtime;
+using Unity.Mathematics;
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace Drboum.Utilities.Editor
 {
-    [CustomPropertyDrawer(typeof(GuidWrapper))]
+    [CustomPropertyDrawer(typeof(GuidWrapper), true)]
     public class GuidWrapperPropertyDrawer : PropertyDrawer
     {
+
         // public override VisualElement CreatePropertyGUI(SerializedProperty property)
         // {
         //     // Create property container element.
@@ -37,10 +37,19 @@ namespace Drboum.Utilities.Editor
             // Calculate rects
             var amountRect = new Rect(position.x, position.y, 30, position.height);
 
-            var t = property.stringValue;
+            var t = property.FindPropertyRelative(nameof(GuidWrapper.HashValue)).rectIntValue;
+
+            var guid = new GuidWrapper() {
+                HashValue = new uint4 {
+                    x = (uint)t.x,
+                    y = (uint)t.y,
+                    z = (uint)t.width,
+                    w = (uint)t.height
+                }
+            };
 
             // Draw fields - pass GUIContent.none to each so they are drawn without labels
-            EditorGUI.LabelField(amountRect, t);
+            EditorGUI.LabelField(amountRect, guid.ToString());
 
             // Set indent back to what it was
             EditorGUI.indentLevel = indent;

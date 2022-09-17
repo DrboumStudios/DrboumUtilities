@@ -2,6 +2,7 @@
     "name": "Utilities.Editor",
     "rootNamespace": "",
     "references": [
+        "GUID:d8b63aba1907145bea998dd612889d6b",
         "GUID:4422a37c5b4882b4693b54d30d43e191",
         "GUID:69448af7b92c7f342b298e06a37122aa"
     ],
