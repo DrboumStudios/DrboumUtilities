@@ -19,7 +19,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
     {
         public const string AssetReferenceExtension = ".asset";
 
-        [SerializeField, InspectorReadOnly] protected GuidWrapper _guid;
+        [SerializeField, InspectorReadOnly] internal GuidWrapper _guid;
 
         internal bool IsValidGuid => !default(GuidWrapper).Equals(_guid);
         public virtual bool IsValidAsset => IsValidGuid;

@@ -90,7 +90,7 @@ namespace Drboum.Utilities.Editor {
 
         public virtual void FixAssetInstanceIfInvalid(TAssetObjectDirectorInstance instance, bool saveAssets = true)
         {
-            if ( IsValidAssetInstance(instance) || EditorObjectTracker.IsInPrefabMode(instance.gameObject) )
+            if ( IsValidAssetInstance(instance) || instance.gameObject.IsInCurrentPrefabStage() )
             {
                 return;
             }

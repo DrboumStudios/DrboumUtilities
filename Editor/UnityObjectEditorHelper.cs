@@ -1,5 +1,5 @@
 ﻿using UnityEditor;
-using UnityEditor.Experimental.SceneManagement;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -131,7 +131,7 @@ public static class UnityObjectEditorHelper
     public static bool IsPrefabAssetOrOpenInPrefabStage(this GameObject gameObject)
     {
 #if UNITY_2018_3_OR_NEWER
-        return PrefabUtility.IsPartOfPrefabAsset(gameObject) || PrefabStageUtility.GetPrefabStage(gameObject) != null;
+        return PrefabUtility.IsPartOfPrefabAsset(gameObject) || UnityEditor.SceneManagement.PrefabStageUtility.GetPrefabStage(gameObject) != null;
 #else
 			return PrefabUtility.GetPrefabType(gameObject) == PrefabType.Prefab;
 #endif
@@ -218,7 +218,7 @@ public static class UnityObjectEditorHelper
     public static bool IsOpenInPrefabStage(this GameObject gameObject)
     {
 #if UNITY_2018_3_OR_NEWER
-        return PrefabStageUtility.GetPrefabStage(gameObject) != null;
+        return UnityEditor.SceneManagement.PrefabStageUtility.GetPrefabStage(gameObject) != null;
 #else
 			return false;
 #endif
@@ -263,10 +263,9 @@ public static class UnityObjectEditorHelper
     {
         return gameObject.IsInCurrentPrefabStage(out var _);
     }
-    
-    public static bool IsInCurrentPrefabStage(this GameObject gameObject, out PrefabStage currentPrefabStage)
+    public static bool IsInCurrentPrefabStage(this GameObject gameObject, out UnityEditor.SceneManagement.PrefabStage currentPrefabStage)
     {
-        currentPrefabStage = PrefabStageUtility.GetCurrentPrefabStage();
+        currentPrefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
         return currentPrefabStage != null && currentPrefabStage.IsPartOfPrefabContents(gameObject);
     }
     public static bool IsPrefabAsset(this GameObject gameObject)

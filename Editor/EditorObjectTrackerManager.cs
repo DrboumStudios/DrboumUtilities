@@ -50,7 +50,7 @@ namespace Drboum.Utilities.Editor {
             {
                 return;
             }
-            if ( EditorObjectTracker.IsInPrefabMode(gameObject) )
+            if ( gameObject.IsInCurrentPrefabStage() )
             {
                 instance.assetInstanceGuid = null;
                 instance.assetInstanceReadableName = null;
@@ -88,16 +88,13 @@ namespace Drboum.Utilities.Editor {
 
         private static void Update(EditorObjectTracker instance)
         {
-
             string name = instance.name;
             if ( instance.IsNull() || Equals(name, instance.assetInstanceReadableName) )
-            {
                 return;
-            }
-            if ( EditorObjectTracker.IsInPrefabMode(instance.gameObject) )
-            {
+            
+            if ( instance.gameObject.IsInCurrentPrefabStage() )
                 return;
-            }
+            
             string old = instance.assetInstanceReadableName;
             instance.assetInstanceReadableName = name;
             instance._onGameObjectNameChanged(old);
