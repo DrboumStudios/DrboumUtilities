@@ -14,7 +14,7 @@ namespace Drboum.Utilities.Editor
             var container = new VisualElement();
 
             // Create property fields.
-            var guidDisplay = new PropertyField(property.FindPropertyRelative(nameof(GuidWrapper.GetDisplayString)));
+            var guidDisplay = new PropertyField(property);
             // Add fields to the container.
             container.Add(guidDisplay);
 
