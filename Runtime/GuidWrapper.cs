@@ -42,9 +42,7 @@ namespace Drboum.Utilities.Runtime
         }
 
         public bool IsDefault => Hash128Value == default;
-
-        internal string GetDisplayString => ToString();
-
+        
         public void SetData(byte[] src)
         {
             AssertIsAValidSizeArray(src);
