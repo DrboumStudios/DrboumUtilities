@@ -56,6 +56,9 @@ namespace Drboum.Utilities.Editor
         {
             GuidWrapper union = default;
             instance.TryGetAssetGuid(out union.GuidValue);
+            if ( instance.Guid.GuidValue == union.GuidValue )
+                return;
+            
             instance.Guid = union;
             instance.SetDirtySafe();
         }
