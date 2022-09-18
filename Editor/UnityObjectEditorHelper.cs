@@ -156,15 +156,6 @@ public static class UnityObjectEditorHelper
 #endif
     }
 
-    public static bool IsDisconnectedPrefabInstance(this GameObject gameObject)
-    {
-#if UNITY_2018_3_OR_NEWER
-        return PrefabUtility.GetPrefabInstanceStatus(gameObject) == PrefabInstanceStatus.Disconnected;
-#else
-			return PrefabUtility.GetPrefabType(gameObject) == PrefabType.DisconnectedPrefabInstance;
-#endif
-    }
-
     public static bool IsPartOfInstantiatedPrefabInstance(this GameObject gameObject)
     {
         for ( var transform = gameObject.transform; transform != null; transform = transform.parent )
@@ -183,17 +174,6 @@ public static class UnityObjectEditorHelper
         return PrefabUtility.IsPartOfVariantPrefab(gameObject);
 #else
 			return false;
-#endif
-    }
-
-    public static bool IsConnectedOrDisconnectedPrefabInstance(this GameObject gameObject)
-    {
-#if UNITY_2018_3_OR_NEWER
-        var prefabStatus = PrefabUtility.GetPrefabInstanceStatus(gameObject);
-        return prefabStatus == PrefabInstanceStatus.Connected || prefabStatus == PrefabInstanceStatus.Disconnected;
-#else
-			var prefabType = PrefabUtility.GetPrefabType(gameObject);
-			return prefabType == PrefabType.PrefabInstance || prefabType == PrefabType.DisconnectedPrefabInstance;
 #endif
     }
 
