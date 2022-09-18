@@ -7,6 +7,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Debug = UnityEngine.Debug;
 
 namespace Drboum.Utilities.Runtime
 {
@@ -14,10 +15,10 @@ namespace Drboum.Utilities.Runtime
     [Serializable]
     public unsafe struct GuidWrapper : IEquatable<GuidWrapper>
     {
-        [FieldOffset(0), NonSerialized] public uint4 HashValue;
+        [FieldOffset(0)] public uint4 HashValue;
         [FieldOffset(0), NonSerialized] public FixedBytes16 Bytes16Value;
         [FieldOffset(0), NonSerialized] public Guid GuidValue;
-        [FieldOffset(0)] public Hash128 Hash128Value;
+        [FieldOffset(0), NonSerialized] public Hash128 Hash128Value;
         [FieldOffset(0)] private fixed byte _buffer[16];
 
         #region InternalGuidRepresentation
@@ -115,6 +116,12 @@ namespace Drboum.Utilities.Runtime
             return guidChars;
         }
 
+        [ContextMenu("Print the Guid as string like 'ca761232-ed42-11ce-bacd-00aa0057b223'")]
+        internal void PrintAsGuidString()
+        {
+            Debug.Log($"{nameof(GuidWrapper)}: {ToString()}");
+        }
+
         private static unsafe void HexsToChars(ref FixedString128Bytes guidChars, int a, int b)
         {
             HexsToChars(ref guidChars, a, b, false);
@@ -210,10 +217,12 @@ namespace Drboum.Utilities.Runtime
             @default.HashValue = guid;
             return @default;
         }
+
         public static implicit operator Guid(GuidWrapper bytes16)
         {
             return bytes16.GuidValue;
         }
+
         public static implicit operator Hash128(GuidWrapper bytes16)
         {
             return bytes16.Hash128Value;
