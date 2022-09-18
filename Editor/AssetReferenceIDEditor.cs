@@ -5,12 +5,10 @@ using System.Linq;
 using System.Reflection;
 using Drboum.Utilities.Runtime;
 using Drboum.Utilities.Runtime.EditorHybrid;
-using Unity.Mathematics;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-using Debug = UnityEngine.Debug;
 
 namespace Drboum.Utilities.Editor
 {
@@ -54,9 +52,7 @@ namespace Drboum.Utilities.Editor
                     .Where(fi => (fi.IsPublic || fi.IsDefined(typeof(SerializeField), true)) && fi.Name != nameof(AssetReferenceID._guid))
                     .Select(fi => fi.Name)
                     .ToList();
-
-                Debug.Log($"reflection {nameof(AssetReferenceIDEditor)} took {sw.ElapsedMilliseconds.ToString()} ms");
-
+                
                 _fieldNamesPerType.Add(targetType, fieldsNames);
             }
             return fieldsNames;

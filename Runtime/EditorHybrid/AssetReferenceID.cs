@@ -17,7 +17,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
 
     public abstract class AssetReferenceID : EditorCallBackScriptableObject<AssetReferenceID>, IAssetReferenceID, IEquatable<AssetReferenceID>
     {
-        public const string AssetReferenceExtension = ".asset";
+        public const string ASSET_REFERENCE_EXTENSION = ".asset";
 
         [SerializeField, InspectorReadOnly] internal GuidWrapper _guid;
 

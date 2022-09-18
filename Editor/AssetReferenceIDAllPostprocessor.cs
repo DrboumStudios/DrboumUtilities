@@ -12,7 +12,7 @@ namespace Drboum.Utilities.Editor
             for ( var index = 0; index < importedAssets.Length; index++ )
             {
                 string str = importedAssets[index];
-                if ( !Equals(Path.GetExtension(str), AssetReferenceID.AssetReferenceExtension) )
+                if ( !Equals(Path.GetExtension(str), AssetReferenceID.ASSET_REFERENCE_EXTENSION) )
                     continue;
 
                 var assetReferenceID = AssetDatabase.LoadAssetAtPath<AssetReferenceID>(str);

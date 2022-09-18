@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
+
 namespace GameProject
 {
     public interface IReadOnlySerializableDictionary<TKey, TValue>
@@ -12,6 +13,7 @@ namespace GameProject
         public IReadOnlyList<TKey> Keys { get; }
         public IReadOnlyList<TValue> Values { get; }
     }
+
     [Serializable]
     public class SerializableDictionary<TKey, TValue> : IReadOnlySerializableDictionary<TKey, TValue>, ISerializationCallbackReceiver
     {
@@ -37,7 +39,7 @@ namespace GameProject
 
         public bool ContainsKey(in TKey key) => _indexBookKeeping.ContainsKey(key);
 
-        public bool Remove(TKey key)
+        public bool TryRemove(TKey key)
         {
             var remove = _indexBookKeeping.TryGetValue(key, out var index);
             if ( remove )
@@ -52,6 +54,7 @@ namespace GameProject
 
             return remove;
         }
+
         private void Asserts()
         {
             Assert.AreEqual(_keys.Count, _values.Count);
@@ -79,6 +82,7 @@ namespace GameProject
 
         public void OnBeforeSerialize()
         { }
+
         public void OnAfterDeserialize()
         {
 
