@@ -76,8 +76,7 @@ namespace Drboum.Utilities.Editor {
                         Rect pos = _pickerWindow.position;
                         _resultObjectLookupList.Clear();
                         if ( typeof(Component).IsAssignableFrom(prop) ) {
-                            UnityObjectEditorHelper.FindAllInstancesInScene(_gameObjectsBuffer, _resultObjectLookupList,
-                                requiredAttribute.InterfaceType, SceneManager.GetActiveScene());
+                            SceneManager.GetActiveScene().FindAllInstancesInScene(_resultObjectLookupList,requiredAttribute.InterfaceType);
                         }
                         else if ( typeof(ScriptableObject).IsAssignableFrom(prop) ) {
                             UnityObjectEditorHelper.FindAllAssetInstances<ScriptableObject>(_resultObjectLookupList,

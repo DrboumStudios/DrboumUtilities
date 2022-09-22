@@ -292,12 +292,10 @@ public static class UnityObjectHelper
 
     public static void FindAllInstancesInActiveScene(List<Object> lookupResult, Type interfaceType)
     {
-        FindAllInstancesInScene(lookupResult, interfaceType, SceneManager.GetActiveScene());
+        FindAllInstancesInScene(SceneManager.GetActiveScene(), lookupResult, interfaceType);
     }
 
-    public static void FindAllInstancesInScene(List<Object> lookupResult,
-        Type lookupType,
-        Scene scene)
+    public static void FindAllInstancesInScene(this Scene scene,List<Object> lookupResult,Type lookupType)
     {
         scene.GetRootGameObjects(_rootGameObjectsBuffer);
         foreach ( GameObject rootGameObject in _rootGameObjectsBuffer )
