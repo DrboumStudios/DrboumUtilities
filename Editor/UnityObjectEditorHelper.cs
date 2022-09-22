@@ -1,5 +1,4 @@
 ﻿using UnityEditor;
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -114,11 +113,13 @@ public static class UnityObjectEditorHelper
     {
         AssetDatabase.SaveAssets();
     }
+
     [MenuItem("Tools/" + nameof(RefreshAssetDataBase))]
     private static void RefreshAssetDataBase()
     {
         AssetDatabase.Refresh();
     }
+
     public static bool IsPrefabAssetEditor(this GameObject gameObject)
     {
 #if UNITY_2018_3_OR_NEWER
@@ -231,6 +232,7 @@ public static class UnityObjectEditorHelper
         if ( gameObject.activeSelf != active )
             gameObject.SetActive(active);
     }
+
     public static void CheckAndSetActive(this GameObject[] gameObjects, bool active)
     {
         for ( var index = 0; index < gameObjects.Length; index++ )
@@ -243,11 +245,13 @@ public static class UnityObjectEditorHelper
     {
         return gameObject.IsInCurrentPrefabStage(out var _);
     }
+
     public static bool IsInCurrentPrefabStage(this GameObject gameObject, out UnityEditor.SceneManagement.PrefabStage currentPrefabStage)
     {
         currentPrefabStage = UnityEditor.SceneManagement.PrefabStageUtility.GetCurrentPrefabStage();
         return currentPrefabStage != null && currentPrefabStage.IsPartOfPrefabContents(gameObject);
     }
+
     public static bool IsPrefabAsset(this GameObject gameObject)
     {
         return EditorUtility.IsPersistent(gameObject) && PrefabUtility.IsPartOfPrefabAsset(gameObject) && gameObject.transform.parent.IsNull();
@@ -275,6 +279,7 @@ public static class UnityObjectEditorHelper
         guid = default;
         return false;
     }
+
     public static bool TryLoadAsset<T>(string assetGuid, out string path, out T asset)
         where T : Object
     {
@@ -289,11 +294,13 @@ public static class UnityObjectEditorHelper
         asset = AssetDatabase.LoadAssetAtPath<T>(path);
         return !asset.IsNull();
     }
+
     public static bool TryLoadAsset<T>(Guid assetGuid, out string path, out T asset)
         where T : Object
     {
         return TryLoadAsset(assetGuid.ToString("n"), out path, out asset);
     }
+
     public static T GetSingletonAssetInstance<T>(string folderPath)
         where T : Object
     {
@@ -313,6 +320,7 @@ public static class UnityObjectEditorHelper
         return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guids[0]));
 
     }
+
     public static T[] FindAllAssetInstances<T>()
         where T : Object
     {
@@ -322,6 +330,7 @@ public static class UnityObjectEditorHelper
 
         return a;
     }
+
     public static T[] FindAllAssetInstances<T>(string[] folderPaths)
         where T : Object
     {
@@ -331,6 +340,7 @@ public static class UnityObjectEditorHelper
 
         return a;
     }
+
     private static void AssignInstances<T>(string[] guids, T[] a)
         where T : Object
     {
@@ -355,10 +365,12 @@ public static class UnityObjectEditorHelper
     {
         return AssetDatabase.FindAssets("t:Prefab", folders);
     }
+
     public static void GetPrefabs(List<GameObject> gameObjects, string[] folders = null)
     {
         GetPrefabsAsComponents<GameObject>(gameObjects, folders);
     }
+
     public static void GetPrefabsAsComponents<T>(List<T> gameObjects, string[] folders = null)
         where T : Object
     {
@@ -370,16 +382,19 @@ public static class UnityObjectEditorHelper
             gameObjects.Add(loadedObject);
         }
     }
+
     public static void FindAllAssetInstances<T>(List<T> buffer)
         where T : Object
     {
         FindAllAssetInstances(buffer, null);
     }
+
     public static void FindAllAssetInstances<T>(List<T> buffer, string[] lookupFolders)
         where T : Object
     {
         FindAllAssetInstances(buffer, lookupFolders, null);
     }
+
     public static void FindAllAssetInstances<T>(List<T> buffer, string[] lookupFolders, AssetSearchPredicate<T> predicate)
         where T : Object
     {
@@ -401,6 +416,7 @@ public static class UnityObjectEditorHelper
             GetAssets(buffer, guids);
         }
     }
+
     public delegate bool AssetSearchPredicate<T>(string guid, string path, T instance)
         where T : Object;
 
@@ -424,6 +440,7 @@ public static class UnityObjectEditorHelper
             buffer.Capacity = guids.Length;
         }
     }
+
     private static void GetAssets<T>(List<T> buffer, string[] guids)
         where T : Object
     {
@@ -435,6 +452,7 @@ public static class UnityObjectEditorHelper
 
         }
     }
+
     private static void GetAssets<T>(List<T> buffer, string[] guids, AssetSearchPredicate<T> predicate)
         where T : Object
     {
@@ -449,85 +467,7 @@ public static class UnityObjectEditorHelper
             }
         }
     }
-    /// <summary>
-    ///     look up on the active scene
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public static List<T> FindAllInstancesInScene<T>()
-        where T : Component
-    {
-        var list = new List<T>();
-        FindAllInstancesInScene(list, SceneManager.GetActiveScene());
-        return list;
-    }
-    public static void FindAllInstancesInScene<T>(List<T> instancesBuffer, Scene scene)
-        where T : Component
-    {
-        GameObject[] rootGameObjects = scene.GetRootGameObjects();
-        foreach ( GameObject rootGameObject in rootGameObjects )
-        {
-            rootGameObject.GetComponentsInChildren(true, instancesBuffer);
-        }
-    }
-    /// <summary>
-    ///     look up on the active scene
-    /// </summary>
-    public static List<Component> FindAllInstancesInScene(Type interfaceType)
-    {
-        var instancesBuffer = new List<Component>();
-        GameObject[] rootGameObjects = SceneManager.GetActiveScene().GetRootGameObjects();
-        foreach ( GameObject rootGameObject in rootGameObjects )
-        {
-            Component[] childrenInterfaces = rootGameObject.GetComponentsInChildren(interfaceType);
-            foreach ( Component childInterface in childrenInterfaces )
-            {
-                instancesBuffer.Add(childInterface);
-            }
-        }
-        return instancesBuffer;
-    }
-    /// <summary>
-    ///     look up on the active scene
-    /// </summary>
-    public static List<int> FindAllInstancesIdsInScene(Type interfaceType)
-    {
-        var instancesBuffer = new List<int>();
-        FindAllInstancesInScene(instancesBuffer, interfaceType, SceneManager.GetActiveScene());
-        return instancesBuffer;
-    }
-    public static void FindAllInstancesInActiveScene(List<Object> lookupResult, Type interfaceType)
-    {
-        FindAllInstancesInScene(new List<GameObject>(SceneManager.GetActiveScene().rootCount), lookupResult,
-            interfaceType, SceneManager.GetActiveScene());
-    }
-    public static void FindAllInstancesInScene(List<GameObject> rootGameObjects,
-        List<Object> lookupResult,
-        Type interfaceType,
-        Scene scene)
-    {
-        scene.GetRootGameObjects(rootGameObjects);
-        foreach ( GameObject rootGameObject in rootGameObjects )
-        {
-            Component[] childrenInterfaces = rootGameObject.GetComponentsInChildren(interfaceType);
-            foreach ( Component childInterface in childrenInterfaces )
-            {
-                lookupResult.Add(childInterface);
-            }
-        }
-    }
-    public static void FindAllInstancesInScene(List<int> instancesBuffer, Type interfaceType, Scene scene)
-    {
-        GameObject[] rootGameObjects = scene.GetRootGameObjects();
-        foreach ( GameObject rootGameObject in rootGameObjects )
-        {
-            Component[] childrenInterfaces = rootGameObject.GetComponentsInChildren(interfaceType);
-            foreach ( Component childInterface in childrenInterfaces )
-            {
-                instancesBuffer.Add(childInterface.GetInstanceID());
-            }
-        }
-    }
+
     public static void EnsureFolderCreation(string folder)
     {
         Directory.CreateDirectory(folder);

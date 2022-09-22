@@ -1,19 +1,26 @@
 ﻿using UnityEditor;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Drboum.Utilities.Runtime;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
 using Object = UnityEngine.Object;
 
-public static class UnityObjectHelper {
+public static class UnityObjectHelper
+{
+    private static readonly List<GameObject> _rootGameObjectsBuffer = new(20);
+    private static Dictionary<Type, IEnumerable> _dictionaryListBuffer;
+
     public static bool IsPrefabInSubSceneContext(this Object @this) =>
         @this is GameObject go && IsPrefabInSubSceneContext(go);
 
     public static bool IsPrefabInSubSceneContext(this GameObject @this) =>
         !@this.scene.IsValid();
-    public static void RemoveComponent<T>(this T component) where T : Component
+
+    public static void RemoveComponent<T>(this T component)
+        where T : Component
     {
         if ( !Application.isPlaying )
         {
@@ -33,6 +40,7 @@ public static class UnityObjectHelper {
         EditorUtility.SetDirty(uObject);
 #endif
     }
+
     [Conditional("UNITY_EDITOR")]
     public static void RecordObjectForUndo(this Object uObject, string actionName)
     {
@@ -40,13 +48,15 @@ public static class UnityObjectHelper {
         Undo.RecordObject(uObject, actionName);
 #endif
     }
+
     /// <summary>
     /// return true only if the component has been removed
     /// </summary>
     /// <param name="go"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static bool RemoveComponentIfExists<T>(this GameObject go) where T : Component
+    public static bool RemoveComponentIfExists<T>(this GameObject go)
+        where T : Component
     {
         if ( !go.TryGetComponent(out T component) )
         {
@@ -56,6 +66,7 @@ public static class UnityObjectHelper {
         go.SetDirtySafe();
         return true;
     }
+
     /// <summary>
     /// return true only if a component has been added
     /// </summary>
@@ -63,7 +74,8 @@ public static class UnityObjectHelper {
     /// <param name="component"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static bool AddComponentIfNotExists<T>(this GameObject go, out T component) where T : Component
+    public static bool AddComponentIfNotExists<T>(this GameObject go, out T component)
+        where T : Component
     {
         bool added = !go.TryGetComponent(out component);
         if ( added )
@@ -73,6 +85,7 @@ public static class UnityObjectHelper {
         }
         return added;
     }
+
     /// <summary>
     /// return true only if a component has been added
     /// </summary>
@@ -80,10 +93,12 @@ public static class UnityObjectHelper {
     /// <param name="component"></param>
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
-    public static bool AddComponentIfNotExists<T>(this GameObject go) where T : Component
+    public static bool AddComponentIfNotExists<T>(this GameObject go)
+        where T : Component
     {
         return go.AddComponentIfNotExists<T>(out var _);
     }
+
     public static void CopyLocalData(this Transform to, Transform source)
     {
         if ( to != null && source != null )
@@ -92,6 +107,7 @@ public static class UnityObjectHelper {
             to.localPosition = source.localPosition;
         }
     }
+
     public static bool EnsureObjectIsNotNull<TExecutor>(this TExecutor _, Object objectToCheck, Object objectHolder, string invalidFieldName, string prefixCategory)
     {
         if ( objectToCheck.IsNull() )
@@ -101,13 +117,16 @@ public static class UnityObjectHelper {
         }
         return false;
     }
-    public static T GetSingletonComponent<T>(bool includeInactive = false) where T : MonoBehaviour
+
+    public static T GetSingletonComponent<T>(bool includeInactive = false)
+        where T : MonoBehaviour
     {
         T[] componentInScenes = Object.FindObjectsOfType<T>(includeInactive);
         T singletonInScene = null;
         CheckMultipleObjectOfType(ref singletonInScene, componentInScenes);
         return singletonInScene;
     }
+
     /// <summary>
     /// <see cref="FillNullMonobehaviourField{ReturnType,LookupType}"/>
     /// </summary>
@@ -125,6 +144,7 @@ public static class UnityObjectHelper {
         Debug.LogError(
             $"the parameter of type {typeof(T)} is not assigned on the component field and can't be find in the scene.");
     }
+
     /// <summary>
     /// fill resultReference only if its null
     /// </summary>
@@ -155,14 +175,17 @@ public static class UnityObjectHelper {
     }
 
     private static void CheckMultipleObjectOfType<ReturnType, LookupType>(ref ReturnType resultReference,
-        LookupType[] foundArray) where LookupType : Component, ReturnType
+        LookupType[] foundArray)
+        where LookupType : Component, ReturnType
     {
         CheckSceneSingletonComponent<ReturnType, LookupType>(foundArray);
         resultReference = foundArray[0];
     }
+
     [Conditional("UNITY_EDITOR")]
     [Conditional("DEBUG")]
-    private static void CheckSceneSingletonComponent<ReturnType, LookupType>(LookupType[] foundArray) where LookupType : Component, ReturnType
+    private static void CheckSceneSingletonComponent<ReturnType, LookupType>(LookupType[] foundArray)
+        where LookupType : Component, ReturnType
     {
         if ( foundArray.Length == 0 )
         {
@@ -177,7 +200,8 @@ public static class UnityObjectHelper {
     }
 
     public static ReturnType FillNullMonobehaviourField<ReturnType, LookupType, ParameterType>(
-        ParameterType parameterToNullCheck = null, bool includeInactive = false)
+        ParameterType parameterToNullCheck = null,
+        bool includeInactive = false)
         where LookupType : Component, ReturnType
         where ParameterType : class
     {
@@ -193,17 +217,111 @@ public static class UnityObjectHelper {
         }
         return resultReference;
     }
+
     public static bool IsNull(this Object @object)
     {
         return @object is null || @object == null;
     }
-    public static void GetComponentInDirectChildren<T>(this Transform transform,List<T> childrenComponent)
+
+    public static void GetComponentInDirectChildren<T>(this Transform transform, List<T> childrenComponent)
         where T : Component
     {
-        foreach ( Transform childTransform in transform )
+        for ( int i = 0; i < transform.childCount; i++ )
         {
+            Transform childTransform = transform.GetChild(i);
             if ( childTransform.TryGetComponent(out T childNode) )
                 childrenComponent.Add(childNode);
+        }
+    }
+
+    private static List<T> GetListFromPool<T>()
+        where T : Component
+    {
+        Type type = typeof(T);
+        List<T> buffer = null;
+        if ( !_dictionaryListBuffer.TryGetValue(type, out var Listobj) )
+        {
+            buffer = new List<T>();
+            _dictionaryListBuffer.Add(type, buffer);
+        }
+        return buffer;
+    }
+
+    public static List<T> FindAllInstancesInScene<T>(this Scene scene)
+        where T : Component
+    {
+        var list = new List<T>();
+        FindAllInstancesInScene(scene, list);
+        return list;
+    }
+
+    public static T FindFirstInstancesInScene<T>(this Scene scene)
+        where T : Component
+    {
+        scene.GetRootGameObjects(_rootGameObjectsBuffer);
+        T firstComponent = default;
+        for ( var index = 0; index < _rootGameObjectsBuffer.Count; index++ )
+        {
+            GameObject rootGameObject = _rootGameObjectsBuffer[index];
+            firstComponent = rootGameObject.GetComponentInChildren<T>();
+            if ( firstComponent )
+                break;
+        }
+        return firstComponent;
+    }
+
+    public static void FindAllInstancesInScene<T>(this Scene scene, List<T> instancesBuffer)
+        where T : Component
+    {
+        scene.GetRootGameObjects(_rootGameObjectsBuffer);
+        var buffer = GetListFromPool<T>();
+        foreach ( GameObject rootGameObject in _rootGameObjectsBuffer )
+        {
+            rootGameObject.GetComponentsInChildren(true, buffer);
+            instancesBuffer.AddRange(buffer);
+        }
+    }
+
+
+    public static List<int> FindAllInstancesIdsInActiveScene(Type lookupType)
+    {
+        var instancesBuffer = new List<int>();
+        FindAllInstancesIdInScene(instancesBuffer, lookupType, SceneManager.GetActiveScene());
+        return instancesBuffer;
+    }
+
+    public static void FindAllInstancesInActiveScene(List<Object> lookupResult, Type interfaceType)
+    {
+        FindAllInstancesInScene(lookupResult, interfaceType, SceneManager.GetActiveScene());
+    }
+
+    public static void FindAllInstancesInScene(List<Object> lookupResult,
+        Type lookupType,
+        Scene scene)
+    {
+        scene.GetRootGameObjects(_rootGameObjectsBuffer);
+        foreach ( GameObject rootGameObject in _rootGameObjectsBuffer )
+        {
+            Component[] childrenInterfaces = rootGameObject.GetComponentsInChildren(lookupType);
+            for ( var index = 0; index < childrenInterfaces.Length; index++ )
+            {
+                Component childInterface = childrenInterfaces[index];
+                lookupResult.Add(childInterface);
+            }
+        }
+    }
+
+    public static void FindAllInstancesIdInScene(List<int> instancesBuffer, Type lookupType, Scene scene)
+    {
+        scene.GetRootGameObjects(_rootGameObjectsBuffer);
+        foreach ( GameObject rootGameObject in _rootGameObjectsBuffer )
+        {
+            Component[] childrenInterfaces = rootGameObject.GetComponentsInChildren(lookupType);
+            for ( var index = 0; index < childrenInterfaces.Length; index++ )
+            {
+                Component childInterface = childrenInterfaces[index];
+                instancesBuffer.Add(childInterface.GetInstanceID());
+            }
         }
     }
 }
