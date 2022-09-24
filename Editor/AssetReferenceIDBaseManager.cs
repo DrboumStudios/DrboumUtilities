@@ -5,21 +5,28 @@ using UnityEngine;
 
 namespace Drboum.Utilities.Editor
 {
-    public abstract class AssetReferenceIDBaseManager<TAssetInstance>
+    public class AssetReferenceIDBaseManager<TAssetInstance>
         where TAssetInstance : Object, IAssetReferenceID
     {
 
         private static AssetReferenceIDBaseManager<TAssetInstance> _instance;
         internal static AssetReferenceIDBaseManager<TAssetInstance> Instance => _instance;
 
-        protected static void CreateStaticInstance<T>()
-            where T : AssetReferenceIDBaseManager<TAssetInstance>, new()
+        // protected static void CreateStaticInstance<T>()
+        //     where T : AssetReferenceIDBaseManager<TAssetInstance>, new()
+        // {
+        //     _instance = new T();
+        //     _instance.Initialize();
+        // }
+
+        static AssetReferenceIDBaseManager()
         {
-            _instance = new T();
+            _instance = new ();
             _instance.Initialize();
         }
-
-        protected AssetReferenceIDBaseManager() { }
+        protected AssetReferenceIDBaseManager()
+        {
+        }
 
         protected virtual void Initialize()
         {

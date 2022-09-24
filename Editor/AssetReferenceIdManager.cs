@@ -5,10 +5,9 @@ using UnityEngine;
 namespace Drboum.Utilities.Editor
 {
     public class AssetReferenceIdManager : AssetReferenceIDBaseManager<AssetReferenceID> {
-        [InitializeOnLoadMethod]
-        protected static void Create()
-        {
-            CreateStaticInstance<AssetReferenceIdManager>();
-        }
+        
     }
+    // public class PrefabIdentityManager : AssetReferenceIDBaseManager<PrefabIdentity> {
+    //   
+    // }
 }
