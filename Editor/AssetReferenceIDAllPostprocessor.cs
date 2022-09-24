@@ -21,7 +21,7 @@ namespace Drboum.Utilities.Editor
                     {
                         AssetReferenceIDBaseManager<AssetReferenceID>.Instance.GenerateAndAssignNewGuid(assetReferenceID);
                     }
-                    return;
+                    continue;
                 }
 
                 bool isPrefab = Equals(Path.GetExtension(str), ".prefab");
