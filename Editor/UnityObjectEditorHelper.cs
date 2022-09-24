@@ -209,11 +209,17 @@ public static class UnityObjectEditorHelper
     public static void FindAllPrefabWithComponentType(MenuCommand command)
     {
         var component = command.context as Component;
-        var targetType = component.GetType();
-        var matches = new List<Object>(200);
+        List<Object> matches = FindAllPrefabWithComponent(component.GetType());
+        Selection.objects = matches.ToArray();
+    }
+
+    public static List<Object> FindAllPrefabWithComponent(Type targetType, List<Object> matches=null)
+    {
+        matches ??= new List<Object>(200);
         var assetGuids = AssetDatabase.FindAssets($"t:Prefab");
-        foreach ( var assetGuid in assetGuids )
+        for ( var index = 0; index < assetGuids.Length; index++ )
         {
+            string assetGuid = assetGuids[index];
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(assetGuid));
             if ( prefab != null )
             {
@@ -223,8 +229,13 @@ public static class UnityObjectEditorHelper
                 }
             }
         }
+        return matches;
+    }
 
-        Selection.objects = matches.ToArray();
+    public static List<Object> FindAllPrefabWithComponent<TComponent>()
+        where TComponent : Component
+    {
+        return FindAllPrefabWithComponent(typeof(TComponent));
     }
 #endif
     public static void CheckAndSetActive(this GameObject gameObject, bool active)
