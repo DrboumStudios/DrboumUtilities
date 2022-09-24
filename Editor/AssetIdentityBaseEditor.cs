@@ -77,7 +77,7 @@ namespace Drboum.Utilities.Editor
 
         private void GetGuidWrapperValue(out GuidWrapper guidWrapper)
         {
-            var guidProp = serializedObject.FindProperty(nameof(AssetReferenceID._guid));
+            var guidProp = serializedObject.FindProperty(GuidPropertyName);
             SerializedProperty hashValue = guidProp.FindPropertyRelative($"{nameof(GuidWrapper.HashValue)}");
             guidWrapper = default;
             int count = 0;
@@ -86,5 +86,7 @@ namespace Drboum.Utilities.Editor
                 guidWrapper.HashValue[count++] = (uint)o.intValue;
             }
         }
+        protected abstract string GuidPropertyName { get; }
+
     }
 }

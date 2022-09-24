@@ -8,8 +8,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
 {
     public class PrefabIdentity : MonoBehaviour,IAssetReferenceID
     {
-        [SerializeField, InspectorReadOnly, CreateProperty] internal GuidWrapper _prefabGuid;
-        private GuidWrapper _guid;
+        [SerializeField, InspectorReadOnly, CreateProperty,InspectorName("PrefabGuid")] internal GuidWrapper _guid;
         
         public GuidWrapper Guid {
             get => _guid;
