@@ -42,7 +42,7 @@ namespace Drboum.Utilities.Runtime
             }
         }
 
-        public bool IsDefault => Hash128Value == default;
+        public bool IsValid => Hash128Value != default;
 
         public void SetData(byte[] src)
         {

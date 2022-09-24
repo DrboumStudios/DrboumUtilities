@@ -1,12 +1,12 @@
 ﻿using System.Diagnostics;
 using Drboum.Utilities.Runtime;
 using Drboum.Utilities.Runtime.EditorHybrid;
+using UnityEngine;
 
 namespace Drboum.Utilities.Editor
 {
-    //This importer is an Override Importer for the .asset extension.
     public abstract class AssetReferenceIDBaseManager<TAssetInstance>
-        where TAssetInstance : AssetReferenceID
+        where TAssetInstance : Object, IAssetReferenceID
     {
 
         private static AssetReferenceIDBaseManager<TAssetInstance> _instance;
@@ -45,10 +45,9 @@ namespace Drboum.Utilities.Editor
 
         public virtual void FixAssetIDIfInvalid(TAssetInstance instance)
         {
-            if ( instance.IsValidGuid )
-            {
+            if ( instance.Guid.IsValid )
                 return;
-            }
+            
             GenerateAndAssignNewGuid(instance);
         }
 
@@ -72,10 +71,10 @@ namespace Drboum.Utilities.Editor
     public static class AssetReferenceIDEditorExtensions
     {
         [Conditional("UNITY_EDITOR")]
-        public static void FixAssetIDIfInvalid<TAssetID>(this TAssetID instance)
-            where TAssetID : AssetReferenceID
+        public static void FixAssetIDIfInvalid<TAssetInstance>(this TAssetInstance instance)
+            where TAssetInstance : Object, IAssetReferenceID
         {
-            AssetReferenceIDBaseManager<TAssetID>.Instance.FixAssetIDIfInvalid(instance);
+            AssetReferenceIDBaseManager<TAssetInstance>.Instance.FixAssetIDIfInvalid(instance);
         }
     }
 }
