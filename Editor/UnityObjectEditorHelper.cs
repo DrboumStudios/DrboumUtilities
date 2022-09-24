@@ -232,10 +232,25 @@ public static class UnityObjectEditorHelper
         return matches;
     }
 
-    public static List<Object> FindAllPrefabWithComponent<TComponent>()
+    public static List<TComponent> FindAllPrefabWithComponent<TComponent>(List<TComponent> matches=null)
         where TComponent : Component
     {
-        return FindAllPrefabWithComponent(typeof(TComponent));
+        matches ??= new List<TComponent>(200);
+        var assetGuids = AssetDatabase.FindAssets($"t:Prefab");
+        for ( var index = 0; index < assetGuids.Length; index++ )
+        {
+            string assetGuid = assetGuids[index];
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(assetGuid));
+            if ( prefab != null )
+            {
+                var lookupComponent = prefab.GetComponentInChildren<TComponent>( true);
+                if ( lookupComponent )
+                {
+                    matches.Add(lookupComponent);
+                }
+            }
+        }
+        return matches;
     }
 #endif
     public static void CheckAndSetActive(this GameObject gameObject, bool active)
