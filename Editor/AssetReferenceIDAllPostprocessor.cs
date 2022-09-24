@@ -7,30 +7,6 @@ namespace Drboum.Utilities.Editor
 #if !DISABLE_ASSETREF_POSTPROCESSOR
     class AssetReferenceIDAllPostprocessor : AssetPostprocessor
     {
-        class PostProcessor : AssetPostprocessor
-        {
-            private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
-            {
-                for ( var index = 0; index < importedAssets.Length; index++ )
-                {
-                    string str = importedAssets[index];
-                    if ( !CanBePrefab(str) )
-                        continue;
-
-                    var assetReferenceID = AssetDatabase.LoadAssetAtPath<PrefabIdentity>(str);
-                    if ( assetReferenceID != null )
-                    {
-                        AssetReferenceIDBaseManager<TAssetInstance>.Instance.FixAssetIDIfInvalid(instance);
-
-                    }
-                }
-            }
-
-            private static bool CanBePrefab(string str)
-            {
-                return Equals(Path.GetExtension(str), ".prefab");
-            }
-        }
 
         private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
         {
