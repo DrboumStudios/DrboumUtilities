@@ -1,11 +1,12 @@
 using Drboum.Utilities.Runtime.Attributes;
+using Unity.Properties;
 using UnityEngine;
 
 namespace Drboum.Utilities.Runtime.EditorHybrid
 {
     public class PrefabIdentity : MonoBehaviour, IAssetReferenceID
     {
-        [SerializeField, InspectorReadOnly] internal GuidWrapper _guid;
+        [SerializeField, InspectorReadOnly,DontCreateProperty] internal GuidWrapper _guid;
 
         public GuidWrapper Guid {
             get => _guid;
