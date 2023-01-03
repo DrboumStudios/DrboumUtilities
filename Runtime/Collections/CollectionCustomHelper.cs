@@ -127,21 +127,21 @@ public static class CollectionCustomHelper {
 
 
     public static bool Contains<TNativeList, T>(this ref TNativeList collection, T element)
-        where TNativeList : struct, INativeList<T>
-        where T : struct, IEquatable<T>
+        where TNativeList : unmanaged, INativeList<T>
+        where T : unmanaged, IEquatable<T>
     {
         return collection.FindFirstIndexOf(element) > -1;
     }
     public static bool Contains<TNativeList, T, U>(this ref TNativeList collection, U element)
-        where TNativeList : struct, INativeList<T>
-        where T : struct
-        where U : struct, IEquatable<T>
+        where TNativeList : unmanaged, INativeList<T>
+        where T : unmanaged
+        where U : unmanaged, IEquatable<T>
     {
         return collection.FindFirstIndexOf<TNativeList, T, U>(element) > -1;
     }
     public static int FindFirstIndexOf<TCollection, T>(this ref TCollection list, T value)
-        where TCollection : struct, INativeList<T>
-        where T : struct, IEquatable<T>
+        where TCollection : unmanaged, INativeList<T>
+        where T : unmanaged, IEquatable<T>
     {
         for ( var i = 0; i < list.Length; i++ )
         {
@@ -154,9 +154,9 @@ public static class CollectionCustomHelper {
     }
 
     public static int FindFirstIndexOf<TCollection, T, U>(this ref TCollection list, U value)
-        where TCollection : struct, INativeList<T>
-        where T : struct
-        where U : struct, IEquatable<T>
+        where TCollection : v, INativeList<T>
+        where T : unmanaged
+        where U : unmanaged, IEquatable<T>
     {
         for ( var i = 0; i < list.Length; i++ )
         {
@@ -168,7 +168,7 @@ public static class CollectionCustomHelper {
         return -1;
     }
     public static unsafe NativeArray<T> ToNativeArray<T>(this in NativeSlice<T> source, Allocator allocator)
-        where T : struct
+        where T : unmanaged
     {
         var dstArray = new NativeArray<T>(source.Length, allocator, NativeArrayOptions.UninitializedMemory);
         var srcPtr = source.GetUnsafeReadOnlyPtr();
@@ -177,7 +177,7 @@ public static class CollectionCustomHelper {
     }
 
     public static unsafe NativeArray<T> ToNativeArray<T>(this in NativeSlice<T> source)
-        where T : struct
+        where T : unmanaged
     {
         var array = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>(source.GetUnsafeReadOnlyPtr(), source.Length, Allocator.None);
 #if UNITY_EDITOR
@@ -201,8 +201,8 @@ public static class CollectionCustomHelper {
     }
 
     public static void DisposeIfCreated<TKey, TValue>(this ref NativeHashMap<TKey, TValue> buffer)
-        where TKey : struct, IEquatable<TKey>
-        where TValue : struct
+        where TKey : unmanaged, IEquatable<TKey>
+        where TValue : unmanaged
     {
         if ( buffer.IsCreated )
         {
@@ -210,8 +210,8 @@ public static class CollectionCustomHelper {
         }
     }
     public static void DisposeIfCreated<TKey, TValue>(this ref NativeHashMap<TKey, TValue> buffer, JobHandle dependencies)
-        where TKey : struct, IEquatable<TKey>
-        where TValue : struct
+        where TKey : unmanaged, IEquatable<TKey>
+        where TValue : unmanaged
     {
         if ( buffer.IsCreated )
         {
