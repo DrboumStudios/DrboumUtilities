@@ -16,8 +16,8 @@ public static class CollectionCustomHelper {
 
     [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
     public static void CheckCapacity<TDest, TSource>(TDest destinationBuffer, TSource textStream)
-        where TDest : struct, INativeList<byte>
-        where TSource : struct, INativeList<byte>
+        where TDest : unmanaged, INativeList<byte>
+        where TSource : unmanaged, INativeList<byte>
     {
         if ( textStream.Length > destinationBuffer.Capacity )
         {
@@ -58,7 +58,7 @@ public static class CollectionCustomHelper {
         }
     }
     public static NativeArray<T> Flatten2DArray<T>(this T[,] arrayToFlatten, int sizeX, int sizeY,
-        Allocator allocator = Allocator.Temp) where T : struct
+        Allocator allocator = Allocator.Temp) where T : unmanaged
     {
         var colliderHeights = new NativeArray<T>(sizeX * sizeY, allocator, NativeArrayOptions.UninitializedMemory);
         Flatten2DArray(arrayToFlatten, sizeX, sizeY, ref colliderHeights);
@@ -67,8 +67,8 @@ public static class CollectionCustomHelper {
 
     public static NativeArray<Out> Flatten2DArray<In, Out>(this In[,] arrayToFlatten, int sizeX, int sizeY,
         Allocator allocator = Allocator.Temp)
-        where Out : struct, IConvertStruct<In, Out>
-        where In : struct
+        where Out : unmanaged, IConvertStruct<In, Out>
+        where In : unmanaged
     {
         var colliderHeights = new NativeArray<Out>(sizeX * sizeY, allocator, NativeArrayOptions.UninitializedMemory);
         Flatten2DArray(arrayToFlatten, sizeX, sizeY, ref colliderHeights);
@@ -77,8 +77,8 @@ public static class CollectionCustomHelper {
 
     public static void Flatten2DArray<In, Out>(this In[,] arrayToFlatten, int sizeX, int sizeY,
         ref NativeArray<Out> colliderHeights)
-        where Out : struct, IConvertStruct<In, Out>
-        where In : struct
+        where Out : unmanaged, IConvertStruct<In, Out>
+        where In : unmanaged
     {
         for ( var j = 0; j < sizeY; j++ )
         {
@@ -154,7 +154,7 @@ public static class CollectionCustomHelper {
     }
 
     public static int FindFirstIndexOf<TCollection, T, U>(this ref TCollection list, U value)
-        where TCollection : v, INativeList<T>
+        where TCollection : unmanaged, INativeList<T>
         where T : unmanaged
         where U : unmanaged, IEquatable<T>
     {
