@@ -395,7 +395,7 @@ public static partial class NativeLinqExtensions {
         int sizeOf = UnsafeUtility.SizeOf<T>();
         for ( int i = 0; i < length * sizeOf; i += sizeOf )
         {
-            UnsafeUtility.CopyPtrTounmanagedure(nativeArrays[i], out NativeArray<T> nativeArray);
+            UnsafeUtility.CopyPtrToStructure(nativeArrays[i], out NativeArray<T> nativeArray);
             NativeArray<T>.Copy(nativeArray, 0, aggregatedArray, offset, nativeArray.Length);
             offset += nativeArray.Length;
         }

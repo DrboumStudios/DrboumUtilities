@@ -473,7 +473,7 @@ public static class CollectionCustomHelper {
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static unsafe NativeArray<T> Shrink<T>(this in NativeArray<T> source, int newLength, int startIndex = 0)
-        where T : struct
+        where T : unmanaged
     {
         bool newArrayIsEmpty = startIndex >= source.Length;
         var index = GetSafeIndex(startIndex, newArrayIsEmpty);
@@ -496,7 +496,7 @@ public static class CollectionCustomHelper {
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static NativeArray<T> Shrink<T>(this in NativeArray<T> source, int newLength, Allocator allocator, int startIndex = 0)
-        where T : struct
+        where T : unmanaged
     {
         bool newArrayIsEmpty = startIndex >= source.Length;
         var index = GetSafeIndex(startIndex, newArrayIsEmpty);

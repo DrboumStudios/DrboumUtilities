@@ -49,7 +49,7 @@ namespace Drboum.Utilities.Runtime.Inputs {
             return fixedString;
         }
         public void AppendFixedString<T>(ref T fixedString)
-            where T : struct, INativeList<byte>, IUTF8Bytes
+            where T : unmanaged, INativeList<byte>, IUTF8Bytes
         {
             PressedThisTick.ToFixedString(out FixedString32Bytes pressedThisFrameStr);
             IsPressed().ToFixedString(out FixedString32Bytes pressedStr);
