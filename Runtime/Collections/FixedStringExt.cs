@@ -21,7 +21,7 @@ public static unsafe class FixedStringExt {
     /// <typeparam name="TFstring"></typeparam>
     /// <typeparam name="TValue"></typeparam>
     public static unsafe void AppendBytesAsFixedString<TFstring, TValue>(this ref TFstring fstring, ref TValue bytes, char separator = ',')
-        where TFstring : struct, INativeList<byte>, IUTF8Bytes
+        where TFstring : unmanaged, INativeList<byte>, IUTF8Bytes
         where TValue : unmanaged
     {
         int size = sizeof(TValue);
@@ -34,7 +34,7 @@ public static unsafe class FixedStringExt {
         AppendByteAsFixedString<TFstring, TValue>(ref fstring, ptr[size - 1]);
     }
     public static TFixedString ToFixedStringAsByte<TFixedString, TValue>(this ref TValue bytes, char separator = ',')
-        where TFixedString : struct, INativeList<byte>, IUTF8Bytes
+        where TFixedString : unmanaged, INativeList<byte>, IUTF8Bytes
         where TValue : unmanaged
     {
         TFixedString fstring = default;
@@ -49,7 +49,8 @@ public static unsafe class FixedStringExt {
     /// <typeparam name="TFstring"></typeparam>
     /// <typeparam name="TValue"></typeparam>
     public static void AppendByteAsFixedString<TFstring, TValue>(ref TFstring fstring, byte inputIn)
-        where TFstring : struct, INativeList<byte>, IUTF8Bytes where TValue : struct
+        where TFstring : unmanaged, INativeList<byte>, IUTF8Bytes
+        where TValue : unmanaged
     {
         if ( inputIn == 0 )
         {
@@ -61,7 +62,7 @@ public static unsafe class FixedStringExt {
         }
     }
     public static unsafe void ToFixedString<T>(this NativeText textStream, out T fixedString)
-        where T : struct, INativeList<byte>, IUTF8Bytes
+        where T : unmanaged, INativeList<byte>, IUTF8Bytes
     {
         fixedString = default;
         CollectionCustomHelper.CheckCapacity(fixedString, textStream);
