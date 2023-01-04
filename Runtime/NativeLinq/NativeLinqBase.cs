@@ -13,7 +13,7 @@ namespace Drboum.Utilities.Runtime.NativeLinq {
         [Pure]
         TResult ConvertValue(in T element);
     }
-    public readonly unmanaged EquatablePredicate<T, TEquatable> : INativePredicate<T>
+    public readonly struct EquatablePredicate<T, TEquatable> : INativePredicate<T>
         where T : unmanaged
         where TEquatable : IEquatable<T> {
         private readonly TEquatable _lookupValue;
@@ -27,7 +27,7 @@ namespace Drboum.Utilities.Runtime.NativeLinq {
             return _lookupValue.Equals(element);
         }
     }
-    public readonly unmanaged EquatablePredicate<T> : INativePredicate<T>
+    public readonly struct EquatablePredicate<T> : INativePredicate<T>
         where T : unmanaged, IEquatable<T> {
         private readonly T _lookupValue;
         public EquatablePredicate(T lookupValue)
@@ -41,12 +41,12 @@ namespace Drboum.Utilities.Runtime.NativeLinq {
         }
     }
     
-    public unmanaged AlwaysTruePredicate<T> : INativePredicate<T>
+    public struct AlwaysTruePredicate<T> : INativePredicate<T>
         where T : unmanaged {
         public readonly bool EvaluatePredicate(in T x) => true;
     }
     
-    public readonly unmanaged AggregatedPredicate<T, TPredicate1, TPredicate2> : INativePredicate<T>
+    public readonly struct AggregatedPredicate<T, TPredicate1, TPredicate2> : INativePredicate<T>
         where T : unmanaged
         where TPredicate1 : unmanaged, INativePredicate<T>
         where TPredicate2 : unmanaged, INativePredicate<T> {
@@ -63,7 +63,7 @@ namespace Drboum.Utilities.Runtime.NativeLinq {
             return Predicate1.EvaluatePredicate(in element) && Predicate2.EvaluatePredicate(in element);
         }
     }
-    public readonly unmanaged AggregatedPredicate<T, TPredicate1, TPredicate2, TPredicate3> : INativePredicate<T>
+    public readonly struct AggregatedPredicate<T, TPredicate1, TPredicate2, TPredicate3> : INativePredicate<T>
         where T : unmanaged
         where TPredicate1 : unmanaged, INativePredicate<T>
         where TPredicate2 : unmanaged, INativePredicate<T>
@@ -83,7 +83,7 @@ namespace Drboum.Utilities.Runtime.NativeLinq {
             return Predicate1.EvaluatePredicate(in element) && Predicate2.EvaluatePredicate(in element) && Predicate3.EvaluatePredicate(in element);
         }
     }
-    public readonly unmanaged AggregatedPredicate<T, TPredicate1, TPredicate2, TPredicate3, TPredicate4> : INativePredicate<T>
+    public readonly struct AggregatedPredicate<T, TPredicate1, TPredicate2, TPredicate3, TPredicate4> : INativePredicate<T>
         where T : unmanaged
         where TPredicate1 : unmanaged, INativePredicate<T>
         where TPredicate2 : unmanaged, INativePredicate<T>
