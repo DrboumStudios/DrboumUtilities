@@ -66,7 +66,7 @@ namespace Drboum.Utilities.Editor
             guidLabel.style.flexGrow = new StyleFloat(0.1f);
             guidLabel.style.flexBasis = Length.Percent(41f);
             guidLabel.AddToClassList("unity-base-field");
-            var guidField = new Label()() {
+            var guidField = new Label() {
                 text = (guidWrapper.ToString()),
             };
             guidField.selection.isSelectable = true;
