@@ -213,7 +213,7 @@ public static class UnityObjectEditorHelper
         Selection.objects = matches.ToArray();
     }
 
-    public static List<Object> FindAllPrefabWithComponent(Type targetType, List<Object> matches=null,string lookupFolders=null)
+    public static List<Object> FindAllPrefabWithComponent(Type targetType, List<Object> matches=null,string[] lookupFolders=null)
     {
         matches ??= new List<Object>(200);
         var assetGuids = AssetDatabase.FindAssets($"t:Prefab",lookupFolders);
@@ -231,7 +231,7 @@ public static class UnityObjectEditorHelper
         }
         return matches;
     }
-    public static List<TComponent> FindAllPrefabWithComponent<TComponent>(List<TComponent> matches=null,string lookupFolders=null)
+    public static List<TComponent> FindAllPrefabWithComponent<TComponent>(List<TComponent> matches=null,string[] lookupFolders=null)
         where TComponent : Component
     {
         matches ??= new List<TComponent>(200);
