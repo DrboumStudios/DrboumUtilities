@@ -213,10 +213,10 @@ public static class UnityObjectEditorHelper
         Selection.objects = matches.ToArray();
     }
 
-    public static List<Object> FindAllPrefabWithComponent(Type targetType, List<Object> matches=null)
+    public static List<Object> FindAllPrefabWithComponent(Type targetType, List<Object> matches=null,string lookupFolders=null)
     {
         matches ??= new List<Object>(200);
-        var assetGuids = AssetDatabase.FindAssets($"t:Prefab");
+        var assetGuids = AssetDatabase.FindAssets($"t:Prefab",lookupFolders);
         for ( var index = 0; index < assetGuids.Length; index++ )
         {
             string assetGuid = assetGuids[index];
@@ -231,12 +231,11 @@ public static class UnityObjectEditorHelper
         }
         return matches;
     }
-
-    public static List<TComponent> FindAllPrefabWithComponent<TComponent>(List<TComponent> matches=null)
+    public static List<TComponent> FindAllPrefabWithComponent<TComponent>(List<TComponent> matches=null,string lookupFolders=null)
         where TComponent : Component
     {
         matches ??= new List<TComponent>(200);
-        var assetGuids = AssetDatabase.FindAssets($"t:Prefab");
+        var assetGuids = AssetDatabase.FindAssets($"t:Prefab",lookupFolders);
         for ( var index = 0; index < assetGuids.Length; index++ )
         {
             string assetGuid = assetGuids[index];
