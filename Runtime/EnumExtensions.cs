@@ -30,4 +30,10 @@ public static partial class EnumExtensions {
     {
         return enumVal.ToByte(null);
     }
+
+    public static bool HasFlagNoAlloc<T>(this T lh,T rh)
+        where T : Enum,IConvertible
+    {
+        return (lh.ToInt32(null) & rh.ToInt32(null)) != 0;
+    }
 }
