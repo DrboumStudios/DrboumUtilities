@@ -11,13 +11,7 @@ namespace Drboum.Utilities.Editor
 
         private static AssetReferenceIDBaseManager<TAssetInstance> _instance;
         internal static AssetReferenceIDBaseManager<TAssetInstance> Instance => _instance;
-
-        // protected static void CreateStaticInstance<T>()
-        //     where T : AssetReferenceIDBaseManager<TAssetInstance>, new()
-        // {
-        //     _instance = new T();
-        //     _instance.Initialize();
-        // }
+        
 
         static AssetReferenceIDBaseManager()
         {
