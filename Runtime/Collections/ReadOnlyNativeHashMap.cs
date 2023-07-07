@@ -2,8 +2,8 @@
 using Unity.Collections;
 namespace Drboum.Utilities.Runtime.Collections {
     public struct ReadOnlyNativeHashMap<TKey, TValue>
-        where TKey : struct, IEquatable<TKey>
-        where TValue : struct {
+        where TKey : unmanaged, IEquatable<TKey>
+        where TValue : unmanaged {
 
         private NativeHashMap<TKey, TValue> _lookupTable;
 

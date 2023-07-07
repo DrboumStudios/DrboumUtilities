@@ -69,7 +69,7 @@ namespace Drboum.Utilities.Editor
             var guidField = new Label() {
                 text = (guidWrapper.ToString()),
             };
-            guidField.isSelectable = true;
+            guidField.selection.isSelectable = true;
             guidWrapperDisplay.Add(guidLabel);
             guidWrapperDisplay.Add(guidField);
             return guidWrapperDisplay;

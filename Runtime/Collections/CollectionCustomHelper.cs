@@ -16,8 +16,8 @@ public static class CollectionCustomHelper {
 
     [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
     public static void CheckCapacity<TDest, TSource>(TDest destinationBuffer, TSource textStream)
-        where TDest : struct, INativeList<byte>
-        where TSource : struct, INativeList<byte>
+        where TDest : unmanaged, INativeList<byte>
+        where TSource : unmanaged, INativeList<byte>
     {
         if ( textStream.Length > destinationBuffer.Capacity )
         {
@@ -58,7 +58,7 @@ public static class CollectionCustomHelper {
         }
     }
     public static NativeArray<T> Flatten2DArray<T>(this T[,] arrayToFlatten, int sizeX, int sizeY,
-        Allocator allocator = Allocator.Temp) where T : struct
+        Allocator allocator = Allocator.Temp) where T : unmanaged
     {
         var colliderHeights = new NativeArray<T>(sizeX * sizeY, allocator, NativeArrayOptions.UninitializedMemory);
         Flatten2DArray(arrayToFlatten, sizeX, sizeY, ref colliderHeights);
@@ -67,8 +67,8 @@ public static class CollectionCustomHelper {
 
     public static NativeArray<Out> Flatten2DArray<In, Out>(this In[,] arrayToFlatten, int sizeX, int sizeY,
         Allocator allocator = Allocator.Temp)
-        where Out : struct, IConvertStruct<In, Out>
-        where In : struct
+        where Out : unmanaged, IConvertStruct<In, Out>
+        where In : unmanaged
     {
         var colliderHeights = new NativeArray<Out>(sizeX * sizeY, allocator, NativeArrayOptions.UninitializedMemory);
         Flatten2DArray(arrayToFlatten, sizeX, sizeY, ref colliderHeights);
@@ -77,8 +77,8 @@ public static class CollectionCustomHelper {
 
     public static void Flatten2DArray<In, Out>(this In[,] arrayToFlatten, int sizeX, int sizeY,
         ref NativeArray<Out> colliderHeights)
-        where Out : struct, IConvertStruct<In, Out>
-        where In : struct
+        where Out : unmanaged, IConvertStruct<In, Out>
+        where In : unmanaged
     {
         for ( var j = 0; j < sizeY; j++ )
         {
@@ -127,21 +127,21 @@ public static class CollectionCustomHelper {
 
 
     public static bool Contains<TNativeList, T>(this ref TNativeList collection, T element)
-        where TNativeList : struct, INativeList<T>
-        where T : struct, IEquatable<T>
+        where TNativeList : unmanaged, INativeList<T>
+        where T : unmanaged, IEquatable<T>
     {
         return collection.FindFirstIndexOf(element) > -1;
     }
     public static bool Contains<TNativeList, T, U>(this ref TNativeList collection, U element)
-        where TNativeList : struct, INativeList<T>
-        where T : struct
-        where U : struct, IEquatable<T>
+        where TNativeList : unmanaged, INativeList<T>
+        where T : unmanaged
+        where U : unmanaged, IEquatable<T>
     {
         return collection.FindFirstIndexOf<TNativeList, T, U>(element) > -1;
     }
     public static int FindFirstIndexOf<TCollection, T>(this ref TCollection list, T value)
-        where TCollection : struct, INativeList<T>
-        where T : struct, IEquatable<T>
+        where TCollection : unmanaged, INativeList<T>
+        where T : unmanaged, IEquatable<T>
     {
         for ( var i = 0; i < list.Length; i++ )
         {
@@ -154,9 +154,9 @@ public static class CollectionCustomHelper {
     }
 
     public static int FindFirstIndexOf<TCollection, T, U>(this ref TCollection list, U value)
-        where TCollection : struct, INativeList<T>
-        where T : struct
-        where U : struct, IEquatable<T>
+        where TCollection : unmanaged, INativeList<T>
+        where T : unmanaged
+        where U : unmanaged, IEquatable<T>
     {
         for ( var i = 0; i < list.Length; i++ )
         {
@@ -168,7 +168,7 @@ public static class CollectionCustomHelper {
         return -1;
     }
     public static unsafe NativeArray<T> ToNativeArray<T>(this in NativeSlice<T> source, Allocator allocator)
-        where T : struct
+        where T : unmanaged
     {
         var dstArray = new NativeArray<T>(source.Length, allocator, NativeArrayOptions.UninitializedMemory);
         var srcPtr = source.GetUnsafeReadOnlyPtr();
@@ -177,7 +177,7 @@ public static class CollectionCustomHelper {
     }
 
     public static unsafe NativeArray<T> ToNativeArray<T>(this in NativeSlice<T> source)
-        where T : struct
+        where T : unmanaged
     {
         var array = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>(source.GetUnsafeReadOnlyPtr(), source.Length, Allocator.None);
 #if UNITY_EDITOR
@@ -201,8 +201,8 @@ public static class CollectionCustomHelper {
     }
 
     public static void DisposeIfCreated<TKey, TValue>(this ref NativeHashMap<TKey, TValue> buffer)
-        where TKey : struct, IEquatable<TKey>
-        where TValue : struct
+        where TKey : unmanaged, IEquatable<TKey>
+        where TValue : unmanaged
     {
         if ( buffer.IsCreated )
         {
@@ -210,22 +210,22 @@ public static class CollectionCustomHelper {
         }
     }
     public static void DisposeIfCreated<TKey, TValue>(this ref NativeHashMap<TKey, TValue> buffer, JobHandle dependencies)
-        where TKey : struct, IEquatable<TKey>
-        where TValue : struct
+        where TKey : unmanaged, IEquatable<TKey>
+        where TValue : unmanaged
     {
         if ( buffer.IsCreated )
         {
             buffer.Dispose(dependencies);
         }
     }
-    public static void DisposeIfCreated<T>(this ref NativeArray<T> buffer) where T : struct
+    public static void DisposeIfCreated<T>(this ref NativeArray<T> buffer) where T : unmanaged
     {
         if ( buffer.IsCreated )
         {
             buffer.Dispose();
         }
     }
-    public static void DisposeIfCreated<T>(this ref NativeArray<T> buffer, JobHandle dependencies) where T : struct
+    public static void DisposeIfCreated<T>(this ref NativeArray<T> buffer, JobHandle dependencies) where T : unmanaged
     {
         if ( buffer.IsCreated )
         {
@@ -311,15 +311,15 @@ public static class CollectionCustomHelper {
         return id >= 0 && id < length;
     }
     public static string ToContentString<T>(this in NativeArray<T> flatNativeArray, char valueSeparator = ',')
-        where T : struct
+        where T : unmanaged
     {
         flatNativeArray.ToContentFixedString(out FixedString4096Bytes toString, valueSeparator);
         return toString.ToString();
     }
     public static void ToContentFixedString<T, TFixedString>(this in NativeArray<T> source,
         out TFixedString fixedStringContent, char valueSeparator = ',')
-        where T : struct
-        where TFixedString : struct, INativeList<byte>, IUTF8Bytes
+        where T : unmanaged
+        where TFixedString : unmanaged, INativeList<byte>, IUTF8Bytes
     {
         fixedStringContent = new TFixedString();
         fixedStringContent.Append("Array content: ");
@@ -372,7 +372,7 @@ public static class CollectionCustomHelper {
         return true;
     }
     public static NativeHashMap<GuidWrapper, TValue> ToNativeContainer<TValue>(
-        this Dictionary<FixedBytes16, TValue> dictionnary, Allocator allocator) where TValue : struct
+        this Dictionary<FixedBytes16, TValue> dictionnary, Allocator allocator) where TValue : unmanaged
     {
         var hashMap = new NativeHashMap<GuidWrapper, TValue>(dictionnary.Count, allocator);
         foreach ( KeyValuePair<FixedBytes16, TValue> item in dictionnary )
@@ -473,7 +473,7 @@ public static class CollectionCustomHelper {
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static unsafe NativeArray<T> Shrink<T>(this in NativeArray<T> source, int newLength, int startIndex = 0)
-        where T : struct
+        where T : unmanaged
     {
         bool newArrayIsEmpty = startIndex >= source.Length;
         var index = GetSafeIndex(startIndex, newArrayIsEmpty);
@@ -496,7 +496,7 @@ public static class CollectionCustomHelper {
     /// <typeparam name="T"></typeparam>
     /// <returns></returns>
     public static NativeArray<T> Shrink<T>(this in NativeArray<T> source, int newLength, Allocator allocator, int startIndex = 0)
-        where T : struct
+        where T : unmanaged
     {
         bool newArrayIsEmpty = startIndex >= source.Length;
         var index = GetSafeIndex(startIndex, newArrayIsEmpty);
@@ -513,8 +513,8 @@ public static class CollectionCustomHelper {
         CheckResize(index + newLength, sourceLength);
     }
     public static unsafe ref TNativeList Shrink<T, TNativeList>(this ref TNativeList source, int newLength, int startIndex)
-        where T : struct
-        where TNativeList : struct, INativeList<T>
+        where T : unmanaged
+        where TNativeList : unmanaged, INativeList<T>
     {
         bool newArrayIsEmpty = startIndex >= source.Length;
 
@@ -530,21 +530,21 @@ public static class CollectionCustomHelper {
         return math.select(startIndex, 0, newArrayIsEmpty);
     }
     public static ref TNativeList Shrink<T, TNativeList>(this ref TNativeList source, int newLength)
-        where T : struct
-        where TNativeList : struct, INativeList<T>
+        where T : unmanaged
+        where TNativeList : unmanaged, INativeList<T>
     {
         CheckResize(newLength, source.Capacity);
         source.Length = newLength;
         return ref source;
     }
     public static unsafe void* GetUnsafePtr<T, TNativeList>(this ref TNativeList source)
-        where T : struct
-        where TNativeList : struct, INativeList<T>
+        where T : unmanaged
+        where TNativeList : unmanaged, INativeList<T>
     {
         return UnsafeUtility.AddressOf(ref source.ElementAt(0));
     }
     public static unsafe void* GetArrayElementPtr<T>(void* sourcePtr, long index)
-        where T : struct
+        where T : unmanaged
     {
         return (void*)GetArrayElementPtr<T>(PointerAsLong(sourcePtr), index);
     }
@@ -554,7 +554,7 @@ public static class CollectionCustomHelper {
         return ((IntPtr)ptr).ToInt64();
     }
     public static long GetArrayElementPtr<T>(long sourcePtr, long index)
-        where T : struct
+        where T : unmanaged
     {
         return (sourcePtr + (UnsafeUtility.SizeOf<T>() * index));
     }
