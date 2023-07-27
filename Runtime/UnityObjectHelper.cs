@@ -10,8 +10,10 @@ using Object = UnityEngine.Object;
 
 public static class UnityObjectHelper
 {
-    private static readonly List<GameObject> _rootGameObjectsBuffer = new(20);
+    private static List<GameObject> RootGameObjectsBuffer => _rootGameObjectsBuffer ??= new(20);
+
     private static Dictionary<Type, IEnumerable> _dictionaryListBuffer;
+    private static List<GameObject> _rootGameObjectsBuffer;
 
     public static bool IsPrefabInSubSceneContext(this Object @this) =>
         @this is GameObject go && IsPrefabInSubSceneContext(go);
@@ -170,28 +172,28 @@ public static class UnityObjectHelper
         }
     }
 
-    private static void CheckMultipleObjectOfType<ReturnType, LookupType>(ref ReturnType resultReference,
-        LookupType[] foundArray)
-        where LookupType : Component, ReturnType
+    private static void CheckMultipleObjectOfType<TReturnType, TLookupType>(ref TReturnType resultReference,
+        IReadOnlyList<TLookupType> foundArray)
+        where TLookupType : Component, TReturnType
     {
-        CheckSceneSingletonComponent<ReturnType, LookupType>(foundArray);
+        CheckSceneSingletonComponent<TReturnType, TLookupType>(foundArray);
         resultReference = foundArray[0];
     }
 
     [Conditional("UNITY_EDITOR")]
     [Conditional("DEBUG")]
-    private static void CheckSceneSingletonComponent<ReturnType, LookupType>(LookupType[] foundArray)
-        where LookupType : Component, ReturnType
+    private static void CheckSceneSingletonComponent<TReturnType, TLookupType>(IReadOnlyList<TLookupType> foundArray)
+        where TLookupType : Component, TReturnType
     {
-        if ( foundArray.Length == 0 )
+        if ( foundArray.Count == 0 )
         {
             throw new InvalidOperationException(
-                $"the parameter of type {typeof(LookupType)} is not assigned on the component field and can't be found in the scene.");
+                $"the parameter of type {typeof(TLookupType)} is not assigned on the component field and can't be found in the scene.");
         }
-        if ( foundArray.Length > 1 )
+        if ( foundArray.Count > 1 )
         {
             Debug.LogWarning(
-                $"there is more than 1 {typeof(LookupType)} in the scene. this might have unexpected effects");
+                $"there is more than 1 {typeof(TLookupType)} in the scene. this might have unexpected effects");
         }
     }
 
@@ -234,7 +236,7 @@ public static class UnityObjectHelper
     {
         Type type = typeof(T);
         List<T> buffer = null;
-        if ( !_dictionaryListBuffer.TryGetValue(type, out var Listobj) )
+        if ( !_dictionaryListBuffer.TryGetValue(type, out _) )
         {
             buffer = new List<T>();
             _dictionaryListBuffer.Add(type, buffer);
@@ -253,11 +255,11 @@ public static class UnityObjectHelper
     public static T FindFirstInstancesInScene<T>(this Scene scene)
         where T : Component
     {
-        scene.GetRootGameObjects(_rootGameObjectsBuffer);
+        scene.GetRootGameObjects(RootGameObjectsBuffer);
         T firstComponent = default;
-        for ( var index = 0; index < _rootGameObjectsBuffer.Count; index++ )
+        for ( var index = 0; index < RootGameObjectsBuffer.Count; index++ )
         {
-            GameObject rootGameObject = _rootGameObjectsBuffer[index];
+            GameObject rootGameObject = RootGameObjectsBuffer[index];
             firstComponent = rootGameObject.GetComponentInChildren<T>();
             if ( firstComponent )
                 break;
@@ -268,9 +270,9 @@ public static class UnityObjectHelper
     public static void FindAllInstancesInScene<T>(this Scene scene, List<T> instancesBuffer)
         where T : Component
     {
-        scene.GetRootGameObjects(_rootGameObjectsBuffer);
+        scene.GetRootGameObjects(RootGameObjectsBuffer);
         var buffer = GetListFromPool<T>();
-        foreach ( GameObject rootGameObject in _rootGameObjectsBuffer )
+        foreach ( GameObject rootGameObject in RootGameObjectsBuffer )
         {
             rootGameObject.GetComponentsInChildren(true, buffer);
             instancesBuffer.AddRange(buffer);
@@ -292,8 +294,8 @@ public static class UnityObjectHelper
 
     public static void FindAllInstancesInScene(this Scene scene, List<Object> lookupResult, Type lookupType)
     {
-        scene.GetRootGameObjects(_rootGameObjectsBuffer);
-        foreach ( GameObject rootGameObject in _rootGameObjectsBuffer )
+        scene.GetRootGameObjects(RootGameObjectsBuffer);
+        foreach ( GameObject rootGameObject in RootGameObjectsBuffer )
         {
             Component[] childrenInterfaces = rootGameObject.GetComponentsInChildren(lookupType);
             for ( var index = 0; index < childrenInterfaces.Length; index++ )
@@ -306,8 +308,8 @@ public static class UnityObjectHelper
 
     public static void FindAllInstancesIdInScene(List<int> instancesBuffer, Type lookupType, Scene scene)
     {
-        scene.GetRootGameObjects(_rootGameObjectsBuffer);
-        foreach ( GameObject rootGameObject in _rootGameObjectsBuffer )
+        scene.GetRootGameObjects(RootGameObjectsBuffer);
+        foreach ( GameObject rootGameObject in RootGameObjectsBuffer )
         {
             Component[] childrenInterfaces = rootGameObject.GetComponentsInChildren(lookupType);
             for ( var index = 0; index < childrenInterfaces.Length; index++ )
