@@ -16,8 +16,8 @@ public static class CollectionCustomHelper {
 
     [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
     public static void CheckCapacity<TDest, TSource>(TDest destinationBuffer, TSource textStream)
-        where TDest : unmanaged, INativeList<byte>
-        where TSource : unmanaged, INativeList<byte>
+        where TDest : INativeList<byte>
+        where TSource : INativeList<byte>
     {
         if ( textStream.Length > destinationBuffer.Capacity )
         {

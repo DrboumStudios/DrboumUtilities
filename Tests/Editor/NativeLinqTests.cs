@@ -154,8 +154,8 @@ namespace Drboum.Utilities.Tests.Editor {
 
         }
         private static void SkipWhileTest<T, TNativePredicate>(NativeArray<T> data, TNativePredicate predicate)
-            where T : struct
-            where TNativePredicate : struct, INativePredicate<T>
+            where T : unmanaged
+            where TNativePredicate : unmanaged, INativePredicate<T>
         {
             var results  = data.CreateCopy().SkipWhileNative<T, TNativePredicate>(in predicate);
             var listLinq = data.SkipWhile((x) => predicate.EvaluatePredicate(x)).ToList();
@@ -188,7 +188,7 @@ namespace Drboum.Utilities.Tests.Editor {
 
         [BurstCompile(CompileSynchronously = true)]
         private struct BurstTestJob<T, TNativePredicate> : IJob
-            where T : struct
+            where T : unmanaged
             where TNativePredicate : struct, INativePredicate<T> {
 
             public NativeArray<T>   Source;
@@ -218,7 +218,7 @@ namespace Drboum.Utilities.Tests.Editor {
         }
 
         private struct EquatablePredicateBurstTest<T> : INativePredicate<T>
-            where T : struct, IEquatable<T> {
+            where T : unmanaged, IEquatable<T> {
             public  EquatablePredicate<T> Predicate;
             private bool                  _runOnce;
             public bool EvaluatePredicate(in T element)

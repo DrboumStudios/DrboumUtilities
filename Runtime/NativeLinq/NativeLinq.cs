@@ -326,7 +326,7 @@ public static partial class NativeLinqExtensions {
         default(AlwaysTruePredicate<float>));
 
     internal static unsafe int SumNativePtr<TNativePredicate>(int* source, int length, in TNativePredicate predicate)
-        where TNativePredicate : unmanaged, INativePredicate<int>
+        where TNativePredicate : struct, INativePredicate<int>
     {
         var count = 0;
         for ( int i = 0; i < length; i++ )

@@ -61,7 +61,7 @@ public static unsafe class FixedStringExt {
             fstring.Append(inputIn);
         }
     }
-    public static unsafe void ToFixedString<T>(this NativeText textStream, out T fixedString)
+    public static void ToFixedString<T>(this NativeText textStream, out T fixedString)
         where T : unmanaged, INativeList<byte>, IUTF8Bytes
     {
         fixedString = default;

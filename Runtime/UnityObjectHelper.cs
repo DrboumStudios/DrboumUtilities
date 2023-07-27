@@ -118,25 +118,25 @@ public static class UnityObjectHelper
         return false;
     }
 
-    public static T GetSingletonComponent<T>(bool includeInactive = false)
+    public static T GetSingletonComponent<T>(FindObjectsInactive includeInactive = FindObjectsInactive.Exclude, FindObjectsSortMode findObjectsSortMode = FindObjectsSortMode.None)
         where T : MonoBehaviour
     {
-        T[] componentInScenes = Object.FindObjectsOfType<T>(includeInactive);
+        T[] componentInScenes = Object.FindObjectsByType<T>(includeInactive, findObjectsSortMode);
         T singletonInScene = null;
         CheckMultipleObjectOfType(ref singletonInScene, componentInScenes);
         return singletonInScene;
     }
 
     /// <summary>
-    /// <see cref="FillNullMonobehaviourField{ReturnType,LookupType}"/>
+    /// <see cref="FillNullMonoBehaviourField{TReturnType,TLookupType}"/>
     /// </summary>
     /// <param name="component"></param>
     /// <param name="includeInactive"></param>
     /// <typeparam name="T"></typeparam>
-    public static void FillNullMonobehaviourField<T>(ref T component, bool includeInactive = false)
+    public static void FillNullMonoBehaviourField<T>(ref T component, FindObjectsInactive includeInactive = FindObjectsInactive.Exclude, FindObjectsSortMode findObjectsSortMode = FindObjectsSortMode.None)
         where T : Component
     {
-        FillNullMonobehaviourField<T, T>(ref component, includeInactive);
+        FillNullMonoBehaviourField<T, T>(ref component, includeInactive);
     }
 
     private static void LogErrorMessageUnassignedFieldAndAbsentofScene<T>()
@@ -149,19 +149,15 @@ public static class UnityObjectHelper
     /// fill resultReference only if its null
     /// </summary>
     /// <remarks>
-    ///  will throw an exception if the <typeparamref name="LookupType"/> is not found, will log if there is more than a single instance available in the scene
+    ///  will throw an exception if the <typeparamref name="TLookupType"/> is not found, will log if there is more than a single instance available in the scene
     /// </remarks>
-    /// <param name="resultReference"></param>
-    /// <param name="includeInactive"></param>
-    /// <typeparam name="ReturnType"></typeparam>
-    /// <typeparam name="LookupType"></typeparam>
-    public static void FillNullMonobehaviourField<ReturnType, LookupType>(ref ReturnType resultReference, bool includeInactive = false)
-        where LookupType : Component, ReturnType
+    public static void FillNullMonoBehaviourField<TReturnType, TLookupType>(ref TReturnType resultReference, FindObjectsInactive includeInactive = FindObjectsInactive.Exclude, FindObjectsSortMode findObjectsSortMode = FindObjectsSortMode.None)
+        where TLookupType : Component, TReturnType
     {
         if ( resultReference == null )
         {
 #if UNITY_EDITOR
-            LookupType[] foundArray = Object.FindObjectsOfType<LookupType>(includeInactive);
+            TLookupType[] foundArray = Object.FindObjectsByType<TLookupType>(includeInactive, findObjectsSortMode);
             CheckMultipleObjectOfType(ref resultReference, foundArray);
 
 #else
@@ -169,7 +165,7 @@ public static class UnityObjectHelper
 #endif
             if ( resultReference == null )
             {
-                LogErrorMessageUnassignedFieldAndAbsentofScene<LookupType>();
+                LogErrorMessageUnassignedFieldAndAbsentofScene<TLookupType>();
             }
         }
     }
@@ -199,17 +195,16 @@ public static class UnityObjectHelper
         }
     }
 
-    public static ReturnType FillNullMonobehaviourField<ReturnType, LookupType, ParameterType>(
-        ParameterType parameterToNullCheck = null,
-        bool includeInactive = false)
-        where LookupType : Component, ReturnType
-        where ParameterType : class
+    public static TReturnType FillNullMonoBehaviourField<TReturnType, TLookupType, TParameterType>(
+        TParameterType parameterToNullCheck = null, FindObjectsInactive includeInactive = FindObjectsInactive.Exclude, FindObjectsSortMode findObjectsSortMode = FindObjectsSortMode.None)
+        where TLookupType : Component, TReturnType
+        where TParameterType : class
     {
-        ReturnType resultReference = default;
+        TReturnType resultReference = default;
         if ( parameterToNullCheck == null )
         {
 #if UNITY_EDITOR
-            LookupType[] foundArray = Object.FindObjectsOfType<LookupType>(includeInactive);
+            TLookupType[] foundArray = Object.FindObjectsByType<TLookupType>(includeInactive, findObjectsSortMode);
             CheckMultipleObjectOfType(ref resultReference, foundArray);
 #else
                 resultReference = Object.FindObjectOfType<LookupType>();
@@ -295,7 +290,7 @@ public static class UnityObjectHelper
         FindAllInstancesInScene(SceneManager.GetActiveScene(), lookupResult, interfaceType);
     }
 
-    public static void FindAllInstancesInScene(this Scene scene,List<Object> lookupResult,Type lookupType)
+    public static void FindAllInstancesInScene(this Scene scene, List<Object> lookupResult, Type lookupType)
     {
         scene.GetRootGameObjects(_rootGameObjectsBuffer);
         foreach ( GameObject rootGameObject in _rootGameObjectsBuffer )
