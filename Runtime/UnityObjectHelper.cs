@@ -163,7 +163,7 @@ public static class UnityObjectHelper
             CheckMultipleObjectOfType(ref resultReference, foundArray);
 
 #else
-                resultReference = Object.FindObjectOfType<LookupType>();
+                resultReference = Object.FindObjectOfType<TLookupType>();
 #endif
             if ( resultReference == null )
             {
@@ -209,7 +209,7 @@ public static class UnityObjectHelper
             TLookupType[] foundArray = Object.FindObjectsByType<TLookupType>(includeInactive, findObjectsSortMode);
             CheckMultipleObjectOfType(ref resultReference, foundArray);
 #else
-                resultReference = Object.FindObjectOfType<LookupType>();
+                resultReference = Object.FindObjectOfType<TLookupType>();
 #endif
         }
         return resultReference;
