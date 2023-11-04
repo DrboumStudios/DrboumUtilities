@@ -2,7 +2,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Net.Mime;
+using log4net.Util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
@@ -12,7 +15,7 @@ public static class UnityObjectHelper
 {
     private static List<GameObject> RootGameObjectsBuffer => _rootGameObjectsBuffer ??= new(20);
 
-    private static Dictionary<Type, IEnumerable> _dictionaryListBuffer;
+    private static Dictionary<Type, IEnumerable> _dictionaryListBuffer = new();
     private static List<GameObject> _rootGameObjectsBuffer;
 
     public static bool IsPrefabInSubSceneContext(this Object @this) =>
@@ -24,7 +27,7 @@ public static class UnityObjectHelper
     public static void RemoveComponent<T>(this T component)
         where T : Component
     {
-        if ( !Application.isPlaying )
+        if ( !MediaTypeNames.Application.isPlaying )
         {
             Object.DestroyImmediate(component, true);
         }
@@ -236,7 +239,12 @@ public static class UnityObjectHelper
     {
         Type type = typeof(T);
         List<T> buffer = null;
-        if ( !_dictionaryListBuffer.TryGetValue(type, out _) )
+        if ( _dictionaryListBuffer.TryGetValue(type, out var listAsEnumerable) )
+        {
+            buffer = (List<T>)listAsEnumerable;
+            buffer.Clear();
+        }
+        else
         {
             buffer = new List<T>();
             _dictionaryListBuffer.Add(type, buffer);
@@ -244,6 +252,7 @@ public static class UnityObjectHelper
         return buffer;
     }
 
+    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T})"/>
     public static List<T> FindAllInstancesInScene<T>(this Scene scene)
         where T : Component
     {
@@ -252,6 +261,12 @@ public static class UnityObjectHelper
         return list;
     }
 
+    /// <summary>
+    /// not Thread safe use internal buffer
+    /// </summary>
+    /// <param name="scene"></param>
+    /// <param name="instancesBuffer"></param>
+    /// <typeparam name="T"></typeparam>
     public static T FindFirstInstancesInScene<T>(this Scene scene)
         where T : Component
     {
@@ -267,6 +282,7 @@ public static class UnityObjectHelper
         return firstComponent;
     }
 
+    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene)"/>
     public static void FindAllInstancesInScene<T>(this Scene scene, List<T> instancesBuffer)
         where T : Component
     {
@@ -279,7 +295,7 @@ public static class UnityObjectHelper
         }
     }
 
-
+    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T})"/>
     public static List<int> FindAllInstancesIdsInActiveScene(Type lookupType)
     {
         var instancesBuffer = new List<int>();
@@ -287,11 +303,13 @@ public static class UnityObjectHelper
         return instancesBuffer;
     }
 
+    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T})"/>
     public static void FindAllInstancesInActiveScene(List<Object> lookupResult, Type interfaceType)
     {
         FindAllInstancesInScene(SceneManager.GetActiveScene(), lookupResult, interfaceType);
     }
 
+    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T})"/>
     public static void FindAllInstancesInScene(this Scene scene, List<Object> lookupResult, Type lookupType)
     {
         scene.GetRootGameObjects(RootGameObjectsBuffer);
@@ -306,6 +324,7 @@ public static class UnityObjectHelper
         }
     }
 
+    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene)"/>
     public static void FindAllInstancesIdInScene(List<int> instancesBuffer, Type lookupType, Scene scene)
     {
         scene.GetRootGameObjects(RootGameObjectsBuffer);
