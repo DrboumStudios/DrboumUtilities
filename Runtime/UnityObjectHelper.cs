@@ -1,10 +1,10 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+     using UnityEditor;
+#endif
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Net.Mime;
-using log4net.Util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
@@ -26,7 +26,7 @@ public static class UnityObjectHelper
     public static void RemoveComponent<T>(this T component)
         where T : Component
     {
-        if ( !MediaTypeNames.Application.isPlaying )
+        if ( !Application.isPlaying )
         {
             Object.DestroyImmediate(component, true);
         }
