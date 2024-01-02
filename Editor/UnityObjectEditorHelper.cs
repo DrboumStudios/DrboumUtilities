@@ -326,7 +326,7 @@ public static class UnityObjectEditorHelper
         return TryLoadAsset(assetGuid.ToString("n"), out path, out asset);
     }
 
-    public static T GetSingletonAssetInstance<T>(string folderPath)
+    public static T GetSingletonAssetInstance<T>(string folderPath="Assets/")
         where T : Object
     {
         string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name, new[] {
