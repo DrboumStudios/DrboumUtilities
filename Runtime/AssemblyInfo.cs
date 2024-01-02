@@ -1,3 +1,3 @@
 using System.Runtime.CompilerServices;
-[assembly: InternalsVisibleTo("Utilities.Tests")]
-[assembly: InternalsVisibleTo("Utilities.Editor")]
+[assembly: InternalsVisibleTo("Drboum.Utilities.Tests.Editor")]
+[assembly: InternalsVisibleTo("Drboum.Utilities.Editor")]
