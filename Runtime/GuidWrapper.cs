@@ -122,36 +122,6 @@ namespace Drboum.Utilities.Runtime
             Debug.Log($"{nameof(GuidWrapper)}: {ToString()}");
         }
 
-        private static unsafe void HexsToChars(ref FixedString128Bytes guidChars, int a, int b)
-        {
-            HexsToChars(ref guidChars, a, b, false);
-        }
-
-        private static unsafe void HexsToChars(ref FixedString128Bytes guidChars, int a, int b, bool hex)
-        {
-            // if ( hex )
-            // {
-            //     guidChars[offset++] = '0';
-            //     guidChars[offset++] = 'x';
-            // }
-            guidChars.Append(HexToChar(a >> 4));
-            guidChars.Append(HexToChar(a));
-            // if ( hex )
-            // {
-            //     guidChars[offset++] = ',';
-            //     guidChars[offset++] = '0';
-            //     guidChars[offset++] = 'x';
-            // }
-            guidChars.Append(HexToChar(b >> 4));
-            guidChars.Append(HexToChar(b));
-        }
-
-        private static char HexToChar(int a)
-        {
-            a = a & 0xf;
-            return (char)((a > 9) ? a - 10 + 0x61 : a + 0x30);
-        }
-
         public static bool IsEquals(in FixedBytes16 lh, in FixedBytes16 rh)
         {
             return
@@ -196,6 +166,15 @@ namespace Drboum.Utilities.Runtime
             @default.GuidValue = guid;
             return @default;
         }
+
+#if UNITY_EDITOR
+        public static implicit operator GuidWrapper(UnityEditor.GUID guid)
+        {
+            GuidWrapper @default = default;
+            @default.HashValue = UnsafeUtility.As<UnityEditor.GUID, uint4>(ref guid);
+            return @default;
+        }
+#endif
 
         public static implicit operator GuidWrapper(string guid)
         {
@@ -247,6 +226,41 @@ namespace Drboum.Utilities.Runtime
         private static void CopyGuidTo(byte* dest, byte* src)
         {
             UnsafeUtility.MemCpy(dest, src, 16);
+        }
+
+        private static unsafe void HexsToChars(ref FixedString128Bytes guidChars, int a, int b)
+        {
+            HexsToChars(ref guidChars, a, b, false);
+        }
+
+        private static unsafe void HexsToChars(ref FixedString128Bytes guidChars, int a, int b, bool hex)
+        {
+            // if ( hex )
+            // {
+            //     guidChars[offset++] = '0';
+            //     guidChars[offset++] = 'x';
+            // }
+            guidChars.Append(HexToChar(a >> 4));
+            guidChars.Append(HexToChar(a));
+            // if ( hex )
+            // {
+            //     guidChars[offset++] = ',';
+            //     guidChars[offset++] = '0';
+            //     guidChars[offset++] = 'x';
+            // }
+            guidChars.Append(HexToChar(b >> 4));
+            guidChars.Append(HexToChar(b));
+        }
+
+        private static char HexToChar(int a)
+        {
+            a &= 0xf;
+            return (char)((a > 9) ? a - 10 + 0x61 : a + 0x30);
+        }
+
+        public static GuidWrapper NewGuid()
+        {
+            return Guid.NewGuid();
         }
     }
 }
