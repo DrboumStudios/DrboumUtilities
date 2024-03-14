@@ -213,10 +213,10 @@ public static class UnityObjectEditorHelper
         Selection.objects = matches.ToArray();
     }
 
-    public static List<Object> FindAllPrefabWithComponent(Type targetType, List<Object> matches=null,string[] lookupFolders=null)
+    public static List<Object> FindAllPrefabWithComponent(Type targetType, List<Object> matches = null, string[] lookupFolders = null)
     {
         matches ??= new List<Object>(200);
-        var assetGuids = AssetDatabase.FindAssets($"t:Prefab",lookupFolders);
+        var assetGuids = AssetDatabase.FindAssets($"t:Prefab", lookupFolders);
         for ( var index = 0; index < assetGuids.Length; index++ )
         {
             string assetGuid = assetGuids[index];
@@ -231,18 +231,19 @@ public static class UnityObjectEditorHelper
         }
         return matches;
     }
-    public static List<TComponent> FindAllPrefabWithComponent<TComponent>(List<TComponent> matches=null,string[] lookupFolders=null)
+
+    public static List<TComponent> FindAllPrefabWithComponent<TComponent>(List<TComponent> matches = null, string[] lookupFolders = null)
         where TComponent : Component
     {
         matches ??= new List<TComponent>(200);
-        var assetGuids = AssetDatabase.FindAssets($"t:Prefab",lookupFolders);
+        var assetGuids = AssetDatabase.FindAssets($"t:Prefab", lookupFolders);
         for ( var index = 0; index < assetGuids.Length; index++ )
         {
             string assetGuid = assetGuids[index];
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(assetGuid));
             if ( prefab != null )
             {
-                var lookupComponent = prefab.GetComponentInChildren<TComponent>( true);
+                var lookupComponent = prefab.GetComponentInChildren<TComponent>(true);
                 if ( lookupComponent )
                 {
                     matches.Add(lookupComponent);
@@ -326,7 +327,7 @@ public static class UnityObjectEditorHelper
         return TryLoadAsset(assetGuid.ToString("n"), out path, out asset);
     }
 
-    public static T GetSingletonAssetInstance<T>(string folderPath="Assets/")
+    public static T GetSingletonAssetInstance<T>(string folderPath = "Assets/")
         where T : Object
     {
         string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name, new[] {
@@ -349,17 +350,23 @@ public static class UnityObjectEditorHelper
     public static T[] FindAllAssetInstances<T>()
         where T : Object
     {
-        string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name);
-        var a = new T[guids.Length];
-        AssignInstances(guids, a);
-
-        return a;
+        return FindAllAssetInstances<T>(null,out _);;
     }
 
     public static T[] FindAllAssetInstances<T>(string[] folderPaths)
         where T : Object
     {
         string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name, folderPaths);
+        var a = new T[guids.Length];
+        AssignInstances(guids, a);
+
+        return FindAllAssetInstances<T>(folderPaths,out _);
+    }
+
+    public static T[] FindAllAssetInstances<T>(string[] folderPaths, out string[] guids)
+        where T : Object
+    {
+        guids = AssetDatabase.FindAssets("t:" + typeof(T).Name, folderPaths);
         var a = new T[guids.Length];
         AssignInstances(guids, a);
 
