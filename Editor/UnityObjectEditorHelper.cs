@@ -3,6 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using Drboum.Utilities.Runtime;
+using Unity.Collections.LowLevel.Unsafe;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
@@ -85,7 +88,11 @@ public static class UnityObjectEditorHelper
         {
             for ( var i = 0; i < selection.Length; i++ )
             {
-                PrefabUtility.RevertPrefabInstance(selection[i], InteractionMode.AutomatedAction);
+                var selectedGameObject = selection[i];
+                if ( PrefabUtility.IsPartOfPrefabInstance(selectedGameObject) )
+                {
+                    PrefabUtility.RevertPrefabInstance(selectedGameObject, InteractionMode.AutomatedAction);
+                }
             }
         }
         else
@@ -205,37 +212,35 @@ public static class UnityObjectEditorHelper
 #endif
     }
 
-    [MenuItem("CONTEXT/Component/" + nameof(FindAllPrefabWithComponentType))]
-    public static void FindAllPrefabWithComponentType(MenuCommand command)
+    [MenuItem("CONTEXT/Component/" + nameof(FindAllPrefabWithThisComponent))]
+    public static void FindAllPrefabWithThisComponent(MenuCommand command)
     {
         var component = command.context as Component;
-        List<Object> matches = FindAllPrefabWithComponent(component.GetType());
+        var matches = FindAllPrefabWithComponent(component.GetType());
         Selection.objects = matches.ToArray();
     }
 
     public static List<Object> FindAllPrefabWithComponent(Type targetType, List<Object> matches = null, string[] lookupFolders = null)
     {
-        matches ??= new List<Object>(200);
+        matches ??= new(200);
         var assetGuids = AssetDatabase.FindAssets($"t:Prefab", lookupFolders);
         for ( var index = 0; index < assetGuids.Length; index++ )
         {
             string assetGuid = assetGuids[index];
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(assetGuid));
-            if ( prefab != null )
+            if ( prefab != null && prefab.GetComponentInChildren(targetType, true) )
             {
-                if ( prefab.GetComponentInChildren(targetType, true) )
-                {
-                    matches.Add(prefab);
-                }
+                matches.Add(prefab);
             }
         }
         return matches;
     }
 
-    public static List<TComponent> FindAllPrefabWithComponent<TComponent>(List<TComponent> matches = null, string[] lookupFolders = null)
+    public static List<TComponent> FindAllComponentInPrefabs<TComponent>(List<TComponent> matches = null, string[] lookupFolders = null)
         where TComponent : Component
     {
         matches ??= new List<TComponent>(200);
+        var componentBuffer = new List<TComponent>();
         var assetGuids = AssetDatabase.FindAssets($"t:Prefab", lookupFolders);
         for ( var index = 0; index < assetGuids.Length; index++ )
         {
@@ -243,11 +248,9 @@ public static class UnityObjectEditorHelper
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(assetGuid));
             if ( prefab != null )
             {
-                var lookupComponent = prefab.GetComponentInChildren<TComponent>(true);
-                if ( lookupComponent )
-                {
-                    matches.Add(lookupComponent);
-                }
+                componentBuffer.Clear();
+                prefab.GetComponentsInChildren(true, componentBuffer);
+                matches.AddRange(componentBuffer);
             }
         }
         return matches;
@@ -278,7 +281,7 @@ public static class UnityObjectEditorHelper
         return currentPrefabStage != null && currentPrefabStage.IsPartOfPrefabContents(gameObject);
     }
 
-    public static bool IsPrefabAsset(this GameObject gameObject)
+    public static bool IsPrefabAssetRoot(this GameObject gameObject)
     {
         return EditorUtility.IsPersistent(gameObject) && PrefabUtility.IsPartOfPrefabAsset(gameObject) && gameObject.transform.parent.IsNull();
     }
@@ -291,6 +294,20 @@ public static class UnityObjectEditorHelper
     /// <returns></returns>
     public static bool TryGetAssetGuid(this Object asset, out Guid guid)
     {
+        bool success = TryGetAssetGuid(asset, out string guidString);
+        if ( success )
+        {
+            guid = Guid.Parse(guidString);
+        }
+        else
+        {
+            guid = default;
+        }
+        return success;
+    }
+
+    public static bool TryGetAssetGuid(this Object asset, out string guid)
+    {
         if ( asset.IsNull() )
         {
             guid = default;
@@ -299,7 +316,7 @@ public static class UnityObjectEditorHelper
         string path = AssetDatabase.GetAssetPath(asset);
         if ( !string.IsNullOrEmpty(path) )
         {
-            guid = Guid.Parse(AssetDatabase.AssetPathToGUID(path));
+            guid = AssetDatabase.AssetPathToGUID(path);
             return true;
         }
         guid = default;
@@ -321,10 +338,26 @@ public static class UnityObjectEditorHelper
         return !asset.IsNull();
     }
 
+    /// <summary>
+    /// Use Managed Strings as the underlying uint representation in the <see cref="GUID"/> does not result in the same final guid than the rest of the guids in <see cref="GuidWrapper"/> 
+    /// </summary>
+    /// <param name="guid"></param>
+    /// <returns></returns>
+    public static GuidWrapper ToGuid(this in GUID guid)
+    {
+        return guid.ToString();
+    }
+
+    /// <inheritdoc cref="ToGuid(GUID)"/>
+    public static GUID ToUnityGuid(this in GuidWrapper guid)
+    {
+        return new GUID(guid.GuidValue.ToString("N"));
+    }
+
     public static bool TryLoadAsset<T>(Guid assetGuid, out string path, out T asset)
         where T : Object
     {
-        return TryLoadAsset(assetGuid.ToString("n"), out path, out asset);
+        return TryLoadAsset(assetGuid.ToString("N"), out path, out asset);
     }
 
     public static T GetSingletonAssetInstance<T>(string folderPath = "Assets/")
@@ -350,7 +383,8 @@ public static class UnityObjectEditorHelper
     public static T[] FindAllAssetInstances<T>()
         where T : Object
     {
-        return FindAllAssetInstances<T>(null,out _);;
+        return FindAllAssetInstances<T>(null, out _);
+        ;
     }
 
     public static T[] FindAllAssetInstances<T>(string[] folderPaths)
@@ -360,7 +394,7 @@ public static class UnityObjectEditorHelper
         var a = new T[guids.Length];
         AssignInstances(guids, a);
 
-        return FindAllAssetInstances<T>(folderPaths,out _);
+        return FindAllAssetInstances<T>(folderPaths, out _);
     }
 
     public static T[] FindAllAssetInstances<T>(string[] folderPaths, out string[] guids)
@@ -400,7 +434,7 @@ public static class UnityObjectEditorHelper
 
     public static void GetPrefabs(List<GameObject> gameObjects, string[] folders = null)
     {
-        GetPrefabsAsComponents<GameObject>(gameObjects, folders);
+        GetPrefabsAsComponents(gameObjects, folders);
     }
 
     public static void GetPrefabsAsComponents<T>(List<T> gameObjects, string[] folders = null)
@@ -430,11 +464,8 @@ public static class UnityObjectEditorHelper
     public static void FindAllAssetInstances<T>(List<T> buffer, string[] lookupFolders, AssetSearchPredicate<T> predicate)
         where T : Object
     {
-
         if ( buffer == null )
-        {
             return;
-        }
 
         string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name,
             lookupFolders); //FindAssets uses tags check documentation for more info
@@ -481,7 +512,6 @@ public static class UnityObjectEditorHelper
             string guid = guids[i];
             string path = AssetDatabase.GUIDToAssetPath(guid);
             buffer.Add(AssetDatabase.LoadAssetAtPath<T>(path));
-
         }
     }
 

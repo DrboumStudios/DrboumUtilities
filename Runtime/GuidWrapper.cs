@@ -167,15 +167,6 @@ namespace Drboum.Utilities.Runtime
             return @default;
         }
 
-#if UNITY_EDITOR
-        public static implicit operator GuidWrapper(UnityEditor.GUID guid)
-        {
-            GuidWrapper @default = default;
-            @default.HashValue = UnsafeUtility.As<UnityEditor.GUID, uint4>(ref guid);
-            return @default;
-        }
-#endif
-
         public static implicit operator GuidWrapper(string guid)
         {
             GuidWrapper @default = default;

@@ -7,7 +7,6 @@ namespace Drboum.Utilities.Editor
 #if !DISABLE_ASSETREF_POSTPROCESSOR
     class AssetReferenceIDAllPostprocessor : AssetPostprocessor
     {
-
         private static void OnPostprocessAllAssets(string[] importedAssets, string[] deletedAssets, string[] movedAssets, string[] movedFromAssetPaths)
         {
             for ( var index = 0; index < importedAssets.Length; index++ )
