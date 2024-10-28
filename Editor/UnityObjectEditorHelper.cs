@@ -407,6 +407,18 @@ public static class UnityObjectEditorHelper
         return a;
     }
 
+    public static void FindAllAssetInstances<T>(string[] folderPaths, out string[] guids, out (T Asset, string Path)[] assetWithPaths)
+        where T : Object
+    {
+        guids = AssetDatabase.FindAssets("t:" + typeof(T).Name, folderPaths);
+        assetWithPaths = new (T Asset, string Path)[guids.Length];
+        for ( var i = 0; i < assetWithPaths.Length; i++ )
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+            assetWithPaths[i] = new ValueTuple<T, string>(AssetDatabase.LoadAssetAtPath<T>(path), path);
+        }
+    }
+
     private static void AssignInstances<T>(string[] guids, T[] a)
         where T : Object
     {
