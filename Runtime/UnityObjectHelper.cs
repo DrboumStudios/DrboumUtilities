@@ -251,15 +251,6 @@ public static class UnityObjectHelper
         return buffer;
     }
 
-    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T})"/>
-    public static List<T> FindAllInstancesInScene<T>(this Scene scene)
-        where T : Component
-    {
-        var list = new List<T>();
-        FindAllInstancesInScene(scene, list);
-        return list;
-    }
-
     /// <summary>
     /// not Thread safe use internal buffer
     /// </summary>
@@ -280,7 +271,16 @@ public static class UnityObjectHelper
         }
         return firstComponent;
     }
-
+    
+    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T})"/>
+    public static List<T> FindAllInstancesInScene<T>(this Scene scene)
+        where T : Component
+    {
+        var list = new List<T>();
+        FindAllInstancesInScene(scene, list);
+        return list;
+    }
+    
     /// <summary>
     /// Find all instances in a scene
     /// </summary>
@@ -288,21 +288,21 @@ public static class UnityObjectHelper
     public static void FindAllInstancesInScene<T>(this Scene scene, List<T> instancesBuffer)
         where T : Component
     {
-        FindAllInstancesInScene(scene, instancesBuffer, RootGameObjectsBuffer);
+        FindAllInstancesInScene(scene, instancesBuffer, RootGameObjectsBuffer, GetListFromPool<T>());
     }
 
     /// <summary>
     /// Find all instances in a scene with a provided buffer
     /// </summary>
-    public static void FindAllInstancesInScene<T>(this Scene scene, List<T> instancesBuffer, List<GameObject> rootGameObjectsBuffer)
+    public static void FindAllInstancesInScene<T>(this Scene scene, List<T> resultInstances, List<GameObject> rootGameObjectsBuffer, List<T> componentBuffer)
         where T : Component
     {
         scene.GetRootGameObjects(rootGameObjectsBuffer);
-        var buffer = GetListFromPool<T>();
-        foreach ( GameObject rootGameObject in rootGameObjectsBuffer )
+        for ( var index = 0; index < rootGameObjectsBuffer.Count; index++ )
         {
-            rootGameObject.GetComponentsInChildren(true, buffer);
-            instancesBuffer.AddRange(buffer);
+            GameObject rootGameObject = rootGameObjectsBuffer[index];
+            rootGameObject.GetComponentsInChildren(true, componentBuffer);
+            resultInstances.AddRange(componentBuffer);
         }
     }
 
@@ -340,8 +340,9 @@ public static class UnityObjectHelper
     public static void FindAllInstancesIdInScene(List<int> instancesBuffer, Type lookupType, Scene scene)
     {
         scene.GetRootGameObjects(RootGameObjectsBuffer);
-        foreach ( GameObject rootGameObject in RootGameObjectsBuffer )
+        for ( var rootIndex = 0; rootIndex < RootGameObjectsBuffer.Count; rootIndex++ )
         {
+            GameObject rootGameObject = RootGameObjectsBuffer[rootIndex];
             Component[] childrenInterfaces = rootGameObject.GetComponentsInChildren(lookupType);
             for ( var index = 0; index < childrenInterfaces.Length; index++ )
             {
