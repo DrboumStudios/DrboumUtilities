@@ -1,5 +1,5 @@
 ﻿#if UNITY_EDITOR
-     using UnityEditor;
+using UnityEditor;
 #endif
 using System;
 using System.Collections;
@@ -281,13 +281,25 @@ public static class UnityObjectHelper
         return firstComponent;
     }
 
-    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene)"/>
+    /// <summary>
+    /// Find all instances in a scene
+    /// </summary>
+    /// <remarks>this method is NOT Thread safe as it uses cached static collections and must be run in the main thread. use the override <see cref="FindAllInstancesInScene{T}(Scene,List{T},List{GameObject})"/> to run this method in another thread</remarks>
     public static void FindAllInstancesInScene<T>(this Scene scene, List<T> instancesBuffer)
         where T : Component
     {
-        scene.GetRootGameObjects(RootGameObjectsBuffer);
+        FindAllInstancesInScene(scene, instancesBuffer, RootGameObjectsBuffer);
+    }
+
+    /// <summary>
+    /// Find all instances in a scene with a provided buffer
+    /// </summary>
+    public static void FindAllInstancesInScene<T>(this Scene scene, List<T> instancesBuffer, List<GameObject> rootGameObjectsBuffer)
+        where T : Component
+    {
+        scene.GetRootGameObjects(rootGameObjectsBuffer);
         var buffer = GetListFromPool<T>();
-        foreach ( GameObject rootGameObject in RootGameObjectsBuffer )
+        foreach ( GameObject rootGameObject in rootGameObjectsBuffer )
         {
             rootGameObject.GetComponentsInChildren(true, buffer);
             instancesBuffer.AddRange(buffer);
@@ -312,8 +324,9 @@ public static class UnityObjectHelper
     public static void FindAllInstancesInScene(this Scene scene, List<Object> lookupResult, Type lookupType)
     {
         scene.GetRootGameObjects(RootGameObjectsBuffer);
-        foreach ( GameObject rootGameObject in RootGameObjectsBuffer )
+        for ( var rootIndex = 0; rootIndex < RootGameObjectsBuffer.Count; rootIndex++ )
         {
+            GameObject rootGameObject = RootGameObjectsBuffer[rootIndex];
             Component[] childrenInterfaces = rootGameObject.GetComponentsInChildren(lookupType);
             for ( var index = 0; index < childrenInterfaces.Length; index++ )
             {
