@@ -74,7 +74,8 @@ namespace Drboum.Utilities.Editor
                     instance._onDuplicate();
                 }
             }
-            else if ( !instance.assetInstanceGuid.IsValid )
+            
+            if ( !instance.assetInstanceGuid.IsValid )
             {
                 GenerateAndAssignNewGuid(instance);
                 instance._created = true;
