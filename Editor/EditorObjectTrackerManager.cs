@@ -8,7 +8,8 @@ namespace Drboum.Utilities.Editor
     public static class EditorObjectTrackerManager
     {
 
-        static EditorObjectTrackerManager()
+        [InitializeOnLoadMethod]
+        static void Init()
         {
             EditorApplication.hierarchyWindowItemOnGUI += delegate(int instanceID, Rect selectionRect)
             {
