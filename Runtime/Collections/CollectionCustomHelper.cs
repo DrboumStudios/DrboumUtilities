@@ -306,9 +306,9 @@ public static class CollectionCustomHelper {
                lhs[14] == rhs[14] &&
                lhs[15] == rhs[15];
     }
-    public static bool IsValidIndex(int id, int length)
+    public static bool IsIndexInRange(int index, int length)
     {
-        return id >= 0 && id < length;
+        return (uint)index < length;
     }
     public static string ToContentString<T>(this in NativeArray<T> flatNativeArray, char valueSeparator = ',')
         where T : unmanaged
