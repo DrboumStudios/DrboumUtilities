@@ -15,7 +15,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
     {
 #if UNITY_EDITOR
 
-        [SerializeField] [InspectorReadOnly] internal string assetInstanceGuid;
+        [SerializeField] [InspectorReadOnly] internal GuidWrapper assetInstanceGuid;
         [SerializeField] [InspectorReadOnly] internal int instanceId;
         [SerializeField] [InspectorReadOnly] internal string assetInstanceReadableName;
 
@@ -27,7 +27,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
         internal List<EventInstanceWrapper> OnCreateComponentEvents = new List<EventInstanceWrapper>(4);
         internal List<GameObjectNameChangedListener> OnGameObjectNameChangedEvents = new List<GameObjectNameChangedListener>(4);
 
-        public string AssetInstanceGuid => assetInstanceGuid;
+        public GuidWrapper AssetInstanceGuid => assetInstanceGuid;
 
         internal void _onDuplicate()
         {

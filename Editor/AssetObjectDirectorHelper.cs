@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Drboum.Utilities.Runtime;
 using Drboum.Utilities.Runtime.EditorHybrid;
 using Drboum.Utilities.Runtime.Interfaces;
 using UnityEditor;
@@ -33,14 +34,14 @@ namespace Drboum.Utilities.Editor {
 
 
         public string GeneratedName(TAssetObjectDirectorInstance instance)
-            => !string.IsNullOrEmpty(AssetInstanceID(instance)) ?
-                instance.name + ASSETID_SEPARATOR + AssetInstanceID(instance).Substring(0, 4) :
-                $"{instance.name}{ASSETID_SEPARATOR}{(uint)instance.GetInstanceID()}";
+        {
+            GuidWrapper assetInstanceID = AssetInstanceID(instance);
+            return assetInstanceID.IsValid ? instance.name + ASSETID_SEPARATOR + assetInstanceID.ToString()[..4] : $"{instance.name}{ASSETID_SEPARATOR}{(uint)instance.GetInstanceID()}";
+        }
 
         public abstract string GeneratedFolder(TAssetObjectDirectorInstance instance);
-        public string AssetInstanceID(TAssetObjectDirectorInstance instance)
+        public GuidWrapper AssetInstanceID(TAssetObjectDirectorInstance instance)
         {
-
             InitializeDeps(instance);
             return instance._editorObjectTracker.AssetInstanceGuid;
 
@@ -86,7 +87,7 @@ namespace Drboum.Utilities.Editor {
             instance._editorObjectTracker.UnRegisterOnDuplicateEvent(instance);
             instance._editorObjectTracker.UnRegisterOnGameObjectNameChangedEvent(instance);
         }
-        public virtual bool IsValidAssetInstance(TAssetObjectDirectorInstance instance) => !instance.AssetObject.IsNull() && instance.AssetObject.IsValidAsset;
+        public virtual bool IsValidAssetInstance(TAssetObjectDirectorInstance instance) => !instance.AssetObject.IsNull() && instance.AssetObject.IsValid;
 
         public virtual void FixAssetInstanceIfInvalid(TAssetObjectDirectorInstance instance, bool saveAssets = true)
         {
@@ -112,7 +113,8 @@ namespace Drboum.Utilities.Editor {
         {
             CreateAssetInstance(instance, out instance.AssetObject, saveAssets);
             string path = default;
-            instance.AssetObject.OverWriteGuidInMetaFile(instance._editorObjectTracker.AssetInstanceGuid, ref path);
+            GUID assetInstanceGuid = instance._editorObjectTracker.AssetInstanceGuid;
+            instance.AssetObject.OverWriteGuidInMetaFile(assetInstanceGuid.ToString(), ref path);
 
             if ( saveAssets )
             {

@@ -3,8 +3,10 @@ using Drboum.Utilities.Runtime.EditorHybrid;
 using UnityEditor;
 using UnityEngine;
 
-namespace Drboum.Utilities.Editor {
-    public static class EditorObjectTrackerManager {
+namespace Drboum.Utilities.Editor
+{
+    public static class EditorObjectTrackerManager
+    {
 
         static EditorObjectTrackerManager()
         {
@@ -37,6 +39,7 @@ namespace Drboum.Utilities.Editor {
             EditorObjectsEventCallBacks<EditorObjectTracker>.RegisterOnUpdate += Update;
             EditorObjectsEventCallBacks<EditorObjectTracker>.RegisterOnDestroy += OnDestroy;
         }
+
         private static void Start(EditorObjectTracker instance)
         {
             instance._duplicate = false;
@@ -70,7 +73,7 @@ namespace Drboum.Utilities.Editor {
                     instance._onDuplicate();
                 }
             }
-            else if ( string.IsNullOrEmpty(instance.assetInstanceGuid) )
+            else if ( instance.assetInstanceGuid.IsValid )
             {
                 GenerateAndAssignNewGuid(instance);
                 instance._created = true;
@@ -78,6 +81,7 @@ namespace Drboum.Utilities.Editor {
             }
 
         }
+
         private static void OnDestroy(EditorObjectTracker instance)
         {
             if ( instance.gameObject.scene.isLoaded )
@@ -91,29 +95,33 @@ namespace Drboum.Utilities.Editor {
             string name = instance.name;
             if ( instance.IsNull() || Equals(name, instance.assetInstanceReadableName) )
                 return;
-            
+
             if ( instance.gameObject.IsInCurrentPrefabStage() )
                 return;
-            
+
             string old = instance.assetInstanceReadableName;
             instance.assetInstanceReadableName = name;
             instance._onGameObjectNameChanged(old);
         }
+
         private static void GenerateAndAssignNewGuid(EditorObjectTracker instance)
         {
             GenerateNewGuid(out Guid guid);
             instance.assetInstanceGuid = $"{guid.ToString("n")}";
         }
+
         private static void MarkAsDuplicate(EditorObjectTracker instance)
         {
             instance.instanceId = instance.GetInstanceID();
             instance.skipDuplication = true;
         }
+
         private static void ClearDuplicateState(EditorObjectTracker instance)
         {
             instance.instanceId = 0;
             instance.skipDuplication = false;
         }
+
         private static void GenerateNewGuid(out Guid guid)
         {
             guid = Guid.NewGuid();
@@ -133,6 +141,7 @@ namespace Drboum.Utilities.Editor {
 
             trackerInstance.OnDuplicateEvents.Add(new EventInstanceWrapper(instance, action));
         }
+
         public static void UnRegisterOnDuplicateEvent<T>(this EditorObjectTracker trackerInstance, T instance)
             where T : Component
         {
@@ -141,10 +150,11 @@ namespace Drboum.Utilities.Editor {
                 return;
             }
 
-            var indexOf = trackerInstance.OnDuplicateEvents.IndexOf(new EventInstanceWrapper(instance,null));
+            var indexOf = trackerInstance.OnDuplicateEvents.IndexOf(new EventInstanceWrapper(instance, null));
             if ( indexOf != -1 )
                 trackerInstance.OnDuplicateEvents.RemoveAt(indexOf);
         }
+
         public static void RegisterOnCreateComponentEvent<T>(this EditorObjectTracker trackerInstance, T instance, Action<Component> action)
             where T : Component
         {
@@ -155,6 +165,7 @@ namespace Drboum.Utilities.Editor {
 
             trackerInstance.OnCreateComponentEvents.Add(new EventInstanceWrapper(instance, action));
         }
+
         public static void UnRegisterOnCreateComponentEvent<T>(this EditorObjectTracker trackerInstance, T instance)
             where T : Component
         {
@@ -163,11 +174,12 @@ namespace Drboum.Utilities.Editor {
                 return;
             }
 
-            var indexOf = trackerInstance.OnCreateComponentEvents.IndexOf(new EventInstanceWrapper(instance,null));
+            var indexOf = trackerInstance.OnCreateComponentEvents.IndexOf(new EventInstanceWrapper(instance, null));
             if ( indexOf != -1 )
                 trackerInstance.OnDuplicateEvents.RemoveAt(indexOf);
         }
-        public static void RegisterOnGameObjectNameChangedEvent<T>(this EditorObjectTracker trackerInstance, T instance, Action<Component,string> action)
+
+        public static void RegisterOnGameObjectNameChangedEvent<T>(this EditorObjectTracker trackerInstance, T instance, Action<Component, string> action)
             where T : Component
         {
             if ( instance.IsNull() )
@@ -177,6 +189,7 @@ namespace Drboum.Utilities.Editor {
 
             trackerInstance.OnGameObjectNameChangedEvents.Add(new GameObjectNameChangedListener(instance, action));
         }
+
         public static void UnRegisterOnGameObjectNameChangedEvent<T>(this EditorObjectTracker trackerInstance, T instance)
             where T : Component
         {
@@ -185,10 +198,11 @@ namespace Drboum.Utilities.Editor {
                 return;
             }
 
-            var indexOf = trackerInstance.OnGameObjectNameChangedEvents.IndexOf(new GameObjectNameChangedListener(instance,null));
+            var indexOf = trackerInstance.OnGameObjectNameChangedEvents.IndexOf(new GameObjectNameChangedListener(instance, null));
             if ( indexOf != -1 )
                 trackerInstance.OnGameObjectNameChangedEvents.RemoveAt(indexOf);
         }
+
         public static void SetAssetGuid<T>(this EditorObjectTracker instance, T obj)
             where T : UnityEngine.Object
         {

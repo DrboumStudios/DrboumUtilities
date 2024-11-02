@@ -18,7 +18,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
             set => _guid = value;
         }
 
-        public bool IsValidAsset => _guid.IsValid;
+        public bool IsValid => _guid.IsValid;
 
 
     }

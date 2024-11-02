@@ -9,9 +9,9 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
     {
         GuidWrapper Guid {
             get;
-            internal set;
+            protected internal set;
         }
-        bool IsValidAsset {
+        bool IsValid {
             get;
         }
     }
@@ -23,11 +23,11 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
         [SerializeField, InspectorReadOnly] internal GuidWrapper _guid;
 
         internal bool IsValidGuid => _guid.IsValid;
-        public virtual bool IsValidAsset => IsValidGuid;
+        public virtual bool IsValid => IsValidGuid;
 
         public GuidWrapper Guid {
             get => _guid;
-            internal  set => _guid = value;
+            protected internal set => _guid = value;
         }
 
         GuidWrapper IAssetReferenceID.Guid {

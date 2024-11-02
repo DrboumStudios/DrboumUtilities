@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using Drboum.Utilities.Runtime.Collections;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
@@ -207,6 +209,28 @@ namespace Drboum.Utilities.Runtime
         {
             return bytes16.Bytes16Value;
         }
+#if UNITY_EDITOR
+
+        /// <summary>
+        /// Use Managed Strings as the underlying uint representation in the <see cref="GUID"/> does not result in the same final guid than the rest of the guids in <see cref="GuidWrapper"/> 
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <returns></returns>
+        public static implicit operator GuidWrapper(in GUID guid)
+        {
+            return guid.ToString();
+        }
+
+        /// <summary>
+        /// Use Managed Strings as the underlying uint representation in the <see cref="GUID"/> does not result in the same final guid than the rest of the guids in <see cref="GuidWrapper"/> 
+        /// </summary>
+        /// <param name="guid"></param>
+        /// <returns></returns>
+        public static implicit operator GUID(in GuidWrapper guid)
+        {
+            return new GUID(guid.GuidValue.ToString("N"));
+        }
+#endif
 
         [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
         private static void AssertIsAValidSizeArray(byte[] src)
