@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+
 namespace Drboum.Utilities.Runtime {
     public static class CsharpHelper {
         public delegate void   FireAndForgetEvent(FireAndForgetEvent notifierToUnsubscribeFrom);
