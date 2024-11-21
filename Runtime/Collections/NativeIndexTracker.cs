@@ -7,7 +7,7 @@ using Unity.Jobs;
 using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 
-namespace GameProject
+namespace Drboum.Utilities.Collections
 {
     /// <summary>
     /// A non-deterministic lookup which enforce key/value unicity with 2 backing collection for fast read-only processing
