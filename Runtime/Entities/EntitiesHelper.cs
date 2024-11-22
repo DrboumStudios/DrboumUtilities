@@ -11,7 +11,6 @@ using Hash128 = Unity.Entities.Hash128;
 
 public static partial class EntitiesHelper
 {
-
     public static EntityGuid GenerateEntityGuid(Hash128 guid, uint serial, ComponentType componentType, int originatingId = 0)
     {
         return new EntityGuid(originatingId, guid.GetHashCode(), (uint)componentType.TypeIndex.Index, serial);
