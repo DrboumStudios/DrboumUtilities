@@ -504,54 +504,6 @@ public static class CollectionCustomHelper
         return readOnlyArray.m_Array.AddInNewArray(element);
     }
 
-    /// <summary>
-    /// create a new temporary <see cref="NativeArray{T}"/> of a smaller length without allocating new memory, therefore sharing the memory with the one that allocated it
-    /// </summary>
-    /// <remarks>
-    /// this function does NOT perform any memory allocation, the returned array share the same memory with the <paramref name="source"/>.
-    /// disposing the array that allocated the memory will free memory for the returned array too, in that case, it is not necessary to dispose the returned array,
-    /// in contrast, disposing the returned array will not affect the <paramref name="source"/> array though it will remove informations about the original data"/>
-    /// </remarks>
-    /// <param name="source"></param>
-    /// <param name="startIndex"></param>
-    /// <param name="newLength"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public static unsafe NativeArray<T> Shrink<T>(this in NativeArray<T> source, int newLength, int startIndex = 0)
-        where T : unmanaged
-    {
-        bool newArrayIsEmpty = startIndex >= source.Length;
-        var index = GetSafeIndex(startIndex, newArrayIsEmpty);
-        CheckShrinkSafeGuard(source.Length, newLength, index);
-
-        long unsafeReadOnlyPtr = PointerAsLong(source.GetUnsafeReadOnlyPtr());
-        var array = NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>((void*)GetArrayElementPtr<T>(unsafeReadOnlyPtr, index), newLength, Allocator.None);
-#if UNITY_EDITOR
-        NativeArrayUnsafeUtility.SetAtomicSafetyHandle(ref array, NativeArrayUnsafeUtility.GetAtomicSafetyHandle(source));
-#endif
-        return array;
-    }
-
-    /// <summary>
-    /// create starting at <paramref name="startIndex"/> with a length of <paramref name="newLength"/>
-    /// </summary>
-    /// <param name="source"></param>
-    /// <param name="newLength"></param>
-    /// <param name="allocator"></param>
-    /// <param name="startIndex"></param>
-    /// <typeparam name="T"></typeparam>
-    /// <returns></returns>
-    public static NativeArray<T> Shrink<T>(this in NativeArray<T> source, int newLength, Allocator allocator, int startIndex = 0)
-        where T : unmanaged
-    {
-        bool newArrayIsEmpty = startIndex >= source.Length;
-        var index = GetSafeIndex(startIndex, newArrayIsEmpty);
-        CheckShrinkSafeGuard(source.Length, newLength, index);
-        var result = new NativeArray<T>(newLength, allocator, NativeArrayOptions.UninitializedMemory);
-        NativeArray<T>.Copy(source, startIndex, result, 0, result.Length);
-        return result;
-    }
-
     [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
     private static void CheckShrinkSafeGuard(int sourceLength, int newLength, int index)
     {
@@ -606,6 +558,7 @@ public static class CollectionCustomHelper
         return ((IntPtr)ptr).ToInt64();
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static long GetArrayElementPtr<T>(long sourcePtr, long index)
         where T : unmanaged
     {
@@ -648,15 +601,17 @@ public static class CollectionCustomHelper
         return dst;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ReadOnlySpan<TElement> AsReadOnlySpan<TElement>(this TElement[] collectionA)
     {
         return new ReadOnlySpan<TElement>(collectionA);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool AreCollectionEquals<TElement>(this TElement[] collectionA, TElement[] collectionB)
         where TElement : IEquatable<TElement>
     {
-        return AreCollectionEquals(new ReadOnlySpan<TElement>(collectionA), new ReadOnlySpan<TElement>(collectionB));
+        return AreCollectionEquals(collectionA.AsReadOnlySpan(), collectionB.AsReadOnlySpan());
     }
 
     public static bool AreCollectionEquals<TElement>(this ReadOnlySpan<TElement> collectionA, ReadOnlySpan<TElement> collectionB)
@@ -673,12 +628,22 @@ public static class CollectionCustomHelper
         return !hasChanged;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool AreCollectionEquals<TElement, TComparer>(this TElement[] collectionA, TElement[] collectionB, TComparer comparer)
         where TComparer : IComparer<TElement>
     {
-        return AreCollectionEquals(new ReadOnlySpan<TElement>(collectionA), new ReadOnlySpan<TElement>(collectionB), comparer);
+        return AreCollectionEquals(collectionA.AsReadOnlySpan(), collectionB.AsReadOnlySpan(), comparer);
     }
 
+    /// <summary>
+    /// Check if Two collection count and content equality
+    /// </summary>
+    /// <param name="collectionA"></param>
+    /// <param name="collectionB"></param>
+    /// <param name="comparer"></param>
+    /// <typeparam name="TElement"></typeparam>
+    /// <typeparam name="TComparer"></typeparam>
+    /// <returns></returns>
     public static bool AreCollectionEquals<TElement, TComparer>(this ReadOnlySpan<TElement> collectionA, ReadOnlySpan<TElement> collectionB, TComparer comparer)
         where TComparer : IComparer<TElement>
     {
@@ -699,6 +664,7 @@ public static class CollectionCustomHelper
         list.GetUnsafeList()->EnsureCapacity(targetCapacity);
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void EnsureCapacity<TData>(this ref UnsafeList<TData> list, int targetCapacity)
         where TData : unmanaged
     {
@@ -708,7 +674,7 @@ public static class CollectionCustomHelper
         }
     }
 
-
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void CopyToManagedArray<T>(NativeArray<T> src, T[] dst)
         where T : unmanaged
     {
@@ -766,6 +732,14 @@ public static class CollectionCustomHelper
         serializableComponentList[serializableComponentList.Length++] = element;
     }
 
+    /// <summary>
+    /// Provide an alternative generic way to add a range of data to a container use only if no specific to the collection alternative exists
+    /// </summary>
+    /// <param name="serializableComponentList"></param>
+    /// <param name="ptrSource"></param>
+    /// <param name="elementCount"></param>
+    /// <typeparam name="TNativeList"></typeparam>
+    /// <typeparam name="TElement"></typeparam>
     public static unsafe void AddRangeExt<TNativeList, TElement>(this ref TNativeList serializableComponentList, void* ptrSource, int elementCount)
         where TNativeList : unmanaged, INativeList<TElement>
         where TElement : unmanaged
@@ -786,5 +760,22 @@ public static class CollectionCustomHelper
         where T : unmanaged
     {
         return ref UnsafeUtility.ArrayElementAsRef<T>(nativeArray.GetUnsafePtr(), index);
+    }
+
+    /// <summary>
+    /// Create a native array which is a copy of <see cref="count"/> <see cref="TElement"/> from a data source
+    /// </summary>
+    /// <param name="bufferSrcPtr">source data to copy </param>
+    /// <param name="count">number of element count in <see cref="bufferSrcPtr"/></param>
+    /// <param name="allocator"></param>
+    /// <typeparam name="TElement">element type in the array</typeparam>
+    /// <returns></returns>
+    public static unsafe NativeArray<TElement> CreateNativeArray<TElement>(void* bufferSrcPtr, int count, AllocatorManager.AllocatorHandle allocator)
+        where TElement : unmanaged
+    {
+        var array = CollectionHelper.CreateNativeArray<TElement>(count, allocator, NativeArrayOptions.UninitializedMemory);
+        int bytesLength = count * sizeof(TElement);
+        UnsafeUtility.MemCpy(array.GetUnsafePtr(), bufferSrcPtr, bytesLength);
+        return array;
     }
 }
