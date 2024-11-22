@@ -34,7 +34,6 @@ namespace Drboum.Utilities.Runtime {
             writer |= *((byte*)(&b)) << position;
         }
 
-
         /// <summary>
         /// scale a float within min/max range to an ushort between min/max range
         /// </summary>
@@ -69,6 +68,5 @@ namespace Drboum.Utilities.Runtime {
             var   valueRelative = (byte)(value    - minValue);
             return minTarget + valueRelative / (float)valueRange * targetRange;
         }
-
     }
 }

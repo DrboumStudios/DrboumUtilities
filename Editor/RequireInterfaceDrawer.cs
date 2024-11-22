@@ -43,8 +43,6 @@ namespace Drboum.Utilities.Editor {
             }
             if ( property.propertyType == SerializedPropertyType.ObjectReference ) {
 
-
-
                 var requiredAttribute = attribute as RequireInterfaceAttribute;
                 if ( requiredAttribute.InterfaceType == null ) {
                     return;

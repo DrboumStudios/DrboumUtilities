@@ -51,15 +51,7 @@ namespace Drboum.Utilities.Runtime.Inputs {
             LogInputActivity(context.phase, context.action.name, elapsedTime, tick, additionalMessage);
             inputFieldData.SetValue(btn, tick);
         }
-        public static void InvalidateButtonInputs<T>(this ref T serializedButtonInputs, uint currentInputTick)
-            where T : unmanaged, INativeList<ButtonInput>
-        {
-            for ( int i = 0; i < serializedButtonInputs.Length; i++ )
-            {
-                ref ButtonInput buttonInput = ref serializedButtonInputs.ElementAt(i);
-                buttonInput.UpdateIsPressedThisTick(currentInputTick);
-            }
-        }
+        
         public static int GetButtonInputCountFromType<T>()
         {
             return GetButtonsList<T>().Count();

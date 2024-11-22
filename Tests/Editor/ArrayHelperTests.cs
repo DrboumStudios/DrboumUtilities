@@ -1,5 +1,5 @@
+using Drboum.Utilities.Collections;
 using Drboum.Utilities.Runtime;
-using Drboum.Utilities.Runtime.Collections;
 using NUnit.Framework;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;

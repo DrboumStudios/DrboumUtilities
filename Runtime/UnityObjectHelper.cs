@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
@@ -350,5 +351,14 @@ public static class UnityObjectHelper
                 instancesBuffer.Add(childInterface.GetInstanceID());
             }
         }
+    }
+    
+    public static float3 GetScaledPoint(Transform relativePoint)
+    {
+        return new float3(
+            relativePoint.localPosition.x * relativePoint.lossyScale.x,
+            relativePoint.localPosition.y * relativePoint.lossyScale.y,
+            relativePoint.localPosition.z * relativePoint.lossyScale.z
+        );
     }
 }

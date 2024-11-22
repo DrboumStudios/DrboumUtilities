@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine.Assertions;
-namespace Drboum.Utilities.Runtime.Collections {
+
+namespace Drboum.Utilities.Collections {
     /// <summary>
     ///     fixed buffer of untyped memory
     /// </summary>

@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using Drboum.Utilities.Collections;
 using Drboum.Utilities.Runtime;
-using Drboum.Utilities.Runtime.Collections;
 using Drboum.Utilities.Runtime.Interfaces;
 using Unity.Burst;
 using Unity.Collections;
@@ -12,8 +13,9 @@ using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
-public static class CollectionCustomHelper {
 
+public static class CollectionCustomHelper
+{
     [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
     public static void CheckCapacity<TDest, TSource>(TDest destinationBuffer, TSource textStream)
         where TDest : INativeList<byte>
@@ -24,6 +26,7 @@ public static class CollectionCustomHelper {
             Debug.LogError($"The destination buffer of capacity: [{destinationBuffer.Capacity}] cannot contains the source buffer of Length: {textStream.Length}");
         }
     }
+
     [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
     public static void CheckElementAccess(int index, int length)
     {
@@ -32,6 +35,7 @@ public static class CollectionCustomHelper {
             throw new IndexOutOfRangeException($"Index {index} is out of range of '{length}' Length.");
         }
     }
+
     [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
     public static void CheckResize(int newLength, int maxCapacity)
     {
@@ -40,6 +44,7 @@ public static class CollectionCustomHelper {
             throw new IndexOutOfRangeException($"NewLength {newLength} is out of range of '{maxCapacity}' Capacity.");
         }
     }
+
     [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
     public static void CheckIndexIsPositive(int number)
     {
@@ -48,6 +53,7 @@ public static class CollectionCustomHelper {
             throw new IndexOutOfRangeException($"the number with value {number} is negative and is therefore OutOfRange of the collection");
         }
     }
+
     [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
     private static void CheckStartIndexIsValidIfResultArrayIsNotEmpty(int length, int newLength, int startIndex)
     {
@@ -57,8 +63,10 @@ public static class CollectionCustomHelper {
             CheckResize(startIndex + newLength, length);
         }
     }
+
     public static NativeArray<T> Flatten2DArray<T>(this T[,] arrayToFlatten, int sizeX, int sizeY,
-        Allocator allocator = Allocator.Temp) where T : unmanaged
+        Allocator allocator = Allocator.Temp)
+        where T : unmanaged
     {
         var colliderHeights = new NativeArray<T>(sizeX * sizeY, allocator, NativeArrayOptions.UninitializedMemory);
         Flatten2DArray(arrayToFlatten, sizeX, sizeY, ref colliderHeights);
@@ -91,7 +99,8 @@ public static class CollectionCustomHelper {
     }
 
     public static void Flatten2DArray<T>(this T[,] arrayToFlatten, int sizeX, int sizeY,
-        ref NativeArray<T> colliderHeights) where T : struct
+        ref NativeArray<T> colliderHeights)
+        where T : struct
     {
         for ( var j = 0; j < sizeY; j++ )
         {
@@ -132,6 +141,7 @@ public static class CollectionCustomHelper {
     {
         return collection.FindFirstIndexOf(element) > -1;
     }
+
     public static bool Contains<TNativeList, T, U>(this ref TNativeList collection, U element)
         where TNativeList : unmanaged, INativeList<T>
         where T : unmanaged
@@ -139,6 +149,7 @@ public static class CollectionCustomHelper {
     {
         return collection.FindFirstIndexOf<TNativeList, T, U>(element) > -1;
     }
+
     public static int FindFirstIndexOf<TCollection, T>(this ref TCollection list, T value)
         where TCollection : unmanaged, INativeList<T>
         where T : unmanaged, IEquatable<T>
@@ -167,6 +178,7 @@ public static class CollectionCustomHelper {
         }
         return -1;
     }
+
     public static unsafe NativeArray<T> ToNativeArray<T>(this in NativeSlice<T> source, Allocator allocator)
         where T : unmanaged
     {
@@ -185,6 +197,7 @@ public static class CollectionCustomHelper {
 #endif
         return array;
     }
+
     /// <summary>
     /// create a new NativeList that is a copy of <paramref name="source"/> array
     /// </summary>
@@ -209,6 +222,7 @@ public static class CollectionCustomHelper {
             buffer.Dispose();
         }
     }
+
     public static void DisposeIfCreated<TKey, TValue>(this ref NativeHashMap<TKey, TValue> buffer, JobHandle dependencies)
         where TKey : unmanaged, IEquatable<TKey>
         where TValue : unmanaged
@@ -218,42 +232,55 @@ public static class CollectionCustomHelper {
             buffer.Dispose(dependencies);
         }
     }
-    public static void DisposeIfCreated<T>(this ref NativeArray<T> buffer) where T : unmanaged
+
+    public static void DisposeIfCreated<T>(this ref NativeArray<T> buffer)
+        where T : unmanaged
     {
         if ( buffer.IsCreated )
         {
             buffer.Dispose();
         }
     }
-    public static void DisposeIfCreated<T>(this ref NativeArray<T> buffer, JobHandle dependencies) where T : unmanaged
+
+    public static void DisposeIfCreated<T>(this ref NativeArray<T> buffer, JobHandle dependencies)
+        where T : unmanaged
     {
         if ( buffer.IsCreated )
         {
             buffer.Dispose(dependencies);
         }
     }
-    public static void DisposeIfCreated<T>(this ref UnsafeList<T> buffer) where T : unmanaged
+
+    public static void DisposeIfCreated<T>(this ref UnsafeList<T> buffer)
+        where T : unmanaged
     {
         if ( buffer.IsCreated )
         {
             buffer.Dispose();
         }
     }
-    public static JobHandle DisposeIfCreated<T>(this ref UnsafeList<T> buffer, JobHandle dependencies) where T : unmanaged
+
+    public static JobHandle DisposeIfCreated<T>(this ref UnsafeList<T> buffer, JobHandle dependencies)
+        where T : unmanaged
     {
         return buffer.IsCreated ? buffer.Dispose(dependencies) : default;
     }
-    public static void DisposeIfCreated<T>(this ref NativeList<T> buffer) where T : unmanaged
+
+    public static void DisposeIfCreated<T>(this ref NativeList<T> buffer)
+        where T : unmanaged
     {
         if ( buffer.IsCreated )
         {
             buffer.Dispose();
         }
     }
-    public static JobHandle DisposeIfCreated<T>(this ref NativeList<T> buffer, JobHandle dependencies) where T : unmanaged
+
+    public static JobHandle DisposeIfCreated<T>(this ref NativeList<T> buffer, JobHandle dependencies)
+        where T : unmanaged
     {
         return buffer.IsCreated ? buffer.Dispose(dependencies) : default;
     }
+
     public static void DisposeIfCreated<T>(this ref NativeHashSet<T> buffer)
         where T : unmanaged, IEquatable<T>
     {
@@ -262,6 +289,7 @@ public static class CollectionCustomHelper {
             buffer.Dispose();
         }
     }
+
     public static JobHandle DisposeIfCreated<T>(this ref NativeHashSet<T> buffer, JobHandle dependencies)
         where T : unmanaged, IEquatable<T>
     {
@@ -277,15 +305,18 @@ public static class CollectionCustomHelper {
         if ( nativeText.IsCreated )
             nativeText.Dispose();
     }
+
     public static void SwapElements<T>(this ref NativeArray<T> arrayElement, int indexLhs, int indexRhs)
         where T : unmanaged
     {
         (arrayElement[indexLhs], arrayElement[indexRhs]) = (arrayElement[indexRhs], arrayElement[indexLhs]);
     }
+
     public static void SwapElements<T>(this T[] arrayElement, int indexLhs, int indexRhs)
     {
         (arrayElement[indexLhs], arrayElement[indexRhs]) = (arrayElement[indexRhs], arrayElement[indexLhs]);
     }
+
     public static bool ByteArrayGuidIsEqual(byte[] lhs, byte[] rhs)
     {
 
@@ -306,16 +337,19 @@ public static class CollectionCustomHelper {
                lhs[14] == rhs[14] &&
                lhs[15] == rhs[15];
     }
+
     public static bool IsIndexInRange(int index, int length)
     {
         return (uint)index < length;
     }
+
     public static string ToContentString<T>(this in NativeArray<T> flatNativeArray, char valueSeparator = ',')
         where T : unmanaged
     {
         flatNativeArray.ToContentFixedString(out FixedString4096Bytes toString, valueSeparator);
         return toString.ToString();
     }
+
     public static void ToContentFixedString<T, TFixedString>(this in NativeArray<T> source,
         out TFixedString fixedStringContent, char valueSeparator = ',')
         where T : unmanaged
@@ -344,6 +378,7 @@ public static class CollectionCustomHelper {
         }
         return mergedArr;
     }
+
     public static void MergeArrays<T>(this T[] array1, T[] array2, T[] resultArray)
     {
         if ( resultArray.Length < array1.Length + array2.Length )
@@ -362,6 +397,7 @@ public static class CollectionCustomHelper {
             resultArray[i + array1.Length] = array2[i];
         }
     }
+
     public static bool TryAdd<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue value)
     {
         if ( dictionary.ContainsKey(key) )
@@ -371,8 +407,10 @@ public static class CollectionCustomHelper {
         dictionary.Add(key, value);
         return true;
     }
+
     public static NativeHashMap<GuidWrapper, TValue> ToNativeContainer<TValue>(
-        this Dictionary<FixedBytes16, TValue> dictionnary, Allocator allocator) where TValue : unmanaged
+        this Dictionary<FixedBytes16, TValue> dictionnary, Allocator allocator)
+        where TValue : unmanaged
     {
         var hashMap = new NativeHashMap<GuidWrapper, TValue>(dictionnary.Count, allocator);
         foreach ( KeyValuePair<FixedBytes16, TValue> item in dictionnary )
@@ -381,6 +419,7 @@ public static class CollectionCustomHelper {
         }
         return hashMap;
     }
+
     public static T[] AddInNewArray<T>(this T[] sourceArray, params T[] elementsToAdd)
     {
         if ( sourceArray.Length == 0 || sourceArray.Length + elementsToAdd.Length == 0 )
@@ -401,16 +440,19 @@ public static class CollectionCustomHelper {
         sourceArray[i++] = element2;
         return sourceArray;
     }
+
     public static T[] AddInNewArray<T>(this T[] sourceArray, T element)
     {
         Append(ref sourceArray, element);
         return sourceArray;
     }
+
     public static void Append<T>(ref T[] sourceArray, T element)
     {
         Array.Resize(ref sourceArray, sourceArray.Length + 1);
         sourceArray[sourceArray.Length - 1] = element;
     }
+
     /// <summary>
     ///     lookup the array and return the index if found otherwise -1
     /// </summary>
@@ -432,6 +474,7 @@ public static class CollectionCustomHelper {
         }
         return -1;
     }
+
     public static T[] AddInNewArray<T>(this ReadOnlyArray<T> readOnlyArray, params T[] array)
     {
         if ( readOnlyArray.Count == 0 || readOnlyArray.Count + array.Length == 0 )
@@ -445,6 +488,7 @@ public static class CollectionCustomHelper {
         Array.Copy(array, 0, allComponents, readOnlyArray.Count, array.Length);
         return allComponents;
     }
+
     public static T[] AddInNewArray<T>(this ReadOnlyArray<T> readOnlyArray, T element)
     {
         if ( element == null )
@@ -459,6 +503,7 @@ public static class CollectionCustomHelper {
         }
         return readOnlyArray.m_Array.AddInNewArray(element);
     }
+
     /// <summary>
     /// create a new temporary <see cref="NativeArray{T}"/> of a smaller length without allocating new memory, therefore sharing the memory with the one that allocated it
     /// </summary>
@@ -486,6 +531,7 @@ public static class CollectionCustomHelper {
 #endif
         return array;
     }
+
     /// <summary>
     /// create starting at <paramref name="startIndex"/> with a length of <paramref name="newLength"/>
     /// </summary>
@@ -512,6 +558,7 @@ public static class CollectionCustomHelper {
         CheckElementAccess(index, sourceLength);
         CheckResize(index + newLength, sourceLength);
     }
+
     public static unsafe ref TNativeList Shrink<T, TNativeList>(this ref TNativeList source, int newLength, int startIndex)
         where T : unmanaged
         where TNativeList : unmanaged, INativeList<T>
@@ -525,10 +572,12 @@ public static class CollectionCustomHelper {
         UnsafeUtility.MemMove(dstPtr, srcPtr, newLength);
         return ref Shrink<T, TNativeList>(ref source, newLength);
     }
+
     private static int GetSafeIndex(int startIndex, bool newArrayIsEmpty)
     {
         return math.select(startIndex, 0, newArrayIsEmpty);
     }
+
     public static ref TNativeList Shrink<T, TNativeList>(this ref TNativeList source, int newLength)
         where T : unmanaged
         where TNativeList : unmanaged, INativeList<T>
@@ -537,27 +586,32 @@ public static class CollectionCustomHelper {
         source.Length = newLength;
         return ref source;
     }
+
     public static unsafe void* GetUnsafePtr<T, TNativeList>(this ref TNativeList source)
         where T : unmanaged
         where TNativeList : unmanaged, INativeList<T>
     {
         return UnsafeUtility.AddressOf(ref source.ElementAt(0));
     }
+
     public static unsafe void* GetArrayElementPtr<T>(void* sourcePtr, long index)
         where T : unmanaged
     {
         return (void*)GetArrayElementPtr<T>(PointerAsLong(sourcePtr), index);
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static unsafe long PointerAsLong(void* ptr)
     {
         return ((IntPtr)ptr).ToInt64();
     }
+
     public static long GetArrayElementPtr<T>(long sourcePtr, long index)
         where T : unmanaged
     {
         return (sourcePtr + (UnsafeUtility.SizeOf<T>() * index));
     }
+
     [BurstDiscard]
     public static void LogErrorIfJobIsNotBurstCompile(ref bool runOnce)
     {
@@ -567,5 +621,170 @@ public static class CollectionCustomHelper {
         }
         runOnce = true;
         Debug.LogError($"a job was not bursted when it was expected to");
+    }
+
+
+    public static TElement[] CreateShallowCopy<TElement>(this TElement[] originalArray)
+    {
+        var evaluationPointsCopy = new TElement[originalArray.Length];
+        originalArray.CopyTo(evaluationPointsCopy, 0);
+        return evaluationPointsCopy;
+    }
+
+    public static TElement[] CopyOrCreate<TElement>(TElement[] dst, TElement[] src)
+    {
+        if ( src.Length == 0 )
+        {
+            dst = Array.Empty<TElement>();
+        }
+        else if ( dst is null || dst.Length != src.Length )
+        {
+            dst = src.CreateShallowCopy();
+        }
+        else
+        {
+            src.CopyTo(dst, 0);
+        }
+        return dst;
+    }
+
+    public static ReadOnlySpan<TElement> AsReadOnlySpan<TElement>(this TElement[] collectionA)
+    {
+        return new ReadOnlySpan<TElement>(collectionA);
+    }
+
+    public static bool AreCollectionEquals<TElement>(this TElement[] collectionA, TElement[] collectionB)
+        where TElement : IEquatable<TElement>
+    {
+        return AreCollectionEquals(new ReadOnlySpan<TElement>(collectionA), new ReadOnlySpan<TElement>(collectionB));
+    }
+
+    public static bool AreCollectionEquals<TElement>(this ReadOnlySpan<TElement> collectionA, ReadOnlySpan<TElement> collectionB)
+        where TElement : IEquatable<TElement>
+    {
+        int countA = collectionA.Length;
+        bool hasChanged = countA != collectionB.Length;
+        for ( var index = 0; index < countA && !hasChanged; index++ )
+        {
+            var elementA = collectionA[index];
+            var elementB = collectionB[index];
+            hasChanged = !elementA.Equals(elementB);
+        }
+        return !hasChanged;
+    }
+
+    public static bool AreCollectionEquals<TElement, TComparer>(this TElement[] collectionA, TElement[] collectionB, TComparer comparer)
+        where TComparer : IComparer<TElement>
+    {
+        return AreCollectionEquals(new ReadOnlySpan<TElement>(collectionA), new ReadOnlySpan<TElement>(collectionB), comparer);
+    }
+
+    public static bool AreCollectionEquals<TElement, TComparer>(this ReadOnlySpan<TElement> collectionA, ReadOnlySpan<TElement> collectionB, TComparer comparer)
+        where TComparer : IComparer<TElement>
+    {
+        var countA = collectionA.Length;
+        bool hasChanged = countA != collectionB.Length;
+        for ( var index = 0; index < countA && !hasChanged; index++ )
+        {
+            var elementA = collectionA[index];
+            var elementB = collectionB[index];
+            hasChanged = comparer.Compare(elementA, elementB) != 0;
+        }
+        return hasChanged;
+    }
+
+    public static unsafe void EnsureCapacity<TData>(this ref NativeList<TData> list, int targetCapacity)
+        where TData : unmanaged
+    {
+        list.GetUnsafeList()->EnsureCapacity(targetCapacity);
+    }
+
+    public static void EnsureCapacity<TData>(this ref UnsafeList<TData> list, int targetCapacity)
+        where TData : unmanaged
+    {
+        if ( targetCapacity > list.Capacity )
+        {
+            list.Capacity = targetCapacity;
+        }
+    }
+
+
+    public static void CopyToManagedArray<T>(NativeArray<T> src, T[] dst)
+        where T : unmanaged
+    {
+        CopyToManagedArray(src, 0, dst, 0, src.Length);
+    }
+
+    public static unsafe void CopyToManagedArray<T>(NativeArray<T> src, int srcIndex, T[] dst, int dstIndex, int length)
+        where T : unmanaged
+    {
+        CheckCopyPtr(dst);
+        CheckCopyLengths(src.Length, dst.Length);
+
+        GCHandle gcHandle = GCHandle.Alloc((object)dst, GCHandleType.Pinned);
+        UnsafeUtility.MemCpy((void*)((IntPtr)(void*)gcHandle.AddrOfPinnedObject() + dstIndex * UnsafeUtility.SizeOf<T>()), (void*)((IntPtr)NativeArrayUnsafeUtility.GetUnsafeBufferPointerWithoutChecks(src) + srcIndex * UnsafeUtility.SizeOf<T>()), (long)(length * UnsafeUtility.SizeOf<T>()));
+        gcHandle.Free();
+    }
+
+    [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
+    public static void CheckCopyPtr<T>(T[] ptr)
+    {
+        if ( ptr == null )
+            throw new ArgumentNullException(nameof(ptr));
+    }
+
+    [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
+    public static void CheckCopyLengths(int srcLength, int dstLength)
+    {
+        if ( srcLength != dstLength )
+            throw new ArgumentException("source and destination length must be the same");
+    }
+
+    [Conditional("UNITY_EDITOR")]
+    [Conditional("DEBUG")]
+    public static void CheckEstimatedSizeMatchActualSize(int actualSize, int expectedByteSize)
+    {
+        if ( actualSize != expectedByteSize )
+        {
+            Debug.LogError($"the estimated content {expectedByteSize} must match the actual size {actualSize}");
+        }
+    }
+
+    public static void SwapBackElementAt<TList, TData>(this ref TList list, int i, TData current)
+        where TData : unmanaged
+        where TList : unmanaged, IIndexable<TData>
+    {
+        ref var lastElement = ref list.ElementAt(list.Length - 1);
+        list.ElementAt(i) = lastElement;
+        lastElement = current;
+    }
+
+    public static void AddExt<TNativeList, TElement>(this ref TNativeList serializableComponentList, TElement element)
+        where TNativeList : unmanaged, INativeList<TElement>
+        where TElement : unmanaged
+    {
+        serializableComponentList[serializableComponentList.Length++] = element;
+    }
+
+    public static unsafe void AddRangeExt<TNativeList, TElement>(this ref TNativeList serializableComponentList, void* ptrSource, int elementCount)
+        where TNativeList : unmanaged, INativeList<TElement>
+        where TElement : unmanaged
+    {
+        var startIndex = serializableComponentList.Length;
+        serializableComponentList.Length += elementCount;
+        var dst = UnsafeUtility.AddressOf(ref serializableComponentList.ElementAt(startIndex));
+        UnsafeUtility.MemCpy(dst, ptrSource, elementCount * sizeof(TElement));
+    }
+
+    public static unsafe NativeArray<T> AsArray<T>(this UnsafeList<T> unsafeList)
+        where T : unmanaged
+    {
+        return NativeArrayUnsafeUtility.ConvertExistingDataToNativeArray<T>(unsafeList.Ptr, unsafeList.Length, Allocator.None);
+    }
+
+    public static unsafe ref T ReadElementAsRef<T>(this ref NativeArray<T> nativeArray, int index)
+        where T : unmanaged
+    {
+        return ref UnsafeUtility.ArrayElementAsRef<T>(nativeArray.GetUnsafePtr(), index);
     }
 }

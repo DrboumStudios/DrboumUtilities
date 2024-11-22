@@ -45,13 +45,12 @@ namespace Drboum.Utilities.Runtime.Inputs {
             _buttonInputs.Length = _buttonNames.Length;
         }
         public ref ButtonInput ElementAt(int   index)       => ref _buttonInputs.ElementAt(index);
-        public     void        Invalidate(uint currentTick) => _buttonInputs.InvalidateButtonInputs(currentTick);
 
-        public bool IsAnyButtonPressedThisTick()
+        public bool IsAnyButtonPressedThisTick(uint tick)
         {
             for ( int i = 0; i < _buttonInputs.Length; i++ )
             {
-                if ( _buttonInputs[i].PressedThisTick )
+                if ( _buttonInputs[i].PressedThisTick(tick) )
                 {
                     return true;
                 }

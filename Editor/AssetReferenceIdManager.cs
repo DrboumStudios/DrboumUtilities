@@ -7,7 +7,4 @@ namespace Drboum.Utilities.Editor
     public class AssetReferenceIdManager : AssetReferenceIDBaseManager<AssetReferenceID> {
         
     }
-    // public class PrefabIdentityManager : AssetReferenceIDBaseManager<PrefabIdentity> {
-    //   
-    // }
 }

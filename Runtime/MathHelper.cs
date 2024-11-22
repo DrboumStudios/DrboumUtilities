@@ -1,8 +1,11 @@
 ﻿using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using Unity.Mathematics;
+using Unity.Physics;
 using UnityEngine;
-public static class MathHelper {
+
+public static class MathHelper
+{
     public const float FULL_ROTATION_RADIANS = math.PI * 2f;
 
     /// <summary>
@@ -25,28 +28,33 @@ public static class MathHelper {
     {
         return math.mul(relativeToRotation, offsetPosition);
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float SmoothStart(float t)
     {
         return t * t;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float2 SmoothStart(float2 t)
     {
         return t * t;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float SmoothStop(float t)
     {
         float mt = 1f - t;
         return 1f - mt * mt;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float2 SmoothStop(float2 t)
     {
         float2 mt = 1f - t;
         return 1f - mt * mt;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float SmoothStep(float t)
     {
@@ -54,11 +62,13 @@ public static class MathHelper {
         var t2 = t * t;
         return 3 * t2 - 2 * t2 * t;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3 Divide(Vector3 vector3, Vector3 by)
     {
         return new Vector3(vector3.x / by.x, vector3.y / by.y, vector3.z / by.z);
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3 DivideSafe(Vector3 vector3, Vector3 by)
     {
@@ -68,17 +78,21 @@ public static class MathHelper {
 
         return new Vector3(resultx, resulty, resultz);
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static float CheckDivideByZero(float val1, float val2)
     {
         bool divideByZero = val2 == 0f;
+#if UNITY_EDITOR
         if ( divideByZero )
         {
             Debug.LogError("Operation Trying to divide by 0");
         }
+#endif
 
         return divideByZero ? val2 : val1 / val2;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static quaternion RotateTowards(this quaternion from, quaternion to, float maxRadianDelta)
     {
@@ -90,6 +104,7 @@ public static class MathHelper {
         }
         return math.slerp(from, to, math.min(1.0f, maxRadianDelta / angle));
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3 RotateAroundPivot(Vector3 point, Vector3 pivot, Vector3 angles)
     {
@@ -101,6 +116,7 @@ public static class MathHelper {
         point = direction + pivot;
         return point;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3 GetHorizontalCircleEdgePosition(float y, Vector3 center, float horizontalAngle, float radius)
     {
@@ -111,12 +127,14 @@ public static class MathHelper {
         pointResult.z += center.z;
         return pointResult;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void GetPointOnCircleEdge(ref Vector3 point, float radius, float horizontalAngle)
     {
         point.x = radius * math.sin(horizontalAngle);
         point.z = radius * math.cos(horizontalAngle);
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Vector3 RotateAroundPivot(Vector3 point, Vector3 pivot, Quaternion quaternion)
     {
@@ -139,6 +157,7 @@ public static class MathHelper {
         direction.z = math.cos(angle * Mathf.Deg2Rad);
         return direction;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool AlignToDirectionSmooth(Transform toRotate, Vector3 desiredDirection, float turnAngleSpeed)
     {
@@ -154,6 +173,7 @@ public static class MathHelper {
         toRotate.rotation = desiredRotation;
         return true;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool AlignToDirectionHorizontalSmooth(Transform toRotate, Vector3 desiredDirection,
         float turnAngleSpeed)
@@ -185,6 +205,7 @@ public static class MathHelper {
         boolToByte.Condition = number >= 0;
         number = (boolToByte.ConditionResultAsNumber + -0.5f) * 2;
     }
+
     /// <summary>
     ///     <see cref="BranchLessSign(ref float,ref MathHelper.BoolToByte)" />
     /// </summary>
@@ -195,6 +216,7 @@ public static class MathHelper {
         BoolToByte boolToByte = default;
         BranchLessSign(ref offsetSign, ref boolToByte);
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void BranchLessSign(ref float3 offsetSign, ref BoolToByte boolToByte)
     {
@@ -202,6 +224,7 @@ public static class MathHelper {
         BranchLessSign(ref offsetSign.y, ref boolToByte);
         BranchLessSign(ref offsetSign.z, ref boolToByte);
     }
+
     /// <summary>
     ///     Convenience method for one shot
     /// </summary>
@@ -212,16 +235,19 @@ public static class MathHelper {
         BoolToByte boolToByte = default;
         BranchLessSign(ref number, ref boolToByte);
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void Sign(in float number, out float result)
     {
         result = number >= 0 ? 1f : -1f;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsDefault(this quaternion quaternion)
     {
         return quaternion.value.x == 0 && quaternion.value.y == 0 && quaternion.value.z == 0 && quaternion.value.w == 0;
     }
+
     /// <summary>
     ///     Timecounter must be between 0 and 1
     /// </summary>
@@ -233,6 +259,7 @@ public static class MathHelper {
         float3.y = 0f;
         return float3;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float3 FlattenNormalize(this float3 float3)
     {
@@ -240,6 +267,7 @@ public static class MathHelper {
         math.normalize(float3);
         return float3;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float3 FlattenNormalizeSafe(this ref float3 float3ToNormalize)
     {
@@ -292,6 +320,7 @@ public static class MathHelper {
         }
         return vector;
     }
+
     /// <summary>
     ///     Returns the Euler angles (in radians) between two quaternions
     /// </summary>
@@ -307,6 +336,7 @@ public static class MathHelper {
         angle += angle;
         return math.dot(toImag, fromImag) < 0 ? -angle : angle;
     }
+
     /// <summary>
     ///     Note: taken from Unity.Animation/Core/MathExtensions.cs, which will be moved to Unity.Mathematics at some point
     ///     after that, this should be removed and the Mathematics version should be used
@@ -471,6 +501,7 @@ public static class MathHelper {
 
         return EulerReorderBack(euler, order);
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static float3 EulerReorderBack(float3 euler, math.RotationOrder order)
     {
@@ -491,6 +522,7 @@ public static class MathHelper {
                 return euler;
         }
     }
+
     /// <summary>
     ///     get the offset between self and another vector
     /// </summary>
@@ -501,13 +533,16 @@ public static class MathHelper {
     {
         return other - self;
     }
+
     [StructLayout(LayoutKind.Explicit)]
-    public struct BoolToByte {
+    public struct BoolToByte
+    {
         [FieldOffset(0)] public bool Condition;
         /// <summary>
         ///     0 or 1 depending on the assigned condition
         /// </summary>
         [FieldOffset(0)] public byte ConditionResultAsNumber;
+
         /// <summary>
         ///     this function will return 1 if the condition is true or else -1
         /// </summary>
@@ -519,68 +554,81 @@ public static class MathHelper {
             result = (ConditionResultAsNumber + -0.5f) * 2;
         }
     }
+
     #region BooleanExtensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEqual(this bool2 @this, bool2 other)
     {
         return @this.x == other.x && @this.y == other.y;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool AllTrue(this bool2 @this)
     {
         return @this.x && @this.y;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any(this bool2 @this)
     {
         return @this.x || @this.y;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool None(this bool2 @this)
     {
         return !Any(@this);
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEqual(this bool3 @this, bool3 other)
     {
         return @this.x == other.x && @this.y == other.y && @this.z == other.z;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool AllTrue(this bool3 @this)
     {
         return math.all(@this);
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any(this bool3 @this)
     {
         return math.any(@this);
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool None(this bool3 @this)
     {
         return !Any(@this);
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEqual(this bool4 @this, bool4 other)
     {
         return @this.x == other.x && @this.y == other.y && @this.z == other.z && @this.w == other.w;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool AllTrue(this bool4 @this)
     {
         return @this.x && @this.y && @this.z && @this.w;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool Any(this bool4 @this)
     {
         return @this.x || @this.y || @this.z || @this.w;
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool None(this bool4 @this)
     {
         return !Any(@this);
     }
     #endregion BooleanExtensions
+
     /// <summary>
     /// can be used to reproduce a local rotation ie transform parent/child rotation 
     /// see <paramref name="localEulerAngle"/>
@@ -592,8 +640,77 @@ public static class MathHelper {
     {
         return CalculateRotationRelativeToSource(rotationReference, quaternion.Euler(localEulerAngle));
     }
+
     public static quaternion CalculateRotationRelativeToSource(in quaternion rotationReference, in quaternion offsetRotation)
     {
         return math.mul(rotationReference, offsetRotation);
     }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Overlaps(this in AABB aabb, in AABB other)
+    {
+        return math.all(aabb.Max >= other.Min & aabb.Min <= other.Max);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Overlaps(in float3 min, in float3 max, in float3 otherMin, in float3 otherMax)
+    {
+        return math.all(max >= otherMin & min <= otherMax);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool Overlaps(this in Aabb aabb, in AABB other)
+    {
+        return Overlaps(in aabb.Min, in aabb.Max, other.Min, other.Max);
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static uint RoundAsUIntWithFloatingPointAccuracy(this float value, uint accuracy = 100)
+    {
+        float f = value * accuracy;
+        return RoundAsUInt(f) / accuracy;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static uint RoundAsUIntWithFloatingPointAccuracy(this double value, uint accuracy = 100)
+    {
+        return RoundAsUInt(value * accuracy) / accuracy;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static uint3 RoundAsUInt(this float3 value, float roundValue = 0.5f)
+    {
+        return (uint3)(value + roundValue);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static uint3 RoundAsUInt(this double3 value, float roundValue = 0.5f)
+    {
+        return (uint3)(value + roundValue);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static uint3 RoundAsUIntWithFloatingPointAccuracy(this float3 value, uint accuracy = 100)
+    {
+        return RoundAsUInt(value * accuracy) / accuracy;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static uint3 RoundAsUIntWithFloatingPointAccuracy(this double3 value, uint accuracy = 100)
+    {
+        return RoundAsUInt(value * accuracy) / accuracy;
+    }
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static uint RoundAsUInt(this float value, float roundValue = 0.5f)
+    {
+        return (uint)(value + roundValue);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static uint RoundAsUInt(this double value, float roundValue = 0.5f)
+    {
+        return (uint)(value + roundValue);
+    }
+    
 }

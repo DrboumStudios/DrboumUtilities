@@ -4,7 +4,7 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace GameProject
+namespace Drboum.Utilities.Collections
 {
     public interface IReadOnlySerializableDictionary<TKey, TValue>
     {
