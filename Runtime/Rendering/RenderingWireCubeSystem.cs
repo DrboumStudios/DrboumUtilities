@@ -1,8 +1,7 @@
-﻿using System.Diagnostics;
+﻿#if HAS_SHAPE_ASSET
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
-#if HAS_SHAPE_ASSET
 using Shapes;
-#endif
 using Unity.Burst;
 using Unity.Burst.Intrinsics;
 using Unity.Collections;
@@ -17,7 +16,6 @@ using UnityEngine;
 
 namespace Drboum.Utilities.Rendering
 {
-#if HAS_SHAPE_ASSET
     struct CubeBakedRenderingData
     {
         public CubeBakedData CubeBakedData;
@@ -202,5 +200,5 @@ namespace Drboum.Utilities.Rendering
             UnityEngine.Rendering.RenderPipelineManager.beginCameraRendering -= DrawShapesSRP;
         }
     }
-#endif
 }
+#endif
