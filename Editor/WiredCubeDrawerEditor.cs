@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR && HAS_SHAPE_ASSET
+﻿#if UNITY_EDITOR && SHAPES_URP
 using Drboum.Utilities.Rendering;
 using UnityEditor;
 

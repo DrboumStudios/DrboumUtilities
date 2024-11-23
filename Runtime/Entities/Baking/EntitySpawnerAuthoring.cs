@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Drboum.Utilities.Entities.Baking
 {
-#if HAS_SHAPE_ASSET
+#if SHAPES_URP
          [RequireComponent(typeof(WiredCubeDrawer))]
 #endif
     public class EntitySpawnerAuthoring : EditorObjectTracker
@@ -17,7 +17,7 @@ namespace Drboum.Utilities.Entities.Baking
             Extents = new float3(50, 0.1f, 50)
         };
         public Vector3 InstanceSpacing;
-#if HAS_SHAPE_ASSET
+#if SHAPES_URP
              [SerializeField] private WiredCubeDrawer m_wiredCubeDrawer;
 #endif
 
@@ -27,7 +27,7 @@ namespace Drboum.Utilities.Entities.Baking
             if ( SpawnPrefab != null )
                 SpawnBounds.Extents = math.max(SpawnBounds.Extents, SpawnPrefab.GetComponentInChildren<Renderer>().bounds.extents);
 
-#if HAS_SHAPE_ASSET
+#if SHAPES_URP
            if ( !m_wiredCubeDrawer && !TryGetComponent(out m_wiredCubeDrawer) )
                 return;
 

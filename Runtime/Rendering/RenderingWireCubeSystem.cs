@@ -1,4 +1,4 @@
-﻿#if HAS_SHAPE_ASSET
+﻿#if SHAPES_URP
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Shapes;
