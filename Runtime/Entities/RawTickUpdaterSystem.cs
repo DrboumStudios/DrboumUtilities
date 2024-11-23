@@ -1,7 +1,7 @@
 ﻿using Unity.Burst;
 using Unity.Entities;
 
-namespace GameProject.Inputs
+namespace Drboum.Utilities.Entities
 {
     [UpdateInGroup(typeof(SimulationSystemGroup), OrderLast = true)]
     [UpdateBefore(typeof(EndSimulationEntityCommandBufferSystem))]

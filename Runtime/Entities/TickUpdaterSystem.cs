@@ -2,9 +2,8 @@
 using Unity.Collections;
 using Unity.Core;
 using Unity.Entities;
-using UnityEngine;
 
-namespace GameProject.Inputs
+namespace Drboum.Utilities.Entities
 {
     public interface ITickData
     {

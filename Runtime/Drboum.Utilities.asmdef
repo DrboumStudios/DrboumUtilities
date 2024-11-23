@@ -14,7 +14,9 @@
         "GUID:e00140a815de944528348782854abe39",
         "GUID:8819f35a0fc84499b990e90a4ca1911f",
         "GUID:e04e6c86a9f3947eb95fded39f9e60cc",
-        "Unity.Physics.Custom"
+        "GUID:870b544e439310c438fcb1141865ffb1",
+        "GUID:13a6fdc14ca9df84eb8019bc66fa9e5d",
+        "GUID:234839f5b92104d4fb68841aefec625b"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
