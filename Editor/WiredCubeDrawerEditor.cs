@@ -1,4 +1,5 @@
 ﻿#if UNITY_EDITOR && HAS_SHAPE_ASSET
+using Drboum.Utilities.Rendering;
 using UnityEditor;
 
 namespace Drboum.Utilities.Editor
