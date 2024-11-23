@@ -42,7 +42,7 @@ namespace Drboum.Utilities.Rendering
         {
             if ( !enabled || !_debugDisplay )
                 return;
-        
+
             DrawWiredCubeCommand(cam, Transform.localToWorldMatrix, lineThickness, _shapeColor, _bounds.Center, _bounds.Size);
         }
 
@@ -242,5 +242,5 @@ namespace Drboum.Utilities.Rendering
             return drawCommandWrapper;
         }
     }
-#endif
 }
+#endif
