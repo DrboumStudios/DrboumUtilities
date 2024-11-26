@@ -30,6 +30,11 @@
             "name": "com.unity.modules.terrain",
             "expression": "1.0",
             "define": "UNITY_TERRAIN_EXIST"
+        },
+        {
+            "name": "com.unity.render-pipelines.universal",
+            "expression": "1.0",
+            "define": "URP_EXISTS"
         }
     ],
     "noEngineReferences": false
