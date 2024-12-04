@@ -1,4 +1,4 @@
-﻿#if SHAPES_URP && URP_EXISTS
+﻿#if (SHAPES_URP || SHAPES_HDRP)
 using System;
 using System.Runtime.CompilerServices;
 using Shapes;
