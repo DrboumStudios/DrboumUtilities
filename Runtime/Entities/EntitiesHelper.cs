@@ -197,4 +197,16 @@ public static partial class EntitiesHelper
     {
         matrix.c3.xyz = position;
     }
+
+    public static EntityQuery SetChangedVersionFilter<TComponent>(this ref EntityQuery query)
+    {
+        query.SetChangedVersionFilter(ComponentType.ReadWrite<TComponent>());
+        return query;
+    }
+
+    public static EntityQuery AddChangedVersionFilter<TComponent>(this ref EntityQuery query)
+    {
+        query.AddChangedVersionFilter(ComponentType.ReadWrite<TComponent>());
+        return query;
+    }
 }
