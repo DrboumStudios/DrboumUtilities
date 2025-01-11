@@ -209,4 +209,11 @@ public static partial class EntitiesHelper
         query.AddChangedVersionFilter(ComponentType.ReadWrite<TComponent>());
         return query;
     }
+    public static void CreateNewLinkedGroupRootFrom(this ref EntityManager entityManager,Entity oldRoot, Entity newRoot)
+    {
+        var entityBufferList = new NativeList<Entity>(8, AllocatorManager.Temp);
+        entityBufferList.Add(in newRoot);
+        entityBufferList.AddRange(entityManager.GetBuffer<LinkedEntityGroup>(oldRoot).Reinterpret<Entity>().AsNativeArray());
+        entityManager.AddBuffer<LinkedEntityGroup>(newRoot).Reinterpret<Entity>().AddRange(entityBufferList.AsArray());
+    }
 }
