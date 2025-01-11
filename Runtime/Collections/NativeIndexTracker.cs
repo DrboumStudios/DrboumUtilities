@@ -5,7 +5,6 @@ using Unity.Assertions;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
-using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 
 namespace Drboum.Utilities.Collections
@@ -44,7 +43,7 @@ namespace Drboum.Utilities.Collections
         public ref TInstance ElementAt(in TKey key)
         {
             var exist = _indexLookup.TryGetValue(key, out var index);
-            Assert.IsTrue(exist);
+            Unity.Assertions.Assert.IsTrue(exist);
             return ref _referencesValues.ElementAt(index);
         }
 
