@@ -105,6 +105,16 @@ namespace Drboum.Utilities.Collections
             AssertArraySizeMatch();
         }
 
+        public bool TryAdd(in TKey key, in TInstance instance)
+        {
+            if ( !Contains(key) )
+            {
+                Add(in key, in instance);
+                return true;
+            }
+            return false;
+        }
+
         public void AddRange(in NativeArray<TKey> keys, in NativeArray<TInstance> instances)
         {
 #if UNITY_EDITOR
@@ -118,7 +128,7 @@ namespace Drboum.Utilities.Collections
             for ( int i = 0; i < keys.Length; i++ )
             {
                 var key = keys[i];
-                if(TryRemove(key))
+                if ( TryRemove(key) )
                 {
                     i--;
                 }
