@@ -118,7 +118,10 @@ namespace Drboum.Utilities.Collections
             for ( int i = 0; i < keys.Length; i++ )
             {
                 var key = keys[i];
-                TryRemove(key);
+                if(TryRemove(key))
+                {
+                    i--;
+                }
                 _indexLookup.TryAdd(key, startIndex + i);
             }
             _referencesKeys.AddRange(keys);
