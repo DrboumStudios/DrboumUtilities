@@ -107,9 +107,11 @@ namespace Drboum.Utilities.Collections
 
         public bool TryAdd(in TKey key, in TInstance instance)
         {
-            if ( !Contains(key) )
+            if ( _indexLookup.TryAdd(key, _referencesKeys.Length) )
             {
-                Add(in key, in instance);
+                _referencesValues.Add(in instance);
+                _referencesKeys.Add(in key);
+                AssertArraySizeMatch();
                 return true;
             }
             return false;

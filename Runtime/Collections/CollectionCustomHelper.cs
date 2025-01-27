@@ -778,4 +778,11 @@ public static class CollectionCustomHelper
         UnsafeUtility.MemCpy(array.GetUnsafePtr(), bufferSrcPtr, bytesLength);
         return array;
     }
+
+    public static unsafe T* Allocate<T>(this ref AllocatorManager.AllocatorHandle allocator, int length = 1)
+        where T : unmanaged
+    {
+        return (T*)allocator.Allocate(UnsafeUtility.SizeOf<T>(), UnsafeUtility.AlignOf<T>(), length);
+    }
+
 }
