@@ -37,6 +37,16 @@ public static class CollectionCustomHelper
     }
 
     [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
+    public static void CheckElementAccess<T>(int index, NativeArray<T> array)
+        where T : unmanaged
+    {
+        if ( array.Length > index )
+        {
+            throw new IndexOutOfRangeException($"Index {index} is out of range of '{array.Length}' Length.");
+        }
+    }
+
+    [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
     public static void CheckResize(int newLength, int maxCapacity)
     {
         if ( newLength < 0 || newLength > maxCapacity )
