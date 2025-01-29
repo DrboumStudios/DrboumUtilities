@@ -795,4 +795,22 @@ public static class CollectionCustomHelper
         return (T*)allocator.Allocate(UnsafeUtility.SizeOf<T>(), UnsafeUtility.AlignOf<T>(), length);
     }
 
+    /// <summary>
+    /// Copy a collection of a <see cref="TSource"/> which exist as a field of <see cref="TDestContainingType"/>.
+    /// </summary>
+    /// <param name="destArray">array of containing type that will be written to</param>
+    /// <param name="sourceArray">array of the single field(readonly access)</param>
+    /// <param name="elementStartOffset">offset where the element <see cref="TSource"/> will be written as part of <see cref="TDestContainingType"/></param>
+    /// <param name="srcPropertyElementSize">the size of the copied element within the containing type</param>
+    /// <typeparam name="TDestContainingType">Type which contains the property we are copying </typeparam>
+    /// <typeparam name="TSource">Type of the property which is part of <see cref="TDestContainingType"/></typeparam>
+    public static unsafe void CopyCollectionDataAsProperty<TDestContainingType, TSource>(NativeArray<TDestContainingType> destArray, NativeArray<TSource> sourceArray, int elementStartOffset, out int srcPropertyElementSize)
+        where TDestContainingType : unmanaged
+        where TSource : unmanaged
+    {
+        CheckCopyLengths(destArray.Length, sourceArray.Length);
+        srcPropertyElementSize = sizeof(TSource);
+        UnsafeUtility.MemCpyStride(((byte*)destArray.GetUnsafePtr() + elementStartOffset), UnsafeUtility.SizeOf<TDestContainingType>() - srcPropertyElementSize, sourceArray.GetUnsafePtr(), 0, srcPropertyElementSize, sourceArray.Length);
+    }
+
 }

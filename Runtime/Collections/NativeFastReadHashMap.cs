@@ -119,13 +119,8 @@ namespace Drboum.Utilities.Collections
 
         public void AddRange(in NativeArray<TKey> keys, in NativeArray<TInstance> instances)
         {
-#if UNITY_EDITOR
-            if ( keys.Length != instances.Length )
-            {
-                Debug.LogError($"The number of keys and instance arrays are different. aborting...");
-                return;
-            }
-#endif
+            CollectionCustomHelper.CheckCopyLengths(keys.Length, instances.Length);
+
             var startIndex = _referencesKeys.Length;
             for ( int i = 0; i < keys.Length; i++ )
             {
