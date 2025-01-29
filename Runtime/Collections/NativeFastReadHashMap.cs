@@ -15,7 +15,7 @@ namespace Drboum.Utilities.Collections
     /// <remarks>not thread safe</remarks>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TInstance"></typeparam>
-    public struct NativeIndexTracker<TKey, TInstance> : IDisposable
+    public struct NativeFastReadHashMap<TKey, TInstance> : IDisposable
         where TKey : unmanaged, IEquatable<TKey>
         where TInstance : unmanaged
     {
@@ -26,7 +26,7 @@ namespace Drboum.Utilities.Collections
         [NativeDisableContainerSafetyRestriction]
         private NativeHashMap<TKey, int> _indexLookup;
 
-        public NativeIndexTracker(int initialCapacity, Allocator allocator)
+        public NativeFastReadHashMap(int initialCapacity, Allocator allocator)
         {
             _referencesKeys = new(initialCapacity, allocator);
             _referencesValues = new(initialCapacity, allocator);
@@ -155,14 +155,14 @@ namespace Drboum.Utilities.Collections
             return TryRemove(key, out _);
         }
 
-        public NativeArray<TKey>.ReadOnly AsKeysArray()
+        public ReadOnlySpan<TKey> AsKeysArray()
         {
-            return _referencesKeys.AsArray().AsReadOnly();
+            return _referencesKeys.AsArray();
         }
 
-        public NativeArray<TInstance>.ReadOnly AsValuesArray()
+        public ReadOnlySpan<TInstance> AsValuesArray()
         {
-            return _referencesValues.AsArray().AsReadOnly();
+            return _referencesValues.AsArray();
         }
 
         public void ToNativeArrays(Allocator allocator, out NativeArray<TKey> keys, out NativeArray<TInstance> values)
