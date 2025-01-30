@@ -72,9 +72,9 @@ namespace Drboum.Utilities.Collections
             _collection.AssertArraysSizeMatch();
         }
 
-        public void AddRangeClear(in NativeArray<TKey> keys, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
+        public void AddRangeFromZero(in NativeArray<TKey> keys, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
         {
-            _collection.AddRangeClear(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], data1, data2, data3));
+            _collection.AddRangeFromZero(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], data1, data2, data3));
         }
 
         public void AddRange(in NativeArray<TKey> keys, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
@@ -291,16 +291,16 @@ namespace Drboum.Utilities.Collections
             return false;
         }
 
-        public void AddRangeClear(in NativeArray<TKey> keys, in ReadOnlySpan<NativeArray<byte>> instances)
+        public void AddRangeFromZero(in NativeArray<TKey> keys, in ReadOnlySpan<NativeArray<byte>> instancesData)
         {
-            Clear();
+            Assert.IsTrue(_referencesKeys.IsEmpty);
             var startIndex = _referencesKeys.Length;
             for ( int i = 0; i < keys.Length; i++ )
             {
                 var key = keys[i];
                 _indexLookup.TryAdd(key, startIndex + i);
             }
-            AddRangeAfterIndexAddImpl(keys, instances);
+            AddRangeAfterIndexAddImpl(keys, instancesData);
             AssertArraysSizeMatch();
         }
 
