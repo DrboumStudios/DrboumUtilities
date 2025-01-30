@@ -122,7 +122,6 @@ namespace Drboum.Utilities.Collections
             where TInstance : unmanaged;
 
         bool Contains(in TKey key);
-        void AssertArraysSizeMatch();
         unsafe bool TryAdd(in TKey key, CompactInstance instanceData);
         void AddRange(in NativeArray<TKey> keys, in NativeArray<NativeArray<byte>> instances);
         bool TryRemove(in TKey key);
@@ -135,7 +134,7 @@ namespace Drboum.Utilities.Collections
         void Clear();
     }
 
-    internal unsafe struct MultiNativeFastReadLookup<TKey> : IDisposable, IMultiNativeFastReadLookup<TKey>
+    internal unsafe struct MultiNativeFastReadLookup<TKey> : IMultiNativeFastReadLookup<TKey>
         where TKey : unmanaged, IEquatable<TKey>
     {
         [NativeDisableContainerSafetyRestriction]
@@ -389,6 +388,7 @@ namespace Drboum.Utilities.Collections
         public CompactInstance(NativeList<byte> data)
         {
             _data = data;
+            _data.Clear();
         }
 
         public void AddData<T>(T value)
