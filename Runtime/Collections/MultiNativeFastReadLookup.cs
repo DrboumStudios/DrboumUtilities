@@ -64,10 +64,14 @@ namespace Drboum.Utilities.Collections
             _collection.AssertArraysSizeMatch();
         }
 
-        public bool TryAdd(in TKey key, CompactInstance instanceData)
+        public void AddRange(in NativeArray<TKey> keys, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
+        { }
+
+        public unsafe bool TryAdd(in TKey key, TData1 data1, TData2 data2, TData3 data3)
         {
-            return _collection.TryAdd(in key, instanceData);
+            new CompactInstance()
         }
+
 
         public void AddRange(in NativeArray<TKey> keys, in NativeArray<NativeArray<byte>> instances)
         {
@@ -122,8 +126,6 @@ namespace Drboum.Utilities.Collections
             where TInstance : unmanaged;
 
         bool Contains(in TKey key);
-        unsafe bool TryAdd(in TKey key, CompactInstance instanceData);
-        void AddRange(in NativeArray<TKey> keys, in NativeArray<NativeArray<byte>> instances);
         bool TryRemove(in TKey key);
         ReadOnlySpan<TKey> AsKeysArray();
 
@@ -374,45 +376,33 @@ namespace Drboum.Utilities.Collections
         }
     }
 
-    public unsafe struct CompactInstance
+    public readonly unsafe ref  struct CompactInstance
     {
-        private NativeList<byte> _data;
+        private readonly Span<byte> _data;
 
         public int Length => _data.Length;
 
-        public CompactInstance(int totalInstanceDataSize)
-        {
-            _data = new(totalInstanceDataSize, Allocator.Temp);
-        }
-
-        public CompactInstance(NativeList<byte> data)
+        public CompactInstance(Span<byte> data)
         {
             _data = data;
-            _data.Clear();
-        }
-
-        public void AddData<T>(T value)
-            where T : unmanaged
-        {
-            _data.AddRange(&value, sizeof(T));
         }
 
         public Reader AsReader() => new(in this);
 
         public ref struct Reader
         {
-            private readonly byte* _data;
+            private readonly Span<byte> _data;
             private int _positionRead;
 
             public Reader(in CompactInstance compactInstance)
             {
-                _data = compactInstance._data.GetUnsafePtr();
+                _data = compactInstance._data;
                 _positionRead = 0;
             }
 
-            internal void* ReadNext(int size)
+            internal ReadOnlySpan<byte> ReadNext(int size)
             {
-                var ptr = _data + _positionRead;
+                var ptr = _data.Slice(_positionRead, size);
                 _positionRead += size;
                 return ptr;
             }
