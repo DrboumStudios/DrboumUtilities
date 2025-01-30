@@ -4,9 +4,7 @@ using System.Runtime.CompilerServices;
 using Unity.Assertions;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
-using Unity.Entities;
 using Unity.Jobs;
-using Debug = UnityEngine.Debug;
 
 namespace Drboum.Utilities.Collections
 {
@@ -16,25 +14,20 @@ namespace Drboum.Utilities.Collections
         where TData2 : unmanaged
         where TData3 : unmanaged
     {
+        private const int DATAPROPERTIES_COUNT = 3;
         private MultiNativeFastReadLookup<TKey> _collection;
 
         public MultiNativeFastReadLookup(int initialCapacity, AllocatorManager.AllocatorHandle allocator)
         {
-            ReadOnlySpan<TypeDescriptor> typeDescriptors = stackalloc TypeDescriptor[3] {
+            ReadOnlySpan<TypeDescriptor> typeDescriptors = stackalloc TypeDescriptor[DATAPROPERTIES_COUNT] {
                 new TypeDescriptor(sizeof(TData1)),
                 new TypeDescriptor(sizeof(TData2)),
                 new TypeDescriptor(sizeof(TData3)),
             };
             _collection = new(typeDescriptors, initialCapacity, allocator);
         }
-
-        public void Dispose()
-        {
-            _collection.Dispose();
-        }
-
+        
         public bool IsCreated => _collection.IsCreated;
-
         public int Length => _collection.Length;
 
         public int Capacity {
@@ -42,16 +35,31 @@ namespace Drboum.Utilities.Collections
             set => _collection.Capacity = value;
         }
 
-        public bool TryGetValue<TInstance>(in TKey key, int valueTypeIndex, out TInstance value)
-            where TInstance : unmanaged
+        public bool TryGetValue(in TKey key, ref TData1 value1, ref TData2 value2, ref TData3 value3)
         {
-            return _collection.TryGetValue(in key, valueTypeIndex, out value);
+            if ( _collection.TryGetValue(in key, out var elementIndex) )
+            {
+                value1 = _collection.ElementAt<TData1>(elementIndex, 0);
+                value2 = _collection.ElementAt<TData2>(elementIndex, 1);
+                value3 = _collection.ElementAt<TData3>(elementIndex, 2);
+                return true;
+            }
+            return false;
         }
 
-        public ref TInstance ElementAt<TInstance>(in TKey key, int typeIndex)
-            where TInstance : unmanaged
+        public bool TryGetValue(in TKey key, out TData1 value)
         {
-            return ref _collection.ElementAt<TInstance>(in key, typeIndex);
+            return _collection.TryGetValue(in key, 0, out value);
+        }
+
+        public bool TryGetValue(in TKey key, out TData2 value)
+        {
+            return _collection.TryGetValue(in key, 1, out value);
+        }
+
+        public bool TryGetValue(in TKey key, out TData3 value)
+        {
+            return _collection.TryGetValue(in key, 2, out value);
         }
 
         public bool Contains(in TKey key)
@@ -64,18 +72,44 @@ namespace Drboum.Utilities.Collections
             _collection.AssertArraysSizeMatch();
         }
 
+        public void AddRangeClear(in NativeArray<TKey> keys, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
+        {
+            _collection.AddRangeClear(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], data1, data2, data3));
+        }
+
         public void AddRange(in NativeArray<TKey> keys, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
-        { }
+        {
+            _collection.AddRange(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], data1, data2, data3));
+        }
+
+        public unsafe void AddOrReplace(in TKey key, in TData1 data1, in TData2 data2, in TData3 data3)
+        {
+            var compactData = stackalloc byte*[DATAPROPERTIES_COUNT];
+            _collection.AddOrReplace(in key, PackInstanceData(compactData, data1, data2, data3));
+        }
 
         public unsafe bool TryAdd(in TKey key, TData1 data1, TData2 data2, TData3 data3)
         {
-            new CompactInstance()
+            var compactData = stackalloc byte*[DATAPROPERTIES_COUNT];
+            return _collection.TryAdd(in key, PackInstanceData(compactData, data1, data2, data3));
         }
 
-
-        public void AddRange(in NativeArray<TKey> keys, in NativeArray<NativeArray<byte>> instances)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static InstanceData PackInstanceData(byte** compactData, TData1 data1, TData2 data2, TData3 data3)
         {
-            _collection.AddRange(in keys, in instances);
+            compactData[0] = (byte*)&data1;
+            compactData[1] = (byte*)&data2;
+            compactData[2] = (byte*)&data3;
+            return new InstanceData(compactData, DATAPROPERTIES_COUNT);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static ReadOnlySpan<NativeArray<byte>> PackNativeArraysData(Span<NativeArray<byte>> allDatas, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
+        {
+            allDatas[0] = data1.Reinterpret<byte>(sizeof(TData1));
+            allDatas[1] = data2.Reinterpret<byte>(sizeof(TData2));
+            allDatas[2] = data3.Reinterpret<byte>(sizeof(TData3));
+            return allDatas;
         }
 
         public bool TryRemove(in TKey key)
@@ -88,10 +122,26 @@ namespace Drboum.Utilities.Collections
             return _collection.AsKeysArray();
         }
 
-        public ReadOnlySpan<TInstance> AsValuesArray<TInstance>(int typeIndex)
-            where TInstance : unmanaged
+        public void AsValuesArray(out ReadOnlySpan<TData1> dataArray)
         {
-            return _collection.AsValuesArray<TInstance>(typeIndex);
+            dataArray = _collection.AsValuesArray<TData1>(0);
+        }
+
+        public void AsValuesArray(out ReadOnlySpan<TData2> dataArray)
+        {
+            dataArray = _collection.AsValuesArray<TData2>(1);
+        }
+
+        public void AsValuesArray(out ReadOnlySpan<TData3> dataArray)
+        {
+            dataArray = _collection.AsValuesArray<TData3>(2);
+        }
+
+        public void AsValuesArray(out ReadOnlySpan<TData1> dataArray1, out ReadOnlySpan<TData2> dataArray2, out ReadOnlySpan<TData3> dataArray3)
+        {
+            dataArray1 = _collection.AsValuesArray<TData1>(0);
+            dataArray2 = _collection.AsValuesArray<TData2>(1);
+            dataArray3 = _collection.AsValuesArray<TData3>(2);
         }
 
         public void Dispose(JobHandle dependencies, NativeList<JobHandle> disposeHandles)
@@ -102,6 +152,11 @@ namespace Drboum.Utilities.Collections
         public void Clear()
         {
             _collection.Clear();
+        }
+
+        public void Dispose()
+        {
+            _collection.Dispose();
         }
     }
 
@@ -119,19 +174,9 @@ namespace Drboum.Utilities.Collections
             set;
         }
 
-        bool TryGetValue<TInstance>(in TKey key, int valueTypeIndex, out TInstance value)
-            where TInstance : unmanaged;
-
-        ref TInstance ElementAt<TInstance>(in TKey key, int typeIndex)
-            where TInstance : unmanaged;
-
         bool Contains(in TKey key);
         bool TryRemove(in TKey key);
         ReadOnlySpan<TKey> AsKeysArray();
-
-        unsafe ReadOnlySpan<TInstance> AsValuesArray<TInstance>(int typeIndex)
-            where TInstance : unmanaged;
-
         void Dispose(JobHandle dependencies, NativeList<JobHandle> disposeHandles);
         void Clear();
     }
@@ -178,13 +223,18 @@ namespace Drboum.Utilities.Collections
             }
         }
 
+        public bool TryGetValue(in TKey key, out int elementIndex)
+        {
+            return _indexLookup.TryGetValue(key, out elementIndex);
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryGetValue<TInstance>(in TKey key, int valueTypeIndex, out TInstance value)
+        public bool TryGetValue<TInstance>(in TKey key, int typeIndex, out TInstance value)
             where TInstance : unmanaged
         {
             if ( _indexLookup.TryGetValue(key, out var elementIndex) )
             {
-                value = ElementAt<TInstance>(elementIndex, valueTypeIndex);
+                value = ElementAt<TInstance>(elementIndex, typeIndex);
                 return true;
             }
             value = default;
@@ -199,7 +249,7 @@ namespace Drboum.Utilities.Collections
             return ref ElementAt<TInstance>(elementIndex, typeIndex);
         }
 
-        private ref TInstance ElementAt<TInstance>(int elementIndex, int typeIndex)
+        public ref TInstance ElementAt<TInstance>(int elementIndex, int typeIndex)
             where TInstance : unmanaged
         {
             ref var untypedCollection = ref _referencesValues.ReadElementAsRef(typeIndex);
@@ -214,25 +264,6 @@ namespace Drboum.Utilities.Collections
             return _indexLookup.ContainsKey(key);
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void AddOrReplace(in TKey key, CompactInstance instanceData)
-        {
-            if ( _indexLookup.TryGetValue(key, out var elementIndex) )
-            {
-                var reader = instanceData.AsReader();
-                for ( var index = 0; index < _referencesValues.Length; index++ )
-                {
-                    ref var typeValues = ref _referencesValues.ReadElementAsRef(index);
-                    UnsafeUtility.MemCpy(typeValues.Collection.GetUnsafePtr() + (elementIndex * typeValues.Type.Size), reader.ReadNext(typeValues.Type.Size), typeValues.Type.Size);
-                }
-            }
-            else
-            {
-                TryAdd(in key, instanceData);
-            }
-            AssertArraysSizeMatch();
-        }
-
         [Conditional("UNITY_ASSERTIONS")]
         public void AssertArraysSizeMatch()
         {
@@ -241,16 +272,15 @@ namespace Drboum.Utilities.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public bool TryAdd(in TKey key, CompactInstance instanceData)
+        public bool TryAdd(in TKey key, InstanceData instanceData)
         {
             if ( !_indexLookup.TryAdd(key, _referencesKeys.Length) )
             {
-                CollectionCustomHelper.CheckEstimatedSizeMatchActualSize(instanceData.Length, _totalInstanceByteLength);
-                var reader = instanceData.AsReader();
+                CollectionCustomHelper.CheckEstimatedSizeMatchActualSize(instanceData.PropertiesCount, _referencesValues.Length);
                 for ( var index = 0; index < _referencesValues.Length; index++ )
                 {
                     ref var typeValues = ref _referencesValues.ReadElementAsRef(index);
-                    typeValues.Collection.AddRange(reader.ReadNext(typeValues.Type.Size), typeValues.Type.Size);
+                    typeValues.Collection.AddRange(instanceData.Read(typeValues.Type.Size), typeValues.Type.Size);
                 }
 
                 _referencesKeys.Add(in key);
@@ -261,7 +291,20 @@ namespace Drboum.Utilities.Collections
             return false;
         }
 
-        public void AddRange(in NativeArray<TKey> keys, in NativeArray<NativeArray<byte>> instances)
+        public void AddRangeClear(in NativeArray<TKey> keys, in ReadOnlySpan<NativeArray<byte>> instances)
+        {
+            Clear();
+            var startIndex = _referencesKeys.Length;
+            for ( int i = 0; i < keys.Length; i++ )
+            {
+                var key = keys[i];
+                _indexLookup.TryAdd(key, startIndex + i);
+            }
+            AddRangeAfterIndexAddImpl(keys, instances);
+            AssertArraysSizeMatch();
+        }
+
+        public void AddRange(in NativeArray<TKey> keys, in ReadOnlySpan<NativeArray<byte>> instances)
         {
             var startIndex = _referencesKeys.Length;
             for ( int i = 0; i < keys.Length; i++ )
@@ -273,11 +316,35 @@ namespace Drboum.Utilities.Collections
                 }
                 _indexLookup.TryAdd(key, startIndex + i);
             }
+            AddRangeAfterIndexAddImpl(keys, instances);
+            AssertArraysSizeMatch();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void AddRangeAfterIndexAddImpl(NativeArray<TKey> keys, ReadOnlySpan<NativeArray<byte>> instances)
+        {
             _referencesKeys.AddRange(keys);
             for ( var index = 0; index < _referencesValues.Length; index++ )
             {
                 ref var typeValues = ref _referencesValues.ReadElementAsRef(index);
                 typeValues.Collection.AddRange(instances[index]);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void AddOrReplace(in TKey key, InstanceData instanceData)
+        {
+            if ( _indexLookup.TryGetValue(key, out var elementIndex) )
+            {
+                for ( var index = 0; index < _referencesValues.Length; index++ )
+                {
+                    ref var typeValues = ref _referencesValues.ReadElementAsRef(index);
+                    UnsafeUtility.MemCpy(typeValues.Collection.GetUnsafePtr() + (elementIndex * typeValues.Type.Size), instanceData.Read(index), typeValues.Type.Size);
+                }
+            }
+            else
+            {
+                TryAdd(in key, instanceData);
             }
             AssertArraysSizeMatch();
         }
@@ -350,12 +417,12 @@ namespace Drboum.Utilities.Collections
 
         public void Clear()
         {
-            _referencesKeys.Clear();
             for ( var index = 0; index < _referencesValues.Length; index++ )
             {
                 ref var typeValues = ref _referencesValues.ReadElementAsRef(index);
                 typeValues.Collection.Clear();
             }
+            _referencesKeys.Clear();
             _indexLookup.Clear();
         }
     }
@@ -376,36 +443,25 @@ namespace Drboum.Utilities.Collections
         }
     }
 
-    public readonly unsafe ref  struct CompactInstance
+    public readonly unsafe ref struct InstanceData
     {
-        private readonly Span<byte> _data;
+        private readonly byte** _data;
 
-        public int Length => _data.Length;
-
-        public CompactInstance(Span<byte> data)
-        {
-            _data = data;
+        public int PropertiesCount {
+            get;
         }
 
-        public Reader AsReader() => new(in this);
-
-        public ref struct Reader
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public InstanceData(byte** data, int propertiesCount)
         {
-            private readonly Span<byte> _data;
-            private int _positionRead;
+            _data = data;
+            PropertiesCount = propertiesCount;
+        }
 
-            public Reader(in CompactInstance compactInstance)
-            {
-                _data = compactInstance._data;
-                _positionRead = 0;
-            }
-
-            internal ReadOnlySpan<byte> ReadNext(int size)
-            {
-                var ptr = _data.Slice(_positionRead, size);
-                _positionRead += size;
-                return ptr;
-            }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public byte* Read(int index)
+        {
+            return _data[index];
         }
     }
 }
