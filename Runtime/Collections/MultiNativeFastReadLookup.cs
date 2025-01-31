@@ -280,7 +280,8 @@ namespace Drboum.Utilities.Collections
                 for ( var index = 0; index < _referencesValues.Length; index++ )
                 {
                     ref var typeValues = ref _referencesValues.ReadElementAsRef(index);
-                    typeValues.Collection.AddRange(instanceData.Read(typeValues.Type.Size), typeValues.Type.Size);
+                    byte* inputData = instanceData.Read(index);
+                    typeValues.Collection.AddRange(inputData, typeValues.Type.Size);
                 }
 
                 _referencesKeys.Add(in key);
