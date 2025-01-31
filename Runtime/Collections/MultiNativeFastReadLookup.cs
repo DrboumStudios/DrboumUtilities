@@ -82,13 +82,13 @@ namespace Drboum.Utilities.Collections
             _collection.AddRange(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], data1, data2, data3));
         }
 
-        public unsafe void AddOrReplace(in TKey key, in TData1 data1, in TData2 data2, in TData3 data3)
+        public void AddOrReplace(in TKey key, in TData1 data1, in TData2 data2, in TData3 data3)
         {
             var compactData = stackalloc byte*[DATAPROPERTIES_COUNT];
             _collection.AddOrReplace(in key, PackInstanceData(compactData, data1, data2, data3));
         }
 
-        public unsafe bool TryAdd(in TKey key, TData1 data1, TData2 data2, TData3 data3)
+        public bool TryAdd(in TKey key, TData1 data1, TData2 data2, TData3 data3)
         {
             var compactData = stackalloc byte*[DATAPROPERTIES_COUNT];
             return _collection.TryAdd(in key, PackInstanceData(compactData, data1, data2, data3));
@@ -294,11 +294,9 @@ namespace Drboum.Utilities.Collections
         public void AddRangeFromZero(in NativeArray<TKey> keys, in ReadOnlySpan<NativeArray<byte>> instancesData)
         {
             Assert.IsTrue(_referencesKeys.IsEmpty);
-            var startIndex = _referencesKeys.Length;
             for ( int i = 0; i < keys.Length; i++ )
             {
-                var key = keys[i];
-                _indexLookup.TryAdd(key, startIndex + i);
+                _indexLookup.TryAdd(keys[i], i);
             }
             AddRangeAfterIndexAddImpl(keys, instancesData);
             AssertArraysSizeMatch();
