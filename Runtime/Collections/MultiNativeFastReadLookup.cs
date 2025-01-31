@@ -72,12 +72,12 @@ namespace Drboum.Utilities.Collections
             _collection.AssertArraysSizeMatch();
         }
 
-        public void AddRangeFromZero(in NativeArray<TKey> keys, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
+        public void AddRangeFromZero(in NativeArray<TKey> keys,in NativeArray<TData1> data1,in NativeArray<TData2> data2,in NativeArray<TData3> data3)
         {
             _collection.AddRangeFromZero(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], data1, data2, data3));
         }
 
-        public void AddRange(in NativeArray<TKey> keys, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
+        public void AddRange(in NativeArray<TKey> keys,in NativeArray<TData1> data1,in NativeArray<TData2> data2,in NativeArray<TData3> data3)
         {
             _collection.AddRange(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], data1, data2, data3));
         }
@@ -274,7 +274,7 @@ namespace Drboum.Utilities.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryAdd(in TKey key, InstanceData instanceData)
         {
-            if ( !_indexLookup.TryAdd(key, _referencesKeys.Length) )
+            if ( _indexLookup.TryAdd(key, _referencesKeys.Length) )
             {
                 CollectionCustomHelper.CheckEstimatedSizeMatchActualSize(instanceData.PropertiesCount, _referencesValues.Length);
                 for ( var index = 0; index < _referencesValues.Length; index++ )
