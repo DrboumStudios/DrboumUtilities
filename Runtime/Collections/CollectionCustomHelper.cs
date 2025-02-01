@@ -813,4 +813,14 @@ public static class CollectionCustomHelper
         UnsafeUtility.MemCpyStride(((byte*)destArray.GetUnsafePtr() + elementStartOffset), UnsafeUtility.SizeOf<TDestContainingType>() - srcPropertyElementSize, sourceArray.GetUnsafePtr(), 0, srcPropertyElementSize, sourceArray.Length);
     }
 
+    public static unsafe void CopyFromTruncated<T>(this ref T fs, ReadOnlySpan<char> s)
+        where T : unmanaged, INativeList<byte>, IUTF8Bytes
+    {
+        int utf8Len;
+        fixed ( char* chars = s )
+        {
+            UTF8ArrayUnsafeUtility.Copy(fs.GetUnsafePtr(), out utf8Len, fs.Capacity, chars, s.Length);
+            fs.Length = utf8Len;
+        }
+    }
 }

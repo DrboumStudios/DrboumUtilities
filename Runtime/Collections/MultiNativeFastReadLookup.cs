@@ -391,6 +391,17 @@ namespace Drboum.Utilities.Collections
             AssertArraysSizeMatch();
         }
 
+        public void Clear()
+        {
+            for ( var index = 0; index < _referencesValues.Length; index++ )
+            {
+                ref var typeValues = ref _referencesValues.ReadElementAsRef(index);
+                typeValues.Collection.Clear();
+            }
+            _referencesKeys.Clear();
+            _indexLookup.Clear();
+        }
+        
         public void Dispose()
         {
             _referencesKeys.Dispose();
@@ -414,16 +425,6 @@ namespace Drboum.Utilities.Collections
             disposeHandles.Add(_indexLookup.Dispose(dependencies));
         }
 
-        public void Clear()
-        {
-            for ( var index = 0; index < _referencesValues.Length; index++ )
-            {
-                ref var typeValues = ref _referencesValues.ReadElementAsRef(index);
-                typeValues.Collection.Clear();
-            }
-            _referencesKeys.Clear();
-            _indexLookup.Clear();
-        }
     }
 
     public readonly struct TypeDescriptor
