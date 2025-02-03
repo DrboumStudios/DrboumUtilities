@@ -1,6 +1,8 @@
 ﻿using System;
 using Drboum.Utilities.Runtime.Attributes;
+#if UNITY_EDITOR
 using UnityEditor.Animations;
+#endif
 using UnityEngine;
 
 namespace Drboum.Utilities.Runtime.Animation
