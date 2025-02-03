@@ -52,9 +52,11 @@ namespace Drboum.Utilities.Entities.Baking
                 };
                 AddComponent(entity, entitySpawnRequest);
                 AddComponent<FreshlyBakedTag>(entity);
+#if UNITY_EDITOR
                 AddComponent(entity, new OriginBakerIdentity {
                     Value = authoring.AssetInstanceGuid.GetHashCode()
                 });
+#endif
                 AddComponent<AABBComponent>(entity, authoring.SpawnBounds);
             }
         }

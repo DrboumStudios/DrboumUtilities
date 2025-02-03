@@ -14,8 +14,8 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
     public class EditorObjectTracker : EditorCallBackMonoBehaviour<EditorObjectTracker>
     {
 #if UNITY_EDITOR
-
         [SerializeField] [InspectorReadOnly] internal GuidWrapper assetInstanceGuid;
+        public GuidWrapper AssetInstanceGuid => assetInstanceGuid;
         [SerializeField] [InspectorReadOnly] internal int instanceId;
         [SerializeField] [InspectorReadOnly] internal string assetInstanceReadableName;
 
@@ -27,7 +27,6 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
         internal List<EventInstanceWrapper> OnCreateComponentEvents = new List<EventInstanceWrapper>(4);
         internal List<GameObjectNameChangedListener> OnGameObjectNameChangedEvents = new List<GameObjectNameChangedListener>(4);
 
-        public GuidWrapper AssetInstanceGuid => assetInstanceGuid;
 
         internal void _onDuplicate()
         {
