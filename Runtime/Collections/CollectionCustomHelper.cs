@@ -7,6 +7,7 @@ using Drboum.Utilities.Collections;
 using Drboum.Utilities.Runtime;
 using Drboum.Utilities.Runtime.Interfaces;
 using Unity.Burst;
+using Unity.Burst.CompilerServices;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
@@ -823,4 +824,8 @@ public static class CollectionCustomHelper
             fs.Length = utf8Len;
         }
     }
+    
+    [return: AssumeRange(0, int.MaxValue)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int AssumePositive(this int value) => value;
 }
