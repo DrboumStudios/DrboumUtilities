@@ -26,7 +26,7 @@ namespace Drboum.Utilities.Collections
             };
             _collection = new(typeDescriptors, initialCapacity, allocator);
         }
-        
+
         public bool IsCreated => _collection.IsCreated;
         public int Length => _collection.Length;
 
@@ -35,7 +35,15 @@ namespace Drboum.Utilities.Collections
             set => _collection.Capacity = value;
         }
 
-        public bool TryGetValue(in TKey key, ref TData1 value1, ref TData2 value2, ref TData3 value3)
+        public bool TryGetValue(in TKey key, out TData1 value1, out TData2 value2, out TData3 value3)
+        {
+            value1 = default;
+            value2 = default;
+            value3 = default;
+            return TryGetValueAsRef(in key, ref value1, ref value2, ref value3);
+        }
+
+        public bool TryGetValueAsRef(in TKey key, ref TData1 value1, ref TData2 value2, ref TData3 value3)
         {
             if ( _collection.TryGetValue(in key, out var elementIndex) )
             {
@@ -72,12 +80,12 @@ namespace Drboum.Utilities.Collections
             _collection.AssertArraysSizeMatch();
         }
 
-        public void AddRangeFromZero(in NativeArray<TKey> keys,in NativeArray<TData1> data1,in NativeArray<TData2> data2,in NativeArray<TData3> data3)
+        public void AddRangeFromZero(in NativeArray<TKey> keys, in NativeArray<TData1> data1, in NativeArray<TData2> data2, in NativeArray<TData3> data3)
         {
             _collection.AddRangeFromZero(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], data1, data2, data3));
         }
 
-        public void AddRange(in NativeArray<TKey> keys,in NativeArray<TData1> data1,in NativeArray<TData2> data2,in NativeArray<TData3> data3)
+        public void AddRange(in NativeArray<TKey> keys, in NativeArray<TData1> data1, in NativeArray<TData2> data2, in NativeArray<TData3> data3)
         {
             _collection.AddRange(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], data1, data2, data3));
         }
@@ -401,7 +409,7 @@ namespace Drboum.Utilities.Collections
             _referencesKeys.Clear();
             _indexLookup.Clear();
         }
-        
+
         public void Dispose()
         {
             _referencesKeys.Dispose();
