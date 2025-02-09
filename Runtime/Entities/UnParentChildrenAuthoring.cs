@@ -114,7 +114,9 @@ namespace Drboum.Utilities.Entities
                          .WithAll<RemoveParentBakingTag>()
                          .WithOptions(EntityQueryOptions.IncludePrefab | EntityQueryOptions.IncludeDisabledEntities) )
             {
-                transformAuthoringRW.ValueRW.RuntimeParent = Entity.Null;
+                ref var transformAuthoring = ref transformAuthoringRW.ValueRW;
+                transformAuthoring.RuntimeParent = Entity.Null;
+                transformAuthoring.RuntimeTransformUsage &= ~RuntimeTransformComponentFlags.RequestParent;
             }
 
             foreach ( var (transformAuthoringRW, remapToParent)
@@ -125,6 +127,10 @@ namespace Drboum.Utilities.Entities
                 while ( state.EntityManager.TryGetComponent(newParent.NewParent, ref newParent) )
                 { }
                 transformAuthoringRW.ValueRW.RuntimeParent = newParent.NewParent;
+                if ( newParent.NewParent == Entity.Null )
+                {
+                    transformAuthoringRW.ValueRW.RuntimeTransformUsage &= ~RuntimeTransformComponentFlags.RequestParent;
+                }
             }
         }
     }

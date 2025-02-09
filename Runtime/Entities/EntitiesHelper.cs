@@ -160,32 +160,6 @@ public static partial class EntitiesHelper
         deduplicator.Add(child);
     }
 
-    public static void SetComponentEnabledIfExist<TEnableable>(this ref SystemState state, Entity entity, bool enabled)
-        where TEnableable : unmanaged, IEnableableComponent
-    {
-        if ( state.EntityManager.HasComponent<TEnableable>(entity) )
-        {
-            state.EntityManager.SetComponentEnabled<TEnableable>(entity, enabled);
-        }
-    }
-
-    public static bool TryGetComponent<TComponent>(this EntityManager entityManager, Entity entity, ref TComponent component)
-        where TComponent : unmanaged, IComponentData
-    {
-        bool hasComponent = entityManager.HasComponent<TComponent>(entity);
-        if ( hasComponent )
-            component = entityManager.GetComponentData<TComponent>(entity);
-        return hasComponent;
-    }
-
-    public static bool TryGetComponent<TComponent>(this EntityManager entityManager, Entity entity, ref DynamicBuffer<TComponent> component)
-        where TComponent : unmanaged, IBufferElementData
-    {
-        bool hasComponent = entityManager.HasComponent<TComponent>(entity);
-        component = hasComponent ? entityManager.GetBuffer<TComponent>(entity) : default;
-        return hasComponent;
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SetPosition(this ref LocalToWorld matrix, in float3 position)
     {
@@ -208,12 +182,5 @@ public static partial class EntitiesHelper
     {
         query.AddChangedVersionFilter(ComponentType.ReadWrite<TComponent>());
         return query;
-    }
-    public static void CreateNewLinkedGroupRootFrom(this ref EntityManager entityManager,Entity oldRoot, Entity newRoot)
-    {
-        var entityBufferList = new NativeList<Entity>(8, AllocatorManager.Temp);
-        entityBufferList.Add(in newRoot);
-        entityBufferList.AddRange(entityManager.GetBuffer<LinkedEntityGroup>(oldRoot).Reinterpret<Entity>().AsNativeArray());
-        entityManager.AddBuffer<LinkedEntityGroup>(newRoot).Reinterpret<Entity>().AddRange(entityBufferList.AsArray());
     }
 }
