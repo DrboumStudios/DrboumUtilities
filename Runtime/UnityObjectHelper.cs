@@ -5,6 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Drboum.Utilities.Runtime;
 using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,7 +16,7 @@ public static class UnityObjectHelper
 {
     private static List<GameObject> RootGameObjectsBuffer => _rootGameObjectsBuffer ??= new(20);
 
-    private static Dictionary<Type, IEnumerable> _dictionaryListBuffer = new();
+    private static readonly Dictionary<Type, IEnumerable> _DictionaryListBuffer = new();
     private static List<GameObject> _rootGameObjectsBuffer;
 
     public static bool IsPrefabInSubSceneContext(this Object @this) =>
@@ -239,7 +240,7 @@ public static class UnityObjectHelper
     {
         Type type = typeof(T);
         List<T> buffer = null;
-        if ( _dictionaryListBuffer.TryGetValue(type, out var listAsEnumerable) )
+        if ( _DictionaryListBuffer.TryGetValue(type, out var listAsEnumerable) )
         {
             buffer = (List<T>)listAsEnumerable;
             buffer.Clear();
@@ -247,7 +248,7 @@ public static class UnityObjectHelper
         else
         {
             buffer = new List<T>();
-            _dictionaryListBuffer.Add(type, buffer);
+            _DictionaryListBuffer.Add(type, buffer);
         }
         return buffer;
     }
@@ -255,10 +256,7 @@ public static class UnityObjectHelper
     /// <summary>
     /// not Thread safe use internal buffer
     /// </summary>
-    /// <param name="scene"></param>
-    /// <param name="instancesBuffer"></param>
-    /// <typeparam name="T"></typeparam>
-    public static T FindFirstInstancesInScene<T>(this Scene scene)
+    public static T FindFirstInstancesInScene<T>(this Scene scene, int layerMask = int.MaxValue)
         where T : Component
     {
         scene.GetRootGameObjects(RootGameObjectsBuffer);
@@ -266,48 +264,67 @@ public static class UnityObjectHelper
         for ( var index = 0; index < RootGameObjectsBuffer.Count; index++ )
         {
             GameObject rootGameObject = RootGameObjectsBuffer[index];
+            if ( !rootGameObject.ContainsBitMask(layerMask) )
+                continue;
+
             firstComponent = rootGameObject.GetComponentInChildren<T>();
             if ( firstComponent )
                 break;
         }
         return firstComponent;
     }
-    
-    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T})"/>
-    public static List<T> FindAllInstancesInScene<T>(this Scene scene)
+
+    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T},int)"/>
+    public static List<T> FindAllInstancesInScene<T>(this Scene scene, int layerMask = int.MaxValue)
         where T : Component
     {
         var list = new List<T>();
-        FindAllInstancesInScene(scene, list);
+        FindAllInstancesInScene(scene, list, layerMask);
         return list;
     }
-    
+
     /// <summary>
     /// Find all instances in a scene
     /// </summary>
     /// <remarks>this method is NOT Thread safe as it uses cached static collections and must be run in the main thread. use the override <see cref="FindAllInstancesInScene{T}(Scene,List{T},List{GameObject})"/> to run this method in another thread</remarks>
-    public static void FindAllInstancesInScene<T>(this Scene scene, List<T> instancesBuffer)
+    public static void FindAllInstancesInScene<T>(this Scene scene, List<T> instancesBuffer, int layerMask = int.MaxValue)
         where T : Component
     {
-        FindAllInstancesInScene(scene, instancesBuffer, RootGameObjectsBuffer, GetListFromPool<T>());
+        FindAllInstancesInScene(scene, instancesBuffer, RootGameObjectsBuffer, GetListFromPool<T>(), layerMask);
     }
 
     /// <summary>
-    /// Find all instances in a scene with a provided buffer
+    /// Find all instances in a scene with provided buffers
+    /// <param name="combinedLayerMask">optional layer mask on the root scene gameobject that will be included in this query, default to include all</param>
     /// </summary>
-    public static void FindAllInstancesInScene<T>(this Scene scene, List<T> resultInstances, List<GameObject> rootGameObjectsBuffer, List<T> componentBuffer)
+    public static void FindAllInstancesInScene<T>(this Scene scene, List<T> resultInstances, List<GameObject> rootGameObjectsBuffer, List<T> componentBuffer, int combinedLayerMask = int.MaxValue)
         where T : Component
     {
         scene.GetRootGameObjects(rootGameObjectsBuffer);
-        for ( var index = 0; index < rootGameObjectsBuffer.Count; index++ )
+        if ( combinedLayerMask == int.MaxValue )
         {
-            GameObject rootGameObject = rootGameObjectsBuffer[index];
-            rootGameObject.GetComponentsInChildren(true, componentBuffer);
-            resultInstances.AddRange(componentBuffer);
+            for ( var index = 0; index < rootGameObjectsBuffer.Count; index++ )
+            {
+                GameObject rootGameObject = rootGameObjectsBuffer[index];
+                rootGameObject.GetComponentsInChildren(true, componentBuffer);
+                resultInstances.AddRange(componentBuffer);
+            }
+        }
+        else
+        {
+            for ( var index = 0; index < rootGameObjectsBuffer.Count; index++ )
+            {
+                GameObject rootGameObject = rootGameObjectsBuffer[index];
+                if ( !rootGameObject.ContainsBitMask(combinedLayerMask) )
+                    continue;
+
+                rootGameObject.GetComponentsInChildren(true, componentBuffer);
+                resultInstances.AddRange(componentBuffer);
+            }
         }
     }
 
-    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T})"/>
+    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T},int)"/>
     public static List<int> FindAllInstancesIdsInActiveScene(Type lookupType)
     {
         var instancesBuffer = new List<int>();
@@ -315,29 +332,43 @@ public static class UnityObjectHelper
         return instancesBuffer;
     }
 
-    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T})"/>
+    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T},int)"/>
     public static void FindAllInstancesInActiveScene(List<Object> lookupResult, Type interfaceType)
     {
         FindAllInstancesInScene(SceneManager.GetActiveScene(), lookupResult, interfaceType);
     }
 
-    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T})"/>
-    public static void FindAllInstancesInScene(this Scene scene, List<Object> lookupResult, Type lookupType)
+    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T},int)"/>
+    public static void FindAllInstancesInScene(this Scene scene, List<Object> lookupResult, Type lookupType, int layerMask = int.MaxValue)
     {
         scene.GetRootGameObjects(RootGameObjectsBuffer);
-        for ( var rootIndex = 0; rootIndex < RootGameObjectsBuffer.Count; rootIndex++ )
+        if ( layerMask == int.MaxValue )
         {
-            GameObject rootGameObject = RootGameObjectsBuffer[rootIndex];
-            Component[] childrenInterfaces = rootGameObject.GetComponentsInChildren(lookupType);
-            for ( var index = 0; index < childrenInterfaces.Length; index++ )
+            for ( var rootIndex = 0; rootIndex < RootGameObjectsBuffer.Count; rootIndex++ )
             {
-                Component childInterface = childrenInterfaces[index];
-                lookupResult.Add(childInterface);
+                GameObject rootGameObject = RootGameObjectsBuffer[rootIndex];
+                GetComponentOfTypeInChildren(lookupResult, lookupType, rootGameObject);
+            }
+        }
+        else
+        {
+            for ( var rootIndex = 0; rootIndex < RootGameObjectsBuffer.Count; rootIndex++ )
+            {
+                GameObject rootGameObject = RootGameObjectsBuffer[rootIndex];
+                if ( !rootGameObject.ContainsBitMask(layerMask) )
+                    continue;
+
+                GetComponentOfTypeInChildren(lookupResult, lookupType, rootGameObject);
             }
         }
     }
 
-    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene)"/>
+    private static void GetComponentOfTypeInChildren(List<Object> lookupResult, Type lookupType, GameObject rootGameObject)
+    {
+        lookupResult.AddRange(rootGameObject.GetComponentsInChildren(lookupType, true));
+    }
+
+    /// <inheritdoc cref="FindAllInstancesInScene{T}(Scene,List{T},int)"/>
     public static void FindAllInstancesIdInScene(List<int> instancesBuffer, Type lookupType, Scene scene)
     {
         scene.GetRootGameObjects(RootGameObjectsBuffer);
@@ -352,7 +383,7 @@ public static class UnityObjectHelper
             }
         }
     }
-    
+
     public static float3 GetScaledPoint(Transform relativePoint)
     {
         return new float3(
