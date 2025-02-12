@@ -21,7 +21,7 @@ namespace Drboum.Utilities.Runtime
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool ContainsBitMask(this GameObject x, int y)
         {
-            return (y & (1 >> x.layer)) != 0;
+            return (y & (1 << x.layer)) != 0;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
