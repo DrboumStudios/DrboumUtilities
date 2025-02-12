@@ -22,8 +22,17 @@ public static class UnityObjectHelper
     public static bool IsPrefabInSubSceneContext(this Object @this) =>
         @this is GameObject go && IsPrefabInSubSceneContext(go);
 
+    public static void CheckSetActive(this GameObject @this, bool active)
+    {
+        if ( @this.activeSelf != active )
+        {
+            @this.SetActive(active);
+        }
+    }
+
     public static bool IsPrefabInSubSceneContext(this GameObject @this) =>
         !@this.scene.IsValid();
+
 
     public static void RemoveComponent<T>(this T component)
         where T : Component
