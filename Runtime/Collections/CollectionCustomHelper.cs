@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using Drboum.Utilities.Collections;
 using Drboum.Utilities.Runtime;
 using Drboum.Utilities.Runtime.Interfaces;
+using JetBrains.Annotations;
 using Unity.Burst;
 using Unity.Burst.CompilerServices;
 using Unity.Collections;
@@ -830,13 +831,12 @@ public static class CollectionCustomHelper
     public static int AssumePositive(this int value) => value;
 
     public static void Allocate<T>(out T[] array, int length) => array = new T[length];
-    
 
-    public static T[] CopyResizedArray<T>(T[] sourceArray, int optionSetsLength)
+    public static T[] CreateResizedCopy<T>([NotNull] this T[] sourceArray, int newLength)
     {
         var oldPartAssets = sourceArray;
-        sourceArray = new T[optionSetsLength];
-        Array.Copy(oldPartAssets, sourceArray, math.min(oldPartAssets.Length, optionSetsLength));
+        sourceArray = new T[newLength];
+        Array.Copy(oldPartAssets, sourceArray, math.min(oldPartAssets.Length, newLength));
         return sourceArray;
     }
 }
