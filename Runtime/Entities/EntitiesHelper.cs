@@ -183,4 +183,16 @@ public static partial class EntitiesHelper
         query.AddChangedVersionFilter(ComponentType.ReadWrite<TComponent>());
         return query;
     }
+
+    public static void GetBufferTypeHandle<TBuffer>(this ref SystemState state, out BufferTypeHandle<TBuffer> typeHandle, bool isReadOnly = false)
+        where TBuffer : unmanaged, IBufferElementData
+    {
+        typeHandle = state.GetBufferTypeHandle<TBuffer>(isReadOnly);
+    }
+
+    public static void GetComponentTypeHandle<TBuffer>(this ref SystemState state, out ComponentTypeHandle<TBuffer> typeHandle, bool isReadOnly = false)
+        where TBuffer : unmanaged, IComponentData
+    {
+        typeHandle = state.GetComponentTypeHandle<TBuffer>(isReadOnly);
+    }
 }
