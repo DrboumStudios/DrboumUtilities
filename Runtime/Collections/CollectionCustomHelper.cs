@@ -830,4 +830,13 @@ public static class CollectionCustomHelper
     public static int AssumePositive(this int value) => value;
 
     public static void Allocate<T>(out T[] array, int length) => array = new T[length];
+    
+
+    public static T[] CopyResizedArray<T>(T[] sourceArray, int optionSetsLength)
+    {
+        var oldPartAssets = sourceArray;
+        sourceArray = new T[optionSetsLength];
+        Array.Copy(oldPartAssets, sourceArray, math.min(oldPartAssets.Length, optionSetsLength));
+        return sourceArray;
+    }
 }
