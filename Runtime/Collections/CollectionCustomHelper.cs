@@ -824,8 +824,10 @@ public static class CollectionCustomHelper
             fs.Length = utf8Len;
         }
     }
-    
+
     [return: AssumeRange(0, int.MaxValue)]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int AssumePositive(this int value) => value;
+
+    public static void Allocate<T>(out T[] array, int length) => array = new T[length];
 }
