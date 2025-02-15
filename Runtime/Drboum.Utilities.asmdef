@@ -1,44 +1,50 @@
 {
-  "name": "Drboum.Utilities",
-  "rootNamespace": "",
-  "references": [
-    "Unity.Mathematics",
-    "Unity.InputSystem",
-    "Unity.Collections",
-    "Unity.Properties",
-    "Unity.Burst",
-    "Unity.Entities",
-    "Unity.Transforms",
-    "Unity.Transforms.Hybrid",
-    "Unity.Physics",
-    "Unity.Physics.Hybrid",
-    "Unity.Physics.Custom",
-    "Unity.Entities.Hybrid",
-    "Unity.Mathematics.Extensions",
-    "ShapesRuntime",
-    "ShapesEditor",
-    "Unity.RenderPipelines.Universal.Runtime",
-    "Unity.RenderPipelines.HighDefinition.Runtime",
-    "Unity.RenderPipelines.Core.Runtime"
-  ],
-  "includePlatforms": [],
-  "excludePlatforms": [],
-  "allowUnsafeCode": true,
-  "overrideReferences": false,
-  "precompiledReferences": [],
-  "autoReferenced": true,
-  "defineConstraints": [],
-  "versionDefines": [
-    {
-      "name": "com.unity.modules.terrain",
-      "expression": "1.0",
-      "define": "UNITY_TERRAIN_EXIST"
-    },
-    {
-      "name": "com.unity.render-pipelines.universal",
-      "expression": "1.0",
-      "define": "URP_EXISTS"
-    }
-  ],
-  "noEngineReferences": false
+    "name": "Drboum.Utilities",
+    "rootNamespace": "",
+    "references": [
+        "Unity.Mathematics",
+        "Unity.InputSystem",
+        "Unity.Collections",
+        "Unity.Properties",
+        "Unity.Burst",
+        "Unity.Entities",
+        "Unity.Transforms",
+        "Unity.Transforms.Hybrid",
+        "Unity.Physics",
+        "Unity.Physics.Hybrid",
+        "Unity.Physics.Custom",
+        "Unity.Entities.Hybrid",
+        "Unity.Mathematics.Extensions",
+        "ShapesRuntime",
+        "ShapesEditor",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.HighDefinition.Runtime",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.Splines"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [
+        {
+            "name": "com.unity.modules.terrain",
+            "expression": "1.0",
+            "define": "UNITY_TERRAIN_EXIST"
+        },
+        {
+            "name": "com.unity.render-pipelines.universal",
+            "expression": "1.0",
+            "define": "URP_EXISTS"
+        },
+        {
+            "name": "com.unity.splines",
+            "expression": "1.0.0",
+            "define": "UNITY_SPLINES_EXIST"
+        }
+    ],
+    "noEngineReferences": false
 }
