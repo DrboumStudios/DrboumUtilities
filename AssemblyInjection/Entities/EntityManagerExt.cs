@@ -63,5 +63,78 @@ namespace Unity.Entities
             component = hasComponent ? GetBuffer<TComponent>(entity) : default;
             return hasComponent;
         }
+
+        public void AddComponent<TComponent1, TComponent2>(Entity entity)
+        {
+            AddComponent(entity, Create<TComponent1, TComponent2>());
+        }
+
+        public void AddComponent<TComponent1, TComponent2, TComponent3>(Entity entity)
+        {
+            AddComponent(entity, Create<TComponent1, TComponent2, TComponent3>());
+        }
+
+        public void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4>(Entity entity)
+        {
+            AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4>());
+        }
+
+        public void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>(Entity entity)
+        {
+            AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>());
+        }
+        public void AddComponent<TComponent1, TComponent2>(EntityQuery entityQuery)
+        {
+            AddComponent(entityQuery, Create<TComponent1, TComponent2>());
+        }
+
+        public void AddComponent<TComponent1, TComponent2, TComponent3>(EntityQuery entityQuery)
+        {
+            AddComponent(entityQuery, Create<TComponent1, TComponent2, TComponent3>());
+        }
+
+        public void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4>(EntityQuery entityQuery)
+        {
+            AddComponent(entityQuery, Create<TComponent1, TComponent2, TComponent3, TComponent4>());
+        }
+
+        public void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>(EntityQuery entityQuery)
+        {
+            AddComponent(entityQuery, Create<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>());
+        }
+        public static ComponentTypeSet Create<TComponent1, TComponent2>()
+        {
+            return new ComponentTypeSet(ComponentType.ReadWrite<TComponent1>(), ComponentType.ReadWrite<TComponent2>());
+        }
+
+        public static ComponentTypeSet Create<TComponent1, TComponent2, TComponent3>()
+        {
+            return new ComponentTypeSet(
+                ComponentType.ReadWrite<TComponent1>(),
+                ComponentType.ReadWrite<TComponent2>(),
+                ComponentType.ReadWrite<TComponent3>()
+            );
+        }
+
+        public static ComponentTypeSet Create<TComponent1, TComponent2, TComponent3, TComponent4>()
+        {
+            return new ComponentTypeSet(
+                ComponentType.ReadWrite<TComponent1>(),
+                ComponentType.ReadWrite<TComponent2>(),
+                ComponentType.ReadWrite<TComponent3>(),
+                ComponentType.ReadWrite<TComponent4>()
+            );
+        }
+
+        public static ComponentTypeSet Create<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>()
+        {
+            return new ComponentTypeSet(
+                ComponentType.ReadWrite<TComponent1>(),
+                ComponentType.ReadWrite<TComponent2>(),
+                ComponentType.ReadWrite<TComponent3>(),
+                ComponentType.ReadWrite<TComponent4>(),
+                ComponentType.ReadWrite<TComponent5>()
+            );
+        }
     }
 }
