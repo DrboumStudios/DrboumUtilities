@@ -15,7 +15,7 @@ namespace Drboum.Utilities.Collections
     /// <remarks>not thread safe</remarks>
     /// <typeparam name="TKey"></typeparam>
     /// <typeparam name="TInstance"></typeparam>
-    public struct NativeFastReadHashMap<TKey, TInstance> : IDisposable
+    public unsafe struct NativeFastReadHashMap<TKey, TInstance> : IDisposable
         where TKey : unmanaged, IEquatable<TKey>
         where TInstance : unmanaged
     {
@@ -37,7 +37,7 @@ namespace Drboum.Utilities.Collections
 
         public TInstance this[TKey key] {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            set => AddOrReplace(in key, in value);
+            set => AddOrUpdate(in key, in value);
         }
 
         public ref TInstance ElementAt(in TKey key)
@@ -77,15 +77,16 @@ namespace Drboum.Utilities.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void AddOrReplace(in TKey key, in TInstance instance)
+        public void AddOrUpdate(in TKey key, in TInstance instance)
         {
-            if ( _indexLookup.TryGetValue(key, out var index) )
+            int hashMapIndex = _indexLookup.FindMapIndex(in key);
+            if ( hashMapIndex != -1 )
             {
-                _referencesValues.ElementAt(index) = instance;
+                _referencesValues.ElementAt(_indexLookup.GetValueFromMapIndex(hashMapIndex)) = instance;
             }
             else
             {
-                Add(in key, in instance);
+                AddNoCheckImpl(in key, in instance);
             }
             AssertArraySizeMatch();
         }
@@ -97,9 +98,9 @@ namespace Drboum.Utilities.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private void Add(in TKey key, in TInstance instance)
+        private void AddNoCheckImpl(in TKey key, in TInstance instance)
         {
-            _indexLookup.Add(key, _referencesKeys.Length);
+            _indexLookup.AddNoExistCheckImpl(in key, _referencesKeys.Length);
             _referencesValues.Add(in instance);
             _referencesKeys.Add(in key);
             AssertArraySizeMatch();

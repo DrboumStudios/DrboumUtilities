@@ -93,7 +93,7 @@ namespace Drboum.Utilities.Collections
         public void AddOrReplace(in TKey key, in TData1 data1, in TData2 data2, in TData3 data3)
         {
             var compactData = stackalloc byte*[DATAPROPERTIES_COUNT];
-            _collection.AddOrReplace(in key, PackInstanceData(compactData, data1, data2, data3));
+            _collection.AddOrUpdate(in key, PackInstanceData(compactData, data1, data2, data3));
         }
 
         public bool TryAdd(in TKey key, TData1 data1, TData2 data2, TData3 data3)
@@ -284,20 +284,25 @@ namespace Drboum.Utilities.Collections
         {
             if ( _indexLookup.TryAdd(key, _referencesKeys.Length) )
             {
-                CollectionCustomHelper.CheckEstimatedSizeMatchActualSize(instanceData.PropertiesCount, _referencesValues.Length);
-                for ( var index = 0; index < _referencesValues.Length; index++ )
-                {
-                    ref var typeValues = ref _referencesValues.ReadElementAsRef(index);
-                    byte* inputData = instanceData.Read(index);
-                    typeValues.Collection.AddRange(inputData, typeValues.Type.Size);
-                }
-
-                _referencesKeys.Add(in key);
-                AssertArraysSizeMatch();
+                AddCollectionsNoCheckImpl(key, instanceData);
 
                 return true;
             }
             return false;
+        }
+
+        private void AddCollectionsNoCheckImpl(in TKey key, InstanceData instanceData)
+        {
+            CollectionCustomHelper.CheckEstimatedSizeMatchActualSize(instanceData.PropertiesCount, _referencesValues.Length);
+            for ( var index = 0; index < _referencesValues.Length; index++ )
+            {
+                ref var typeValues = ref _referencesValues.ReadElementAsRef(index);
+                byte* inputData = instanceData.Read(index);
+                typeValues.Collection.AddRange(inputData, typeValues.Type.Size);
+            }
+
+            _referencesKeys.Add(in key);
+            AssertArraysSizeMatch();
         }
 
         public void AddRangeFromZero(in NativeArray<TKey> keys, in ReadOnlySpan<NativeArray<byte>> instancesData)
@@ -339,10 +344,12 @@ namespace Drboum.Utilities.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AddOrReplace(in TKey key, InstanceData instanceData)
+        public void AddOrUpdate(in TKey key, InstanceData instanceData)
         {
-            if ( _indexLookup.TryGetValue(key, out var elementIndex) )
+            int findMapIndex = _indexLookup.FindMapIndex(in key);
+            if ( findMapIndex != -1 )
             {
+                int elementIndex = _indexLookup.GetValueFromMapIndex(findMapIndex);
                 for ( var index = 0; index < _referencesValues.Length; index++ )
                 {
                     ref var typeValues = ref _referencesValues.ReadElementAsRef(index);
@@ -351,7 +358,8 @@ namespace Drboum.Utilities.Collections
             }
             else
             {
-                TryAdd(in key, instanceData);
+                _indexLookup.AddNoExistCheckImpl(in key, _referencesKeys.Length);
+                AddCollectionsNoCheckImpl(in key, instanceData);
             }
             AssertArraysSizeMatch();
         }
