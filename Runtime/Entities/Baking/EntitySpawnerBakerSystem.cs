@@ -1,6 +1,4 @@
 ﻿using System.Runtime.CompilerServices;
-using GameProject;
-using GameProject.EntitiesInjected.Hybrid;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
