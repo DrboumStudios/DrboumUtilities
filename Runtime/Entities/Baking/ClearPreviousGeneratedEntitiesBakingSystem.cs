@@ -1,5 +1,4 @@
-﻿using GameProject;
-using Unity.Burst;
+﻿using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
 
