@@ -28,4 +28,5 @@ public static class EntitiesInternalBridge
             : default;
         return hasBuffer;
     }
+    
 }
