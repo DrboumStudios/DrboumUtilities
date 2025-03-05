@@ -1,7 +1,11 @@
-﻿using Unity.Entities;
+﻿using System;
+using Unity.Assertions;
+using Unity.Collections;
+using Unity.Entities;
 using Unity.Entities.Hybrid.Baking;
+using UnityEngine;
 
-public static class EntitiesInternalBridge
+public static unsafe class EntitiesInternalBridge
 {
     public static EntityManager GetEntityManager(this IBaker baker)
     {
@@ -28,5 +32,34 @@ public static class EntitiesInternalBridge
             : default;
         return hasBuffer;
     }
-    
+
+    public static void AddTransformCompanionComponent(this EntityManager entityManager, Entity entity, UnityObjectRef<Transform> writeTransform, UnityObjectRef<GameObject> transformGameObject)
+    {
+        entityManager.AddComponent<CompanionLink, CompanionLinkTransform>(entity);
+        entityManager.SetComponentData(entity, new CompanionLink {
+            Companion = transformGameObject,
+        });
+        entityManager.SetComponentData(entity, new CompanionLinkTransform {
+            CompanionTransform = writeTransform,
+        });
+    }
+
+    public static void AddTransformCompanionComponent(this EntityManager entityManager, NativeArray<Entity> entities, ReadOnlySpan<UnityObjectRef<Transform>> writeTransforms, ReadOnlySpan<UnityObjectRef<GameObject>> transformGameObjects)
+    {
+#if ENABLE_UNITY_COLLECTIONS_CHECKS
+        Assert.AreEqual(entities.Length, writeTransforms.Length);
+        Assert.AreEqual(entities.Length, transformGameObjects.Length);
+#endif
+        entityManager.AddComponent<CompanionLink, CompanionLinkTransform>(entities);
+        for ( var index = 0; index < entities.Length; index++ )
+        {
+            Entity entity = entities[index];
+            entityManager.SetComponentData(entity, new CompanionLink {
+                Companion = transformGameObjects[index],
+            });
+            entityManager.SetComponentData(entity, new CompanionLinkTransform {
+                CompanionTransform = writeTransforms[index],
+            });
+        }
+    }
 }

@@ -90,6 +90,25 @@ namespace Unity.Entities
         {
             AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>());
         }
+        public void AddComponent<TComponent1, TComponent2>(NativeArray<Entity> entity)
+        {
+            AddComponent(entity, Create<TComponent1, TComponent2>());
+        }
+
+        public void AddComponent<TComponent1, TComponent2, TComponent3>(NativeArray<Entity> entity)
+        {
+            AddComponent(entity, Create<TComponent1, TComponent2, TComponent3>());
+        }
+
+        public void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4>(NativeArray<Entity> entity)
+        {
+            AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4>());
+        }
+
+        public void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>(NativeArray<Entity> entity)
+        {
+            AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>());
+        }
 
         public void AddComponent<TComponent1, TComponent2>(EntityQuery entityQuery)
         {
