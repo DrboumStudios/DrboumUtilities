@@ -64,6 +64,13 @@ namespace Unity.Entities
             return hasComponent;
         }
 
+        [ExcludeFromBurstCompatTesting("Takes managed object")]
+        public void SetComponentObject<T>(Entity entity, T componentObject)
+            where T : class
+        {
+            SetComponentObject(entity, typeof(T), componentObject);
+        }
+
         public void AddComponent<TComponent1, TComponent2>(Entity entity)
         {
             AddComponent(entity, Create<TComponent1, TComponent2>());
@@ -83,6 +90,7 @@ namespace Unity.Entities
         {
             AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>());
         }
+
         public void AddComponent<TComponent1, TComponent2>(EntityQuery entityQuery)
         {
             AddComponent(entityQuery, Create<TComponent1, TComponent2>());
@@ -102,6 +110,7 @@ namespace Unity.Entities
         {
             AddComponent(entityQuery, Create<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>());
         }
+
         public static ComponentTypeSet Create<TComponent1, TComponent2>()
         {
             return new ComponentTypeSet(ComponentType.ReadWrite<TComponent1>(), ComponentType.ReadWrite<TComponent2>());
