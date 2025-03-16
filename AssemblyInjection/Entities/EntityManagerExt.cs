@@ -1,5 +1,7 @@
 ﻿using System;
+using Unity.Burst.CompilerServices;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 
 namespace Unity.Entities
@@ -28,12 +30,33 @@ namespace Unity.Entities
 #endif
         }
 
-        public bool TryGetComponent<TComponent>(Entity entity, ref TComponent component)
+        public bool TryGetComponent<TComponent>(Entity entity, out TComponent component)
             where TComponent : unmanaged, IComponentData
         {
             bool hasComponent = HasComponent<TComponent>(entity);
             if ( hasComponent )
                 component = GetComponentData<TComponent>(entity);
+            else
+                component = default;
+            return hasComponent;
+        }
+        public bool TryGetComponentIfExist<TComponent>(Entity entity, ref TComponent component)
+            where TComponent : unmanaged, IComponentData
+        {
+            bool hasComponent = HasComponent<TComponent>(entity);
+            if ( hasComponent )
+                component = GetComponentData<TComponent>(entity);
+            return hasComponent;
+        }
+
+        public bool TryGetComponentRW<TComponent>(Entity entity, out RefRW<TComponent> component)
+            where TComponent : unmanaged, IComponentData
+        {
+            bool hasComponent = HasComponent<TComponent>(entity);
+            if ( hasComponent )
+                component = GetComponentDataRW<TComponent>(entity);
+            else
+                component = default;
             return hasComponent;
         }
 
@@ -49,18 +72,17 @@ namespace Unity.Entities
             where TEnableable : unmanaged, IEnableableComponent
         {
             if ( !HasComponent<TEnableable>(entity) )
-            {
                 return false;
-            }
+
             SetComponentEnabled<TEnableable>(entity, enabled);
             return true;
         }
 
-        public bool TryGetComponent<TComponent>(Entity entity, ref DynamicBuffer<TComponent> component)
-            where TComponent : unmanaged, IBufferElementData
+        public bool TryGetComponent<TBuffer>(Entity entity, out DynamicBuffer<TBuffer> component)
+            where TBuffer : unmanaged, IBufferElementData
         {
-            bool hasComponent = HasComponent<TComponent>(entity);
-            component = hasComponent ? GetBuffer<TComponent>(entity) : default;
+            bool hasComponent = HasComponent<TBuffer>(entity);
+            component = hasComponent ? GetBuffer<TBuffer>(entity) : default;
             return hasComponent;
         }
 
@@ -90,6 +112,7 @@ namespace Unity.Entities
         {
             AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>());
         }
+
         public void AddComponent<TComponent1, TComponent2>(NativeArray<Entity> entity)
         {
             AddComponent(entity, Create<TComponent1, TComponent2>());
