@@ -33,7 +33,6 @@ public static class UnityObjectHelper
     public static bool IsPrefabInSubSceneContext(this GameObject @this) =>
         !@this.scene.IsValid();
 
-
     public static void RemoveComponent<T>(this T component)
         where T : Component
     {
@@ -43,14 +42,18 @@ public static class UnityObjectHelper
     public static void Destroy<T>(this T uObject)
         where T : Object
     {
+#if UNITY_EDITOR
         if ( Application.isPlaying )
         {
+#endif
             Object.Destroy(uObject);
+#if UNITY_EDITOR
         }
         else
         {
             Object.DestroyImmediate(uObject, true);
         }
+#endif
 
     }
 
