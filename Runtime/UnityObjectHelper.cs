@@ -37,13 +37,19 @@ public static class UnityObjectHelper
     public static void RemoveComponent<T>(this T component)
         where T : Component
     {
-        if ( !Application.isPlaying )
+        component.Destroy();
+    }
+
+    public static void Destroy<T>(this T uObject)
+        where T : Object
+    {
+        if ( Application.isPlaying )
         {
-            Object.DestroyImmediate(component, true);
+            Object.Destroy(uObject);
         }
         else
         {
-            Object.Destroy(component);
+            Object.DestroyImmediate(uObject, true);
         }
 
     }
