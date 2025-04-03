@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.CompilerServices;
 using Unity.Assertions;
 using Unity.Collections;
 using Unity.Entities;
@@ -30,7 +31,7 @@ public static unsafe class EntitiesInternalBridge
         linkedGroupEntityBakingDataAsEntity = hasBuffer
             ? entityManager.GetBuffer<LinkedEntityGroupBakingData>(entity, true).Reinterpret<Entity>()
             : default;
-        
+
         return hasBuffer;
     }
 
@@ -47,16 +48,30 @@ public static unsafe class EntitiesInternalBridge
         }
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void SetTransformCompanionComponent(this EntityManager entityManager, Entity entity, UnityObjectRef<Transform> writeTransform, UnityObjectRef<GameObject> transformGameObject)
     {
-        entityManager.SetComponentData(entity, new CompanionLink {
-            Companion = transformGameObject,
-        });
+        SetCompanionLinkComponent(entityManager, entity, transformGameObject);
         entityManager.SetComponentData(entity, new CompanionLinkTransform {
             CompanionTransform = writeTransform,
         });
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static void SetCompanionLinkComponent(EntityManager entityManager, Entity entity, UnityObjectRef<GameObject> companion)
+    {
+        entityManager.SetComponentData(entity, new CompanionLink {
+            Companion = companion,
+        });
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static ComponentType GetCompanionLinkComponent(this EntityManager entityManager)
+    {
+        return ComponentType.ReadWrite<CompanionLink>();
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void GetTransformCompanionComponentTypes(this EntityManager entityManager, ref FixedList128Bytes<ComponentType> buffer)
     {
         buffer.Add(ComponentType.ReadWrite<CompanionLink>());
