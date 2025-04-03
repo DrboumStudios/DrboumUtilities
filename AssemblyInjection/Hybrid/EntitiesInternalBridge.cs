@@ -58,7 +58,7 @@ public static unsafe class EntitiesInternalBridge
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static void SetCompanionLinkComponent(EntityManager entityManager, Entity entity, UnityObjectRef<GameObject> companion)
+    public static void SetCompanionLinkComponent(this EntityManager entityManager, Entity entity, UnityObjectRef<GameObject> companion)
     {
         entityManager.SetComponentData(entity, new CompanionLink {
             Companion = companion,
