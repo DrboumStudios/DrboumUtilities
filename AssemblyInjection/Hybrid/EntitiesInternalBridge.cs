@@ -2,6 +2,7 @@
 using System.Runtime.CompilerServices;
 using Unity.Assertions;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Entities.Hybrid.Baking;
 using UnityEngine;
@@ -33,6 +34,15 @@ public static unsafe class EntitiesInternalBridge
             : default;
 
         return hasBuffer;
+    }
+
+    public static T GetComponentDataAs<T>(this EntityManager entityManager, Entity entity, ComponentType type)
+        where T : unmanaged
+    {
+        Assert.AreEqual(sizeof(T), TypeManager.GetTypeInfo(type.TypeIndex).TypeSize);
+        var access = entityManager.GetUncheckedEntityDataAccess();
+        var data = access->EntityComponentStore->GetComponentDataWithTypeRO(entity, type.TypeIndex);
+        return *(T*)data;
     }
 
     public static void AddTransformCompanionComponent(this EntityManager entityManager, NativeArray<Entity> entities, ReadOnlySpan<UnityObjectRef<Transform>> writeTransforms, ReadOnlySpan<UnityObjectRef<GameObject>> transformGameObjects)
