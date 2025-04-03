@@ -93,10 +93,10 @@ namespace Drboum.Utilities.Entities
             {
                 var childrenEntities = children.Reinterpret<Entity>().AsNativeArray();
                 RemapToParent remapToParent = default;
-                bool hasComponent = state.EntityManager.TryGetComponentIfExist(entity, ref remapToParent);
+                bool hasComponent = state.EntityManager.TryGetComponentAndSetRefValueIfExist(entity, ref remapToParent);
                 if ( hasComponent )
                 {
-                    while ( state.EntityManager.TryGetComponentIfExist(remapToParent.NewParent, ref remapToParent) )
+                    while ( state.EntityManager.TryGetComponentAndSetRefValueIfExist(remapToParent.NewParent, ref remapToParent) )
                     { }
                     ecb.AddComponent(childrenEntities, remapToParent);
                 }
@@ -124,7 +124,7 @@ namespace Drboum.Utilities.Entities
                          .WithOptions(EntityQueryOptions.IncludePrefab | EntityQueryOptions.IncludeDisabledEntities) )
             {
                 var newParent = remapToParent;
-                while ( state.EntityManager.TryGetComponentIfExist(newParent.NewParent, ref newParent) )
+                while ( state.EntityManager.TryGetComponentAndSetRefValueIfExist(newParent.NewParent, ref newParent) )
                 { }
                 transformAuthoringRW.ValueRW.RuntimeParent = newParent.NewParent;
                 if ( newParent.NewParent == Entity.Null )

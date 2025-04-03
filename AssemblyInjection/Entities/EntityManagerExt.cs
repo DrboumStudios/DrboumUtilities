@@ -40,7 +40,15 @@ namespace Unity.Entities
                 component = default;
             return hasComponent;
         }
-        public bool TryGetComponentIfExist<TComponent>(Entity entity, ref TComponent component)
+        
+        /// <summary>
+        /// will only set <see cref="component"/> ref if the component exists
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="component"></param>
+        /// <typeparam name="TComponent"></typeparam>
+        /// <returns></returns>
+        public bool TryGetComponentAndSetRefValueIfExist<TComponent>(Entity entity, ref TComponent component)
             where TComponent : unmanaged, IComponentData
         {
             bool hasComponent = HasComponent<TComponent>(entity);
