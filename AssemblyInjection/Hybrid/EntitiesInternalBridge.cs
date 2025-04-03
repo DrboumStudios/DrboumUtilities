@@ -30,18 +30,8 @@ public static unsafe class EntitiesInternalBridge
         linkedGroupEntityBakingDataAsEntity = hasBuffer
             ? entityManager.GetBuffer<LinkedEntityGroupBakingData>(entity, true).Reinterpret<Entity>()
             : default;
+        
         return hasBuffer;
-    }
-
-    public static void AddTransformCompanionComponent(this EntityManager entityManager, Entity entity, UnityObjectRef<Transform> writeTransform, UnityObjectRef<GameObject> transformGameObject)
-    {
-        entityManager.AddComponent<CompanionLink, CompanionLinkTransform>(entity);
-        entityManager.SetComponentData(entity, new CompanionLink {
-            Companion = transformGameObject,
-        });
-        entityManager.SetComponentData(entity, new CompanionLinkTransform {
-            CompanionTransform = writeTransform,
-        });
     }
 
     public static void AddTransformCompanionComponent(this EntityManager entityManager, NativeArray<Entity> entities, ReadOnlySpan<UnityObjectRef<Transform>> writeTransforms, ReadOnlySpan<UnityObjectRef<GameObject>> transformGameObjects)
@@ -53,13 +43,23 @@ public static unsafe class EntitiesInternalBridge
         entityManager.AddComponent<CompanionLink, CompanionLinkTransform>(entities);
         for ( var index = 0; index < entities.Length; index++ )
         {
-            Entity entity = entities[index];
-            entityManager.SetComponentData(entity, new CompanionLink {
-                Companion = transformGameObjects[index],
-            });
-            entityManager.SetComponentData(entity, new CompanionLinkTransform {
-                CompanionTransform = writeTransforms[index],
-            });
+            SetTransformCompanionComponent(entityManager, entities[index], writeTransforms[index], transformGameObjects[index]);
         }
+    }
+
+    public static void SetTransformCompanionComponent(this EntityManager entityManager, Entity entity, UnityObjectRef<Transform> writeTransform, UnityObjectRef<GameObject> transformGameObject)
+    {
+        entityManager.SetComponentData(entity, new CompanionLink {
+            Companion = transformGameObject,
+        });
+        entityManager.SetComponentData(entity, new CompanionLinkTransform {
+            CompanionTransform = writeTransform,
+        });
+    }
+
+    public static void GetTransformCompanionComponentTypes(this EntityManager entityManager, ref FixedList128Bytes<ComponentType> buffer)
+    {
+        buffer.Add(ComponentType.ReadWrite<CompanionLink>());
+        buffer.Add(ComponentType.ReadWrite<CompanionLinkTransform>());
     }
 }
