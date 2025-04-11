@@ -80,39 +80,39 @@ namespace Drboum.Utilities.Collections
             _collection.AssertArraysSizeMatch();
         }
 
-        public void AddRangeFromZero(in NativeArray<TKey> keys, in NativeArray<TData1> data1, in NativeArray<TData2> data2, in NativeArray<TData3> data3)
+        public void AddRangeFromZero(in NativeArray<TKey> keys, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
         {
-            _collection.AddRangeFromZero(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], data1, data2, data3));
+            _collection.AddRangeFromZero(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], ref data1, ref data2, ref data3));
         }
 
-        public void AddRange(in NativeArray<TKey> keys, in NativeArray<TData1> data1, in NativeArray<TData2> data2, in NativeArray<TData3> data3)
+        public void AddRange(in NativeArray<TKey> keys, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
         {
-            _collection.AddRange(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], data1, data2, data3));
+            _collection.AddRange(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], ref data1, ref data2, ref data3));
         }
 
-        public void AddOrReplace(in TKey key, in TData1 data1, in TData2 data2, in TData3 data3)
+        public void AddOrReplace(in TKey key, TData1 data1, TData2 data2, TData3 data3)
         {
             var compactData = stackalloc byte*[DATAPROPERTIES_COUNT];
-            _collection.AddOrUpdate(in key, PackInstanceData(compactData, data1, data2, data3));
+            _collection.AddOrUpdate(in key, PackInstanceData(compactData, ref data1, ref data2, ref data3));
         }
 
         public bool TryAdd(in TKey key, TData1 data1, TData2 data2, TData3 data3)
         {
             var compactData = stackalloc byte*[DATAPROPERTIES_COUNT];
-            return _collection.TryAdd(in key, PackInstanceData(compactData, data1, data2, data3));
+            return _collection.TryAdd(in key, PackInstanceData(compactData, ref data1, ref data2, ref data3));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static InstanceData PackInstanceData(byte** compactData, TData1 data1, TData2 data2, TData3 data3)
+        private static InstanceData PackInstanceData(byte** compactData, ref TData1 data1, ref TData2 data2, ref TData3 data3)
         {
-            compactData[0] = (byte*)&data1;
-            compactData[1] = (byte*)&data2;
-            compactData[2] = (byte*)&data3;
+            compactData[0] = (byte*)UnsafeUtility.AddressOf(ref data1);
+            compactData[1] = (byte*)UnsafeUtility.AddressOf(ref data2);
+            compactData[2] = (byte*)UnsafeUtility.AddressOf(ref data3);
             return new InstanceData(compactData, DATAPROPERTIES_COUNT);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static ReadOnlySpan<NativeArray<byte>> PackNativeArraysData(Span<NativeArray<byte>> allDatas, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
+        private static ReadOnlySpan<NativeArray<byte>> PackNativeArraysData(Span<NativeArray<byte>> allDatas, ref NativeArray<TData1> data1, ref NativeArray<TData2> data2, ref NativeArray<TData3> data3)
         {
             allDatas[0] = data1.Reinterpret<byte>(sizeof(TData1));
             allDatas[1] = data2.Reinterpret<byte>(sizeof(TData2));
