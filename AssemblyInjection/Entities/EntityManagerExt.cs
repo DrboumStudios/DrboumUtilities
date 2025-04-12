@@ -73,10 +73,19 @@ namespace Unity.Entities
 
         public static void CreateNewLinkedGroupRootFrom(this EntityManager em, Entity oldRoot, Entity newRoot)
         {
+#if UNITY_EDITOR
+            if ( !em.HasComponent<LinkedEntityGroup>(oldRoot) )
+            {
+                Debug.LogError($"Did not create a linked group root from {oldRoot} because there was no existing group. ");
+                return;
+            }
+#endif
             var entityBufferList = new NativeList<Entity>(8, AllocatorManager.Temp);
             entityBufferList.Add(in newRoot);
             entityBufferList.AddRange(em.GetBuffer<LinkedEntityGroup>(oldRoot).Reinterpret<Entity>().AsNativeArray());
-            em.AddBuffer<LinkedEntityGroup>(newRoot).Reinterpret<Entity>().AddRange(entityBufferList.AsArray());
+            var newLinkedGroup = em.AddBuffer<LinkedEntityGroup>(newRoot).Reinterpret<Entity>();
+            newLinkedGroup.Clear();
+            newLinkedGroup.AddRange(entityBufferList.AsArray());
         }
 
         public static bool TrySetComponentEnabled<TEnableable>(this EntityManager em, Entity entity, bool enabled)
