@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 
-namespace GameProject
+namespace Drboum.Utilities
 {
     public static class AppHttpClientProvider
     {
