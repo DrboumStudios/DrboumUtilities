@@ -7,6 +7,9 @@ using Unity.Entities;
 namespace Unity.Entities
 {
     public unsafe partial struct EntityManager
+    { }
+
+    public static unsafe class EntitiesExtensions
     {
         // From https://forum.unity.com/threads/really-hoped-for-refrw-refro-getcomponentrw-ro-entity.1369275/
         /// <summary>
@@ -16,10 +19,10 @@ namespace Unity.Entities
         /// <returns>A <see cref="RefRW{T}"/> struct of type T containing access to the component value.</returns>
         /// <exception cref="ArgumentException">Thrown if the component type has no fields.</exception>
         [GenerateTestsForBurstCompatibility(GenericTypeArguments = new[] { typeof(BurstCompatibleComponentData) })]
-        public RefRW<T> GetComponentDataRW<T>(Entity entity)
+        public static RefRW<T> GetComponentDataRW<T>(this EntityManager em, Entity entity)
             where T : unmanaged, IComponentData
         {
-            var access = GetUncheckedEntityDataAccess();
+            var access = em.GetUncheckedEntityDataAccess();
 
             var typeIndex = TypeManager.GetTypeIndex<T>();
             var data = access->GetComponentDataRW_AsBytePointer(entity, typeIndex);
@@ -30,17 +33,17 @@ namespace Unity.Entities
 #endif
         }
 
-        public bool TryGetComponent<TComponent>(Entity entity, out TComponent component)
+        public static bool TryGetComponent<TComponent>(this EntityManager em, Entity entity, out TComponent component)
             where TComponent : unmanaged, IComponentData
         {
-            bool hasComponent = HasComponent<TComponent>(entity);
+            bool hasComponent = em.HasComponent<TComponent>(entity);
             if ( hasComponent )
-                component = GetComponentData<TComponent>(entity);
+                component = em.GetComponentData<TComponent>(entity);
             else
                 component = default;
             return hasComponent;
         }
-        
+
         /// <summary>
         /// will only set <see cref="component"/> ref if the component exists
         /// </summary>
@@ -48,117 +51,117 @@ namespace Unity.Entities
         /// <param name="component"></param>
         /// <typeparam name="TComponent"></typeparam>
         /// <returns></returns>
-        public bool TryGetComponentAndSetRefValueIfExist<TComponent>(Entity entity, ref TComponent component)
+        public static bool TryGetComponentAndSetRefValueIfExist<TComponent>(this EntityManager em, Entity entity, ref TComponent component)
             where TComponent : unmanaged, IComponentData
         {
-            bool hasComponent = HasComponent<TComponent>(entity);
+            bool hasComponent = em.HasComponent<TComponent>(entity);
             if ( hasComponent )
-                component = GetComponentData<TComponent>(entity);
+                component = em.GetComponentData<TComponent>(entity);
             return hasComponent;
         }
 
-        public bool TryGetComponentRW<TComponent>(Entity entity, out RefRW<TComponent> component)
+        public static bool TryGetComponentRW<TComponent>(this EntityManager em, Entity entity, out RefRW<TComponent> component)
             where TComponent : unmanaged, IComponentData
         {
-            bool hasComponent = HasComponent<TComponent>(entity);
+            bool hasComponent = em.HasComponent<TComponent>(entity);
             if ( hasComponent )
-                component = GetComponentDataRW<TComponent>(entity);
+                component = em.GetComponentDataRW<TComponent>(entity);
             else
                 component = default;
             return hasComponent;
         }
 
-        public void CreateNewLinkedGroupRootFrom(Entity oldRoot, Entity newRoot)
+        public static void CreateNewLinkedGroupRootFrom(this EntityManager em, Entity oldRoot, Entity newRoot)
         {
             var entityBufferList = new NativeList<Entity>(8, AllocatorManager.Temp);
             entityBufferList.Add(in newRoot);
-            entityBufferList.AddRange(GetBuffer<LinkedEntityGroup>(oldRoot).Reinterpret<Entity>().AsNativeArray());
-            AddBuffer<LinkedEntityGroup>(newRoot).Reinterpret<Entity>().AddRange(entityBufferList.AsArray());
+            entityBufferList.AddRange(em.GetBuffer<LinkedEntityGroup>(oldRoot).Reinterpret<Entity>().AsNativeArray());
+            em.AddBuffer<LinkedEntityGroup>(newRoot).Reinterpret<Entity>().AddRange(entityBufferList.AsArray());
         }
 
-        public bool TrySetComponentEnabled<TEnableable>(Entity entity, bool enabled)
+        public static bool TrySetComponentEnabled<TEnableable>(this EntityManager em, Entity entity, bool enabled)
             where TEnableable : unmanaged, IEnableableComponent
         {
-            if ( !HasComponent<TEnableable>(entity) )
+            if ( !em.HasComponent<TEnableable>(entity) )
                 return false;
 
-            SetComponentEnabled<TEnableable>(entity, enabled);
+            em.SetComponentEnabled<TEnableable>(entity, enabled);
             return true;
         }
 
-        public bool TryGetComponent<TBuffer>(Entity entity, out DynamicBuffer<TBuffer> component)
+        public static bool TryGetComponent<TBuffer>(this EntityManager em, Entity entity, out DynamicBuffer<TBuffer> component)
             where TBuffer : unmanaged, IBufferElementData
         {
-            bool hasComponent = HasComponent<TBuffer>(entity);
-            component = hasComponent ? GetBuffer<TBuffer>(entity) : default;
+            bool hasComponent = em.HasComponent<TBuffer>(entity);
+            component = hasComponent ? em.GetBuffer<TBuffer>(entity) : default;
             return hasComponent;
         }
 
         [ExcludeFromBurstCompatTesting("Takes managed object")]
-        public void SetComponentObject<T>(Entity entity, T componentObject)
+        public static void SetComponentObject<T>(this EntityManager em, Entity entity, T componentObject)
             where T : class
         {
-            SetComponentObject(entity, typeof(T), componentObject);
+            em.SetComponentObject(entity, typeof(T), componentObject);
         }
 
-        public void AddComponent<TComponent1, TComponent2>(Entity entity)
+        public static void AddComponent<TComponent1, TComponent2>(this EntityManager em, Entity entity)
         {
-            AddComponent(entity, Create<TComponent1, TComponent2>());
+            em.AddComponent(entity, Create<TComponent1, TComponent2>());
         }
 
-        public void AddComponent<TComponent1, TComponent2, TComponent3>(Entity entity)
+        public static void AddComponent<TComponent1, TComponent2, TComponent3>(this EntityManager em, Entity entity)
         {
-            AddComponent(entity, Create<TComponent1, TComponent2, TComponent3>());
+            em.AddComponent(entity, Create<TComponent1, TComponent2, TComponent3>());
         }
 
-        public void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4>(Entity entity)
+        public static void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4>(this EntityManager em, Entity entity)
         {
-            AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4>());
+            em.AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4>());
         }
 
-        public void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>(Entity entity)
+        public static void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>(this EntityManager em, Entity entity)
         {
-            AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>());
+            em.AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>());
         }
 
-        public void AddComponent<TComponent1, TComponent2>(NativeArray<Entity> entity)
+        public static void AddComponent<TComponent1, TComponent2>(this EntityManager em, NativeArray<Entity> entity)
         {
-            AddComponent(entity, Create<TComponent1, TComponent2>());
+            em.AddComponent(entity, Create<TComponent1, TComponent2>());
         }
 
-        public void AddComponent<TComponent1, TComponent2, TComponent3>(NativeArray<Entity> entity)
+        public static void AddComponent<TComponent1, TComponent2, TComponent3>(this EntityManager em, NativeArray<Entity> entity)
         {
-            AddComponent(entity, Create<TComponent1, TComponent2, TComponent3>());
+            em.AddComponent(entity, Create<TComponent1, TComponent2, TComponent3>());
         }
 
-        public void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4>(NativeArray<Entity> entity)
+        public static void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4>(this EntityManager em, NativeArray<Entity> entity)
         {
-            AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4>());
+            em.AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4>());
         }
 
-        public void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>(NativeArray<Entity> entity)
+        public static void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>(this EntityManager em, NativeArray<Entity> entity)
         {
-            AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>());
+            em.AddComponent(entity, Create<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>());
         }
 
-        public void AddComponent<TComponent1, TComponent2>(EntityQuery entityQuery)
+        public static void AddComponent<TComponent1, TComponent2>(this EntityManager em, EntityQuery entityQuery)
         {
-            AddComponent(entityQuery, Create<TComponent1, TComponent2>());
+            em.AddComponent(entityQuery, Create<TComponent1, TComponent2>());
         }
 
-        public void AddComponent<TComponent1, TComponent2, TComponent3>(EntityQuery entityQuery)
+        public static void AddComponent<TComponent1, TComponent2, TComponent3>(this EntityManager em, EntityQuery entityQuery)
         {
-            AddComponent(entityQuery, Create<TComponent1, TComponent2, TComponent3>());
+            em.AddComponent(entityQuery, Create<TComponent1, TComponent2, TComponent3>());
         }
 
-        public void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4>(EntityQuery entityQuery)
+        public static void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4>(this EntityManager em, EntityQuery entityQuery)
         {
-            AddComponent(entityQuery, Create<TComponent1, TComponent2, TComponent3, TComponent4>());
+            em.AddComponent(entityQuery, Create<TComponent1, TComponent2, TComponent3, TComponent4>());
         }
 
-        public void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>(EntityQuery entityQuery)
+        public static void AddComponent<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>(this EntityManager em, EntityQuery entityQuery)
         {
-            AddComponent(entityQuery, Create<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>());
+            em.AddComponent(entityQuery, Create<TComponent1, TComponent2, TComponent3, TComponent4, TComponent5>());
         }
 
         public static ComponentTypeSet Create<TComponent1, TComponent2>()
