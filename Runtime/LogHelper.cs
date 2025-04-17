@@ -7,8 +7,10 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 
 
-public static class LogHelper {
+public static class LogHelper
+{
     private const string _WITH_TYPE_PREFIX_DEFAULT = "of type";
+
     public static bool LogIfInvalidRequiredField<TExecutor, TObject>(this TExecutor _, TObject authoring, string invalidFieldName, string prefixCategory)
         where TObject : Object
     {
@@ -19,33 +21,36 @@ public static class LogHelper {
         }
         return false;
     }
+
     public static void LogInvalidRequiredField<TExecutor>(this TExecutor _, Object authoring, string invalidFieldName, string prefixCategory)
     {
         LogErrorMessage($"the required field {invalidFieldName} is not filled or null", $"{prefixCategory} : {typeof(TExecutor).Name}", authoring);
     }
-    [Conditional("UNITY_EDITOR")]
+
     public static void LogInfoMessage(string message, string category = "", object context = null)
     {
         Debug.Log(BuildStringMessage(category, message), context as Object);
     }
-    [Conditional("UNITY_EDITOR")]
+
     public static void LogInfoTypedMessage<T>(in T message, string category = "",
         string prefixMessage = _WITH_TYPE_PREFIX_DEFAULT, object context = null)
     {
         Debug.Log(BuildTypedMessage(message, category, prefixMessage), context as Object);
     }
+
     [Conditional("DEBUG")]
     public static void LogDebugMessage(string message, string category = "", object context = null)
     {
-        Debug.Log(BuildStringMessage(category, message), context as Object);
+        LogInfoMessage(category, message, context as Object);
     }
 
     [Conditional("DEBUG")]
     public static void LogDebugTypedMessage<T>(in T message, string category = "",
         string prefixMessage = _WITH_TYPE_PREFIX_DEFAULT, object context = null)
     {
-        Debug.Log(BuildTypedMessage(message, category, prefixMessage), context as Object);
+        LogInfoTypedMessage(message, category, prefixMessage, context as Object);
     }
+
     [Conditional("DEBUG")]
     public static void LogDebugWarningMessage(string message, string category, object context = null)
     {
@@ -63,10 +68,12 @@ public static class LogHelper {
     {
         Debug.LogError(BuildStringMessage(category, message), context as Object);
     }
+
     public static void LogErrorNullMessage(string message, string category, object context = null)
     {
         Debug.LogError(BuildStringMessage(category, $"null reference: {message}"), context as Object);
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string BuildStringMessage(string category, string message,
         string prefixMessage = "")
@@ -74,6 +81,7 @@ public static class LogHelper {
         string cat = string.IsNullOrEmpty(category) ? "" : $"[{category}]-> ";
         return $"{cat} {prefixMessage} {message}";
     }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string BuildTypedMessage<T>(T message, string category = "",
         string prefixMessage = _WITH_TYPE_PREFIX_DEFAULT)
@@ -81,11 +89,13 @@ public static class LogHelper {
         return BuildStringMessage(category,
             $"{prefixMessage} {_WITH_TYPE_PREFIX_DEFAULT} {typeof(T).Name} click log to read the contents ->\n{ColorMessage(message.ToString(), nameof(Color.yellow))} ");
     }
+
     [Conditional("DEBUG")]
     public static void LogTime(string message)
     {
         Debug.Log($"[TimeSinceStartup: {Time.realtimeSinceStartup}]  {message}", null);
     }
+
     [Conditional("DEBUG")]
     public static void LogTime(double elapsedTime, string message)
     {
@@ -96,6 +106,7 @@ public static class LogHelper {
     {
         return $"<color={colorName}>{message}</color>";
     }
+
     /// <summary>
     ///     For debugging runtime only
     /// </summary>
@@ -116,6 +127,7 @@ public static class LogHelper {
 
         RenderWiredCone(position, upRayOffset, downRayOffset, rightOffset, leftRayOffset, forwardRayOffset, current);
     }
+
     [Conditional("DEBUG")]
     public static void DrawWiredCone(Vector3 position, Vector3 forward, float range, float fieldOfView, Color coneColor)
     {
@@ -124,6 +136,7 @@ public static class LogHelper {
 
         RenderWiredCone(position, upRayOffset, downRayOffset, rightOffset, leftRayOffset, forwardRayOffset, coneColor);
     }
+
     [Conditional("DEBUG")]
     public static void RenderWiredCone(Vector3 position, Vector3 upRayOffset, Vector3 downRayOffset, Vector3 rightOffset, Vector3 leftRayOffset,
         Vector3 forwardRayOffset, Color renderColor)
@@ -147,10 +160,12 @@ public static class LogHelper {
         Debug.DrawLine(start, end, renderColor, 0, true);
 
     }
+
     private static void DrawRay(Vector3 position, Vector3 upRayOffset, Color renderColor)
     {
         Debug.DrawRay(position, upRayOffset, renderColor, 0, true);
     }
+
     private static void ConstructWiredConePoints(Vector3 forward, float range, float fieldOfView,
         out Vector3 upRayOffset,
         out Vector3 downRayOffset,
@@ -171,6 +186,7 @@ public static class LogHelper {
         forwardRayOffset = forward * range;
 
     }
+
     public static Vector3[] ConstructWiredConePoints(Vector3 forward, float range, float fieldOfView)
     {
         ConstructWiredConePoints(forward, range, fieldOfView,
@@ -191,6 +207,7 @@ public static class LogHelper {
         };
 
     }
+
     public static void DrawWiredConeGizmo(Vector3 position, Vector3 forward, float range, float fieldOfView, Color color)
     {
         DrawWiredConeGizmo(position, forward, range, fieldOfView, color, Color.clear, true);
@@ -266,6 +283,7 @@ public static class LogHelper {
         string info = string.IsNullOrEmpty(additionalMessage) ? string.Empty : $"\n more info: {additionalMessage}";
         LogErrorMessage($"the parameter '{parameterName}' is null and the {methodName} could not proceed any further.{info}", category);
     }
+
     public static void LogStackTraceErrorMessage(string additionalMessage = null, bool debugLog = true)
     {
         if ( debugLog )
@@ -274,6 +292,7 @@ public static class LogHelper {
             Debug.LogError($"UserLog Error {info} \n {StackTraceUtility.ExtractStackTrace()}");
         }
     }
+
     public static void LogStackTraceMessage(string additionalMessage = null, bool debugLog = true)
     {
         if ( debugLog )
@@ -282,6 +301,7 @@ public static class LogHelper {
             Debug.Log($"UserLog stackTrace {info} \n {StackTraceUtility.ExtractStackTrace()}");
         }
     }
+
     public static void LogMethodMessage(string className, string methodName, string additionalMessage = null,
         bool debugLog = true)
     {
@@ -319,6 +339,7 @@ public static class LogHelper {
         point = dir + pivot; // calculate rotated point
         return point; // return it
     }
+
     public static Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Quaternion rotation)
     {
         Vector3 dir = point - pivot; // get point direction relative to pivot
@@ -345,6 +366,7 @@ public static class LogHelper {
 
         }
     }
+
     private static Vector3 GetPointOffset(Quaternion rotation, float height)
     {
         return rotation * Vector3.up * (height / 2f);
