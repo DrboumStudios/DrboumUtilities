@@ -14,6 +14,7 @@ using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 
 public static class CollectionCustomHelper
@@ -27,6 +28,12 @@ public static class CollectionCustomHelper
         {
             Debug.LogError($"The destination buffer of capacity: [{destinationBuffer.Capacity}] cannot contains the source buffer of Length: {textStream.Length}");
         }
+    }
+
+    [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]
+    public static void AssertRequestedSizeIsValid(int requestedElementLength, int providedCollectionLength)
+    {
+        Assert.IsTrue(requestedElementLength >= providedCollectionLength, $"the {nameof(providedCollectionLength)}({providedCollectionLength}) must be greater or equals than {requestedElementLength}");
     }
 
     [Conditional("ENABLE_UNITY_COLLECTIONS_CHECKS")]

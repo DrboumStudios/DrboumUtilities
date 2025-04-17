@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
-using UnityEditor.Experimental.GraphView;
 
 public static unsafe class CollectionInternalExtensions
 {

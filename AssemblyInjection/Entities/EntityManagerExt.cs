@@ -1,14 +1,8 @@
 ﻿using System;
-using Unity.Burst.CompilerServices;
 using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
-using Unity.Entities;
 
 namespace Unity.Entities
 {
-    public unsafe partial struct EntityManager
-    { }
-
     public static unsafe class EntitiesExtensions
     {
         // From https://forum.unity.com/threads/really-hoped-for-refrw-refro-getcomponentrw-ro-entity.1369275/

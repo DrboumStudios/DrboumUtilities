@@ -2,7 +2,6 @@
 using System.Runtime.CompilerServices;
 using Unity.Assertions;
 using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
 using Unity.Entities;
 using Unity.Entities.Hybrid.Baking;
 using UnityEngine;
