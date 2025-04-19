@@ -118,12 +118,43 @@ namespace Drboum.Utilities.Collections
             return false;
         }
 
+
+        /// <summary>
+        /// Add to this collection with as little of a cost as possible
+        /// <remarks>the collection must be cleared before running this method</remarks> 
+        /// </summary>
+        public void AddRangeFromZero(in NativeArray<TKey> keys, in NativeArray<TInstance> instances)
+        {
+            AddRangeFromZero((TKey*)keys.GetUnsafeReadOnlyPtr(), keys.Length, (TInstance*)instances.GetUnsafeReadOnlyPtr(), instances.Length);
+        }
+
+        /// <inheritdoc cref="AddRangeFromZero(in Unity.Collections.NativeArray{TKey},in Unity.Collections.NativeArray{TInstance})"/>
+        public void AddRangeFromZero(TKey* keys, int keyCount, TInstance* instances, int instanceCount)
+        {
+            Assert.IsTrue(_referencesKeys.IsEmpty);
+            CollectionCustomHelper.CheckCopyLengths(keyCount, instanceCount);
+
+            for ( int i = 0; i < keyCount; i++ )
+            {
+                //we cannot have duplicate key as they would store an instance that would never be used,
+                //so we rather alert the user (Add will throw if the key exist)
+                _indexLookup.Add(keys[i], i);
+            }
+            _referencesKeys.AddRange(keys, keyCount);
+            _referencesValues.AddRange(instances, instanceCount);
+        }
+
         public void AddRange(in NativeArray<TKey> keys, in NativeArray<TInstance> instances)
         {
-            CollectionCustomHelper.CheckCopyLengths(keys.Length, instances.Length);
+            AddRange((TKey*)keys.GetUnsafeReadOnlyPtr(), keys.Length, (TInstance*)instances.GetUnsafeReadOnlyPtr(), instances.Length);
+        }
+
+        public void AddRange(TKey* keys, int keyCount, TInstance* instances, int instanceCount)
+        {
+            CollectionCustomHelper.CheckCopyLengths(keyCount, instanceCount);
 
             var startIndex = _referencesKeys.Length;
-            for ( int i = 0; i < keys.Length; i++ )
+            for ( int i = 0; i < keyCount; i++ )
             {
                 var key = keys[i];
                 if ( TryRemove(key) )
@@ -132,8 +163,8 @@ namespace Drboum.Utilities.Collections
                 }
                 _indexLookup.TryAdd(key, startIndex + i);
             }
-            _referencesKeys.AddRange(keys);
-            _referencesValues.AddRange(instances);
+            _referencesKeys.AddRange(keys, keyCount);
+            _referencesValues.AddRange(instances, instanceCount);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

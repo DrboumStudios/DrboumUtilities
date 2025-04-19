@@ -80,6 +80,7 @@ namespace Drboum.Utilities.Collections
             _collection.AssertArraysSizeMatch();
         }
 
+        /// <inheritdoc cref="MultiNativeFastReadLookup{TKey}.AddRangeFromZero(in Unity.Collections.NativeArray{TKey},in ReadOnlySpan{Unity.Collections.NativeArray{byte}})"/>
         public void AddRangeFromZero(in NativeArray<TKey> keys, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
         {
             _collection.AddRangeFromZero(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], ref data1, ref data2, ref data3));
@@ -305,12 +306,14 @@ namespace Drboum.Utilities.Collections
             AssertArraysSizeMatch();
         }
 
+        /// <inheritdoc cref="NativeFastReadHashMap{TKey,TInstance}.AddRangeFromZero(in Unity.Collections.NativeArray{TKey},in Unity.Collections.NativeArray{TInstance})"/>
         public void AddRangeFromZero(in NativeArray<TKey> keys, in ReadOnlySpan<NativeArray<byte>> instancesData)
         {
             Assert.IsTrue(_referencesKeys.IsEmpty);
+            CollectionCustomHelper.CheckCopyLengths(keys.Length, instancesData.Length);
             for ( int i = 0; i < keys.Length; i++ )
             {
-                _indexLookup.TryAdd(keys[i], i);
+                _indexLookup.Add(keys[i], i);
             }
             AddRangeAfterIndexAddImpl(keys, instancesData);
             AssertArraysSizeMatch();
