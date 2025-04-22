@@ -83,11 +83,13 @@ namespace Drboum.Utilities.Collections
         /// <inheritdoc cref="MultiNativeFastReadLookup{TKey}.AddRangeFromZero(in Unity.Collections.NativeArray{TKey},in ReadOnlySpan{Unity.Collections.NativeArray{byte}})"/>
         public void AddRangeFromZero(in NativeArray<TKey> keys, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
         {
+            AssertCollectionSizeAreSame(in keys, in data1, in data2, in data3);
             _collection.AddRangeFromZero(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], ref data1, ref data2, ref data3));
         }
 
         public void AddRange(in NativeArray<TKey> keys, NativeArray<TData1> data1, NativeArray<TData2> data2, NativeArray<TData3> data3)
         {
+            AssertCollectionSizeAreSame(in keys, in data1, in data2, in data3);
             _collection.AddRange(in keys, PackNativeArraysData(stackalloc NativeArray<byte>[DATAPROPERTIES_COUNT], ref data1, ref data2, ref data3));
         }
 
@@ -166,6 +168,13 @@ namespace Drboum.Utilities.Collections
         public void Dispose()
         {
             _collection.Dispose();
+        }
+        
+
+        [Conditional("UNITY_ASSERTIONS")]
+        private static void AssertCollectionSizeAreSame(in NativeArray<TKey> keys, in NativeArray<TData1> data1, in NativeArray<TData2> data2, in NativeArray<TData3> data3)
+        {
+            Assert.IsTrue(keys.Length == (data1.Length & data2.Length & data3.Length));
         }
     }
 
@@ -310,7 +319,6 @@ namespace Drboum.Utilities.Collections
         public void AddRangeFromZero(in NativeArray<TKey> keys, in ReadOnlySpan<NativeArray<byte>> instancesData)
         {
             Assert.IsTrue(_referencesKeys.IsEmpty);
-            CollectionCustomHelper.CheckCopyLengths(keys.Length, instancesData.Length);
             for ( int i = 0; i < keys.Length; i++ )
             {
                 _indexLookup.Add(keys[i], i);
