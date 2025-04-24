@@ -29,7 +29,7 @@ public static class LogHelper
 
     public static void LogInfoMessage(string message, string category = "", object context = null)
     {
-        Debug.Log(BuildStringMessage(category, message), context as Object);
+        Debug.Log(BuildStringMessage(message, category), context as Object);
     }
 
     public static void LogInfoTypedMessage<T>(in T message, string category = "",
@@ -41,7 +41,7 @@ public static class LogHelper
     [Conditional("DEBUG")]
     public static void LogDebugMessage(string message, string category = "", object context = null)
     {
-        LogInfoMessage(category, message, context as Object);
+        LogInfoMessage(message, category, context as Object);
     }
 
     [Conditional("DEBUG")]
@@ -54,7 +54,7 @@ public static class LogHelper
     [Conditional("DEBUG")]
     public static void LogDebugWarningMessage(string message, string category, object context = null)
     {
-        Debug.LogWarning(BuildStringMessage(category, message), context as Object);
+        Debug.LogWarning(BuildStringMessage(message, category), context as Object);
     }
 
     [Conditional("DEBUG")]
@@ -66,16 +66,17 @@ public static class LogHelper
 
     public static void LogErrorMessage(string message, string category, object context = null)
     {
-        Debug.LogError(BuildStringMessage(category, message), context as Object);
+        Debug.LogError(BuildStringMessage(message, category), context as Object);
     }
 
     public static void LogErrorNullMessage(string message, string category, object context = null)
     {
-        Debug.LogError(BuildStringMessage(category, $"null reference: {message}"), context as Object);
+        Debug.LogError(BuildStringMessage($"null reference: {message}", category), context as Object);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static string BuildStringMessage(string category, string message,
+    public static string BuildStringMessage(string message,
+        string category,
         string prefixMessage = "")
     {
         string cat = string.IsNullOrEmpty(category) ? "" : $"[{category}]-> ";
@@ -86,8 +87,7 @@ public static class LogHelper
     public static string BuildTypedMessage<T>(T message, string category = "",
         string prefixMessage = _WITH_TYPE_PREFIX_DEFAULT)
     {
-        return BuildStringMessage(category,
-            $"{prefixMessage} {_WITH_TYPE_PREFIX_DEFAULT} {typeof(T).Name} click log to read the contents ->\n{ColorMessage(message.ToString(), nameof(Color.yellow))} ");
+        return BuildStringMessage($"{prefixMessage} {_WITH_TYPE_PREFIX_DEFAULT} {typeof(T).Name} click log to read the contents ->\n{ColorMessage(message.ToString(), nameof(Color.yellow))} ", category);
     }
 
     [Conditional("DEBUG")]
