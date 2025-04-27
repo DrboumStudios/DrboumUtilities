@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
-public static partial class EnumExtensions {
+using System.Runtime.CompilerServices;
+
+public static partial class EnumExtensions
+{
     /// <summary>
     ///     allocate only once ever for each enum type
     /// </summary>
@@ -13,12 +16,14 @@ public static partial class EnumExtensions {
     {
         return EqualityComparer<T>.Default.Equals(first, second);
     }
+
     public static TEnum Parse<TEnum, TValue>(this TValue enumVal)
         where TEnum : Enum
         where TValue : unmanaged
     {
         return (TEnum)Enum.Parse(typeof(TEnum), enumVal.ToString());
     }
+
     /// <summary>
     ///     parse an enum to bytes allocate coz boxing, only use for conversions
     /// </summary>
@@ -31,9 +36,16 @@ public static partial class EnumExtensions {
         return enumVal.ToByte(null);
     }
 
-    public static bool HasFlagNoAlloc<T>(this T lh,T rh)
-        where T : Enum,IConvertible
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static unsafe bool HasFlagNoAlloc<T>(this T value, T flag)
+        where T : unmanaged, Enum
     {
-        return (lh.ToInt32(null) & rh.ToInt32(null)) != 0;
+        return sizeof(T) switch {
+            1 => (*(byte*)&value & *(byte*)&flag) == *(byte*)&flag,
+            2 => (*(ushort*)&value & *(ushort*)&flag) == *(ushort*)&flag,
+            4 => (*(uint*)&value & *(uint*)&flag) == *(uint*)&flag,
+            8 => (*(ulong*)&value & *(ulong*)&flag) == *(ulong*)&flag,
+            _ => false
+        };
     }
 }
