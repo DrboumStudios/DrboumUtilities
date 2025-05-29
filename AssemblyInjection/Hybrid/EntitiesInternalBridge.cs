@@ -6,7 +6,7 @@ using Unity.Entities;
 using Unity.Entities.Hybrid.Baking;
 using UnityEngine;
 
-public static unsafe class EntitiesInternalBridge
+public static unsafe partial class EntitiesInternalBridge
 {
     public static EntityManager GetEntityManager(this IBaker baker)
     {

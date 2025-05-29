@@ -1,37 +1,38 @@
-using Unity.Entities;
-using Unity.Entities.Editor;
 using UnityEditor;
 using UnityEngine;
 
-public static class EntitiesInternalBridge
+namespace Unity.Entities.Editor
 {
-    public struct EntityWorldInfo
+    public static class EntitiesInternalBridge
     {
-        public Entity Entity;
-        public World World;
-        public ScriptableObject EntitySelectionProxy;
-    }
-
-    public static bool TryGetEntityWorldInfoFromSelectionContext(out EntityWorldInfo entityWorldInfo)
-    {
-        bool getEntitySelectionProxy = TryGetEntitySelectionProxy(out EntitySelectionProxy entitySelectionProxy);
-        if ( getEntitySelectionProxy )
+        public struct EntityWorldInfo
         {
-            entityWorldInfo = new EntityWorldInfo {
-                Entity = entitySelectionProxy.Entity,
-                World = entitySelectionProxy.World,
-                EntitySelectionProxy = entitySelectionProxy
-            };
+            public Entity Entity;
+            public World World;
+            public ScriptableObject EntitySelectionProxy;
         }
-        else
-        {
-            entityWorldInfo = default;
-        }
-        return getEntitySelectionProxy;
-    }
 
-    private static bool TryGetEntitySelectionProxy(out EntitySelectionProxy entitySelectionProxy)
-    {
-        return (entitySelectionProxy = (Selection.activeObject as EntitySelectionProxy)) || (entitySelectionProxy = Selection.activeContext as EntitySelectionProxy);
+        public static bool TryGetEntityWorldInfoFromSelectionContext(out EntityWorldInfo entityWorldInfo)
+        {
+            bool getEntitySelectionProxy = TryGetEntitySelectionProxy(out EntitySelectionProxy entitySelectionProxy);
+            if ( getEntitySelectionProxy )
+            {
+                entityWorldInfo = new EntityWorldInfo {
+                    Entity = entitySelectionProxy.Entity,
+                    World = entitySelectionProxy.World,
+                    EntitySelectionProxy = entitySelectionProxy
+                };
+            }
+            else
+            {
+                entityWorldInfo = default;
+            }
+            return getEntitySelectionProxy;
+        }
+
+        private static bool TryGetEntitySelectionProxy(out EntitySelectionProxy entitySelectionProxy)
+        {
+            return (entitySelectionProxy = (Selection.activeObject as EntitySelectionProxy)) || (entitySelectionProxy = Selection.activeContext as EntitySelectionProxy);
+        }
     }
 }
