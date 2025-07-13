@@ -255,7 +255,7 @@ public static class UnityObjectEditorHelper
         }
         return matches;
     }
-    
+
     public static bool IsInCurrentPrefabStage(this GameObject gameObject)
     {
         return gameObject.IsInCurrentPrefabStage(out var _);
@@ -271,7 +271,7 @@ public static class UnityObjectEditorHelper
     {
         return EditorUtility.IsPersistent(gameObject) && PrefabUtility.IsPartOfPrefabAsset(gameObject) && gameObject.transform.parent.IsNull();
     }
-    
+
 
     /// <summary>
     ///     Editor Only
@@ -297,7 +297,7 @@ public static class UnityObjectEditorHelper
     {
         if ( asset.IsNull() )
         {
-            guid = default;
+            guid = null;
             return false;
         }
         string path = AssetDatabase.GetAssetPath(asset);
@@ -306,7 +306,7 @@ public static class UnityObjectEditorHelper
             guid = AssetDatabase.AssetPathToGUID(path);
             return true;
         }
-        guid = default;
+        guid = null;
         return false;
     }
 
@@ -324,7 +324,7 @@ public static class UnityObjectEditorHelper
         asset = AssetDatabase.LoadAssetAtPath<T>(path);
         return !asset.IsNull();
     }
-  
+
 
 
     /// <summary>
@@ -349,33 +349,25 @@ public static class UnityObjectEditorHelper
         return TryLoadAsset(assetGuid.ToString("N"), out path, out asset);
     }
 
-    public static T GetSingletonAssetInstance<T>(string folderPath = "Assets/")
+    public static T GetSingletonAssetInstance<T>(string[] folderPaths = null)
         where T : Object
     {
-        string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name, new[] {
-            folderPath
-        });
+        string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name, folderPaths);
         if ( guids.Length > 1 )
         {
-            Debug.LogError($"SingletonInstance of type {typeof(T).Name} is not unique path: {folderPath}");
+            Debug.LogError($"SingletonInstance of type {typeof(T).Name} is not unique path: {folderPaths}");
         }
 
         if ( guids.Length == 0 )
         {
-            Debug.LogError($"SingletonInstance of type {typeof(T).Name} has not been found on path: {folderPath}");
+            Debug.LogError($"SingletonInstance of type {typeof(T).Name} has not been found on path: {folderPaths}");
             return null;
         }
         return AssetDatabase.LoadAssetAtPath<T>(AssetDatabase.GUIDToAssetPath(guids[0]));
 
     }
 
-    public static T[] FindAllAssetInstances<T>()
-        where T : Object
-    {
-        return FindAllAssetInstances<T>(null, out _);
-    }
-
-    public static T[] FindAllAssetInstances<T>(string[] folderPaths)
+    public static T[] FindAllAssetInstances<T>(string[] folderPaths = null)
         where T : Object
     {
         string[] guids = AssetDatabase.FindAssets("t:" + typeof(T).Name, folderPaths);
@@ -427,7 +419,7 @@ public static class UnityObjectEditorHelper
             (guid, path, inst) => abstractType.IsAssignableFrom(inst.GetType()));
     }
 
-    public static string[] GetPrefabGuids(string[] folders)
+    public static string[] GetPrefabGuids(string[] folders = null)
     {
         return AssetDatabase.FindAssets("t:Prefab", folders);
     }
@@ -479,7 +471,7 @@ public static class UnityObjectEditorHelper
             GetAssets(buffer, guids);
         }
     }
-    
+
     private static void GetAssets<T>(List<T> buffer, string[] guids)
         where T : Object
     {
@@ -490,7 +482,7 @@ public static class UnityObjectEditorHelper
             buffer.Add(AssetDatabase.LoadAssetAtPath<T>(path));
         }
     }
-    
+
     private static void GetAssets<T>(List<T> buffer, string[] guids, AssetSearchPredicate<T> predicate)
         where T : Object
     {
@@ -511,7 +503,7 @@ public static class UnityObjectEditorHelper
         Directory.CreateDirectory(folder);
         AssetDatabase.Refresh();
     }
-    
+
     public static void OverWriteGuidInMetaFile(this Object assetObject, string assetGuid, ref string path)
     {
         path = AssetDatabase.GetAssetPath(assetObject);
@@ -521,7 +513,7 @@ public static class UnityObjectEditorHelper
         allLines[1] = $"guid: {assetGuid}";
         File.WriteAllLines(pathMeta, allLines);
     }
-    
+
     private static void FillBufferAndEnsureCapacity<T>(List<T> buffer, string[] guids)
         where T : Object
     {
@@ -530,11 +522,11 @@ public static class UnityObjectEditorHelper
         {
             buffer.Capacity = guids.Length;
         }
-    } 
-    
+    }
+
     public delegate bool AssetSearchPredicate<T>(string guid, string path, T instance)
-             where T : Object;
+        where T : Object;
 #endif
-    
-  
+
+
 }
