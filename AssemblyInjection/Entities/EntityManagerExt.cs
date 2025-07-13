@@ -201,5 +201,13 @@ namespace Unity.Entities
                 ComponentType.ReadWrite<TComponent5>()
             );
         }
+
+        public static World CreateDefaultWorld(string worldName = "DefaultWorld", bool isEditorWorld = false)
+        {
+            var world = new World(worldName, isEditorWorld ? WorldFlags.Editor : WorldFlags.Game);
+            DefaultWorldInitialization.AddSystemToRootLevelSystemGroupsInternal(world, DefaultWorldInitialization.GetAllSystemTypeIndices(WorldSystemFilterFlags.Default, isEditorWorld));
+            ScriptBehaviourUpdateOrder.AppendWorldToCurrentPlayerLoop(world);
+            return world;
+        }
     }
 }
