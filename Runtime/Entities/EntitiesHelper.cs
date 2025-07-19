@@ -183,6 +183,17 @@ public static unsafe partial class EntitiesHelper
         query.AddChangedVersionFilter(ComponentType.ReadWrite<TComponent>());
         return query;
     }
+    public static void GetBufferLookup<TBuffer>(this ref SystemState state, out BufferLookup<TBuffer> typeHandle, bool isReadOnly = false)
+        where TBuffer : unmanaged, IBufferElementData
+    {
+        typeHandle = state.GetBufferLookup<TBuffer>(isReadOnly);
+    }
+
+    public static void GetComponentLookup<TBuffer>(this ref SystemState state, out ComponentLookup<TBuffer> typeHandle, bool isReadOnly = false)
+        where TBuffer : unmanaged, IComponentData
+    {
+        typeHandle = state.GetComponentLookup<TBuffer>(isReadOnly);
+    }
 
     public static void GetBufferTypeHandle<TBuffer>(this ref SystemState state, out BufferTypeHandle<TBuffer> typeHandle, bool isReadOnly = false)
         where TBuffer : unmanaged, IBufferElementData
