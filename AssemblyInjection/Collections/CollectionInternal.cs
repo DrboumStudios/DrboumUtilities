@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 
-public static unsafe class CollectionInternalExtensions
+public static unsafe class CollectionInternal
 {
     public static ref T AsRef<T>(this ref NativeReference<T> nativeReference)
         where T : unmanaged

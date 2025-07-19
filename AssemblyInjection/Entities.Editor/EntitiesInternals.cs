@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Unity.Entities.Editor
 {
-    public static class EntitiesInternalBridge
+    public static class EntitiesInternals
     {
         public struct EntityWorldInfo
         {

@@ -3,7 +3,7 @@ using Unity.Collections;
 
 namespace Unity.Entities
 {
-    public static unsafe class EntitiesExtensions
+    public static unsafe class EntitiesInternals
     {
         // From https://forum.unity.com/threads/really-hoped-for-refrw-refro-getcomponentrw-ro-entity.1369275/
         /// <summary>
