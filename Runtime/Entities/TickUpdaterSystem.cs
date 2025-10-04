@@ -12,7 +12,7 @@ namespace Drboum.Utilities.Entities
     }
 
     [DisableAutoCreation]
-    public partial struct TickUpdaterSystem<T> : ISystem,ISystemStartStop
+    public partial struct TickUpdaterSystem<T> : ISystem, ISystemStartStop
         where T : unmanaged, ITickData, IComponentData
     {
 
@@ -26,7 +26,7 @@ namespace Drboum.Utilities.Entities
             using var builder = new EntityQueryBuilder(Allocator.Temp);
             _tickData.TickValue = 1;
             _tickData.ElapsedTime = 0;
-            if ( !builder.WithPresent<T>().Build(ref state).TryGetSingletonEntity<T>(out _tickSingletonEntity) )
+            if ( !builder.WithPresent<T>().WithOptions(EntityQueryOptions.IncludeSystems).Build(ref state).TryGetSingletonEntity<T>(out _tickSingletonEntity) )
             {
                 _tickSingletonEntity = state.EntityManager.CreateSingleton<T>();
             }
@@ -43,9 +43,7 @@ namespace Drboum.Utilities.Entities
         }
 
         public void OnStopRunning(ref SystemState state)
-        {
-            
-        }
+        { }
     }
 
     public struct RawTick : IComponentData, ITickData
