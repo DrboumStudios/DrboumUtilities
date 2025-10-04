@@ -46,7 +46,7 @@ namespace Drboum.Utilities.Entities
         { }
     }
 
-    public struct RawTick : IComponentData, ITickData
+    public struct SimulationTick : IComponentData, ITickData
     {
         public double ElapsedTime {
             get;

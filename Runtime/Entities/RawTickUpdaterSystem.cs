@@ -7,7 +7,7 @@ namespace Drboum.Utilities.Entities
     [UpdateBefore(typeof(EndSimulationEntityCommandBufferSystem))]
     public partial struct RawTickUpdaterSystem : ISystem,ISystemStartStop
     {
-        private TickUpdaterSystem<RawTick> _tickUpdaterSystem;
+        private TickUpdaterSystem<SimulationTick> _tickUpdaterSystem;
 
         [BurstCompile]
         public void OnUpdate(ref SystemState state)
