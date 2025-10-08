@@ -1,7 +1,7 @@
 ﻿using System;
 using Unity.Collections;
 
-namespace Unity.Entities
+namespace Unity.Entities.Extensions
 {
     public static unsafe class EntitiesInternals
     {

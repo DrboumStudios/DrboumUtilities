@@ -1,6 +1,7 @@
 ﻿using Unity.Burst;
 using Unity.Collections;
 using Unity.Entities;
+using Unity.Entities.Extensions;
 using UnityEngine;
 
 namespace Drboum.Utilities.Entities

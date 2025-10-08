@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using Unity.Assertions;
 using Unity.Collections;
 using Unity.Entities.Hybrid.Baking;
+using Unity.Entities.Extensions;
 using UnityEngine;
 
 namespace Unity.Entities.Hybrid
