@@ -1,9 +1,9 @@
-﻿#if UNITY_EDITOR
-using UnityEditor;
-#endif
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using Debug = UnityEngine.Debug;
 
 
@@ -11,20 +11,25 @@ public static class LogHelper
 {
     private const string _WITH_TYPE_PREFIX_DEFAULT = "of type";
 
-    public static bool LogIfInvalidRequiredField<TExecutor, TObject>(this TExecutor _, TObject authoring, string invalidFieldName, string prefixCategory)
+    public static bool LogIfInvalidRequiredField<TExecutor, TObject>(this TExecutor _, TObject authoring, string invalidFieldName, string category)
         where TObject : Object
     {
         if ( authoring.IsNull() )
         {
-            _.LogInvalidRequiredField(authoring, invalidFieldName, prefixCategory);
+            _.LogInvalidRequiredField(authoring, invalidFieldName, category);
             return true;
         }
         return false;
     }
 
-    public static void LogInvalidRequiredField<TExecutor>(this TExecutor _, Object authoring, string invalidFieldName, string prefixCategory)
+    public static void LogInvalidRequiredField<TExecutor>(this TExecutor _, Object authoring, string invalidFieldName, string category)
     {
-        LogErrorMessage($"the required field {invalidFieldName} is not filled or null", $"{prefixCategory} : {typeof(TExecutor).Name}", authoring);
+        LogInvalidRequiredFieldImpl(authoring, authoring, invalidFieldName, string.IsNullOrEmpty(category) ? $"{typeof(TExecutor).Name}" : category);
+    }
+
+    private static void LogInvalidRequiredFieldImpl<TExecutor>(this TExecutor _, Object authoring, string invalidFieldName, string category)
+    {
+        LogErrorMessage($"the required field {invalidFieldName} is not filled or null", category, authoring);
     }
 
     public static void LogInfoMessage(string message, string category = "", object context = null)
