@@ -11,7 +11,7 @@ public static class LogHelper
 {
     private const string _WITH_TYPE_PREFIX_DEFAULT = "of type";
 
-    public static bool LogIfInvalidRequiredField<TExecutor, TObject>(this TExecutor _, TObject authoring, string invalidFieldName, string category)
+    public static bool LogIfInvalidRequiredField<TExecutor, TObject>(this TExecutor _, TObject authoring, string invalidFieldName, string category = null)
         where TObject : Object
     {
         if ( authoring.IsNull() )
