@@ -184,12 +184,12 @@ namespace Drboum.Utilities.Collections
 
         public ReadOnlySpan<TKey> AsKeysArray()
         {
-            return _referencesKeys.AsArray();
+            return _referencesKeys.AsReadOnly();
         }
 
         public ReadOnlySpan<TInstance> AsValuesArray()
         {
-            return _referencesValues.AsArray();
+            return _referencesValues.AsReadOnly();
         }
 
         public void ToNativeArrays(Allocator allocator, out NativeArray<TKey> keys, out NativeArray<TInstance> values)

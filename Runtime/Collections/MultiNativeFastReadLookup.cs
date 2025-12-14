@@ -390,7 +390,7 @@ namespace Drboum.Utilities.Collections
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlySpan<TKey> AsKeysArray()
         {
-            return _referencesKeys.AsArray();
+            return _referencesKeys.AsReadOnly();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -399,7 +399,7 @@ namespace Drboum.Utilities.Collections
         {
             ref readonly var referencesValue = ref _referencesValues.ReadElementAsRef(typeIndex);
             CollectionCustomHelper.CheckEstimatedSizeMatchActualSize(UnsafeUtility.SizeOf<TInstance>(), referencesValue.Type.Size);
-            return new ReadOnlySpan<TInstance>(referencesValue.Collection.GetUnsafePtr(), Length);
+            return new ReadOnlySpan<TInstance>(referencesValue.Collection.GetUnsafeReadOnlyPtr(), Length);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
