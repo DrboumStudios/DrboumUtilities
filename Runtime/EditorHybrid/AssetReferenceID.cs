@@ -14,6 +14,11 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
         bool IsValid {
             get;
         }
+
+        /// <summary>
+        /// Reliable method designed to be called ONLY when the asset is created in the EDITOR, support all forms of asset creation including duplicating from existing, copy paste,etc...   
+        /// </summary>
+        void OnCreateAsset();
     }
 
     public abstract class AssetReferenceID : EditorCallBackScriptableObject<AssetReferenceID>, IAssetReferenceID, IEquatable<AssetReferenceID>
@@ -24,6 +29,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
 
         internal bool IsValidGuid => _guid.IsValid;
         public virtual bool IsValid => IsValidGuid;
+        public abstract void OnCreateAsset();
 
         public GuidWrapper Guid {
             get => _guid;

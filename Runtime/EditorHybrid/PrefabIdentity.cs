@@ -6,7 +6,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
 {
     public class PrefabIdentity : MonoBehaviour, IAssetReferenceID
     {
-        [SerializeField, InspectorReadOnly,DontCreateProperty] internal GuidWrapper _guid;
+        [SerializeField, InspectorReadOnly, DontCreateProperty] internal GuidWrapper _guid;
 
         public GuidWrapper Guid {
             get => _guid;
@@ -19,7 +19,6 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
         }
 
         public bool IsValid => _guid.IsValid;
-
-
+        public virtual void OnCreateAsset() { }
     }
 }

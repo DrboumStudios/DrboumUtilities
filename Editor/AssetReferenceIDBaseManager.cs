@@ -8,15 +8,14 @@ namespace Drboum.Utilities.Editor
     public class AssetReferenceIDBaseManager<TAssetInstance>
         where TAssetInstance : Object, IAssetReferenceID
     {
-
-        private static AssetReferenceIDBaseManager<TAssetInstance> _instance;
-        internal static AssetReferenceIDBaseManager<TAssetInstance> Instance => _instance;
+        private static readonly AssetReferenceIDBaseManager<TAssetInstance> _Instance;
+        internal static AssetReferenceIDBaseManager<TAssetInstance> Instance => _Instance;
         
 
         static AssetReferenceIDBaseManager()
         {
-            _instance = new ();
-            _instance.Initialize();
+            _Instance = new ();
+            _Instance.Initialize();
         }
         protected AssetReferenceIDBaseManager()
         {
@@ -60,6 +59,7 @@ namespace Drboum.Utilities.Editor
                 return;
             
             instance.Guid = union;
+            instance.OnCreateAsset();
             instance.SetDirtySafe();
         }
 
