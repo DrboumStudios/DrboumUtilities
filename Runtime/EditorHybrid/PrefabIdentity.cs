@@ -20,5 +20,10 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
 
         public bool IsValid => _guid.IsValid;
         public virtual void OnCreateAsset() { }
+
+        public virtual GuidWrapper GenerateGuid()
+        {
+            return IAssetReferenceID.GenerateGuidFromAsset(this);
+        }
     }
 }

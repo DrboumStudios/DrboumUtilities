@@ -10,16 +10,16 @@ namespace Drboum.Utilities.Editor
     {
         private static readonly AssetReferenceIDBaseManager<TAssetInstance> _Instance;
         internal static AssetReferenceIDBaseManager<TAssetInstance> Instance => _Instance;
-        
+
 
         static AssetReferenceIDBaseManager()
         {
-            _Instance = new ();
+            _Instance = new();
             _Instance.Initialize();
         }
+
         protected AssetReferenceIDBaseManager()
-        {
-        }
+        { }
 
         protected virtual void Initialize()
         {
@@ -47,18 +47,14 @@ namespace Drboum.Utilities.Editor
         {
             if ( instance.Guid.IsValid )
                 return;
-            
+
             GenerateAndAssignNewGuid(instance);
         }
 
         internal void GenerateAndAssignNewGuid(TAssetInstance instance)
         {
-            GuidWrapper union = default;
-            instance.TryGetAssetGuid(out union.GuidValue);
-            if ( instance.Guid.GuidValue == union.GuidValue )
-                return;
-            
-            instance.Guid = union;
+            GuidWrapper generateGuid = instance.GenerateGuid();
+            instance.Guid = generateGuid;
             instance.OnCreateAsset();
             instance.SetDirtySafe();
         }
