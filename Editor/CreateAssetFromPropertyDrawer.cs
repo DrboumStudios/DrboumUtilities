@@ -34,7 +34,7 @@ namespace Drboum.Utilities.Editor
             ICreateAsset createAssetImplem = createButtonAttribute.GetInstanceCreator(parentObject);
             ISavePersistentAsset iSavePersistentAsset = createButtonAttribute.GetConfigurePersistentAsset(parentObject);
 
-            return BuildVisualElements(property, parentObject, fieldType, createAssetImplem, iSavePersistentAsset);
+            return BuildVisualElements(property, parentObject, field.FieldType, createAssetImplem, iSavePersistentAsset);
         }
 
         protected static Object GetPropertyData(SerializedProperty property, out FieldInfo propertyFieldInfo, out CreateAssetFromPropertyAttribute createButtonAttribute)
