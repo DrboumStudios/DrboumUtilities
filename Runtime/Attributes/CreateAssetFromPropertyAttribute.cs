@@ -31,15 +31,25 @@ namespace Drboum.Utilities.Attributes
             _customSavePersistentAssetType = ValidateType(configureType, null, typeof(ISavePersistentAsset));
         }
 
-        private static Type ValidateType(Type validateType, Type defaultInstanceType, Type interfacetype)
+        private static Type ValidateType(Type validateType, [CanBeNull] Type defaultInstanceType, Type interfaceType)
         {
             if ( validateType == null )
                 return defaultInstanceType;
 
-            if ( interfacetype.IsAssignableFrom(validateType) )
+            if ( interfaceType.IsAssignableFrom(validateType) )
                 return validateType;
 
-            LogHelper.LogErrorMessage($"The provided type {validateType.Name} must be assignable from {interfacetype.Name}.a default implementation of type {defaultInstanceType.Name} will be provided", nameof(CreateAssetFromPropertyAttribute));
+            var s = $"The provided type {validateType.Name} must implement the interface {interfaceType.Name}.";
+            if ( defaultInstanceType != null )
+            {
+                s += $" A default implementation of type {defaultInstanceType.Name} will be provided";
+            }
+            else
+            {
+                s += $" Please provide a custom implementation";
+            }
+
+            LogHelper.LogErrorMessage(s, nameof(CreateAssetFromPropertyAttribute));
             return defaultInstanceType;
         }
 

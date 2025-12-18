@@ -2,7 +2,6 @@
 using System.Reflection;
 using Drboum.Utilities.Attributes;
 using Drboum.Utilities.Interfaces;
-using JetBrains.Annotations;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -11,7 +10,7 @@ using Object = UnityEngine.Object;
 
 namespace Drboum.Utilities.Editor
 {
-    [CustomPropertyDrawer(typeof(ScriptableObject))]
+    [CustomPropertyDrawer(typeof(ScriptableObject), true)]
     public class CreateScriptableObjectByDefaultFromPropertyDrawer : CreateAssetFromPropertyDrawer
     {
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
