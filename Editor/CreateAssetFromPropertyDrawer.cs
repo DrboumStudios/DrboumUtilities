@@ -30,7 +30,6 @@ namespace Drboum.Utilities.Editor
     {
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
-            base.CreatePropertyGUI()
             Object parentObject = GetPropertyData(property, out var field, out var createButtonAttribute);
             ICreateAsset createAssetImplem = createButtonAttribute.GetInstanceCreator(parentObject);
             ISavePersistentAsset iSavePersistentAsset = createButtonAttribute.GetConfigurePersistentAsset(parentObject);
