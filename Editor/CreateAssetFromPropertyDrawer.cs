@@ -30,8 +30,6 @@ namespace Drboum.Utilities.Editor
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
             Object parentObject = GetPropertyData(property, out var field, out var createButtonAttribute);
-            // if ( typeof(ScriptableObject).IsAssignableFrom(field.FieldType) )
-            //     return new();
 
             ICreateAsset createAssetImplem = createButtonAttribute.GetInstanceCreator(parentObject);
             ISavePersistentAsset iSavePersistentAsset = createButtonAttribute.GetConfigurePersistentAsset(parentObject);
@@ -74,7 +72,8 @@ namespace Drboum.Utilities.Editor
                 CreateNewInstance(property, parentObject, fieldType, createAssetImplem, iSavePersistentAsset);
             }) {
                 text = "+",
-                style = { width = 30, marginLeft = 2 }
+                style = { width = 30, marginLeft = 2 },
+                name = "create-asset-button"
             };
 
             void UpdateButtonVisibility()
