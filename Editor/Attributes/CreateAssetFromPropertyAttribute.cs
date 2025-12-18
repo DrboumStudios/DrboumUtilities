@@ -1,0 +1,111 @@
+﻿using System;
+using System.IO;
+using JetBrains.Annotations;
+using UnityEditor;
+using UnityEngine;
+using Object = UnityEngine.Object;
+
+namespace Drboum.Utilities.Editor.Attributes
+{
+    /// <summary>
+    /// Adds a create button for ScriptableObject fields
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field)]
+    public class CreateAssetFromPropertyAttribute : PropertyAttribute
+    {
+        private readonly Type _customSavePersistentAssetType;
+        private readonly Type _customAssetCreatorType;
+
+        public CreateAssetFromPropertyAttribute() : this(typeof(DefaultCreateScriptableObjectInstance), typeof(DefaultSavePersistentAsset))
+        { }
+
+        public CreateAssetFromPropertyAttribute(Type createAndConfigureType) : this(typeof(ICreateAsset).IsAssignableFrom(createAndConfigureType) ? createAndConfigureType : typeof(DefaultCreateScriptableObjectInstance), typeof(ISavePersistentAsset).IsAssignableFrom(createAndConfigureType) ? createAndConfigureType : null)
+        { }
+
+        public CreateAssetFromPropertyAttribute(Type creatorType, [CanBeNull] Type configureType)
+        {
+            _customAssetCreatorType = ValidateType(creatorType, typeof(DefaultCreateScriptableObjectInstance), typeof(ICreateAsset));
+            _customSavePersistentAssetType = ValidateType(configureType, null, typeof(ISavePersistentAsset));
+        }
+
+        private static Type ValidateType(Type validateType, Type defaultInstanceType, Type interfacetype)
+        {
+            if ( validateType == null )
+                return defaultInstanceType;
+
+            if ( interfacetype.IsAssignableFrom(validateType) )
+                return validateType;
+
+            LogHelper.LogErrorMessage($"The provided type {validateType.Name} must be assignable from {interfacetype.Name}.a default implementation of type {defaultInstanceType.Name} will be provided", nameof(CreateAssetFromPropertyAttribute));
+            return defaultInstanceType;
+        }
+
+        public ICreateAsset GetInstanceCreator(Object parentObject)
+        {
+            return _customAssetCreatorType == typeof(DefaultCreateScriptableObjectInstance) && parentObject is ICreateAsset parentCreateAsset
+                ? parentCreateAsset
+                : (ICreateAsset)Activator.CreateInstance(_customAssetCreatorType);
+        }
+
+        public ISavePersistentAsset GetConfigurePersistentAsset(Object parentObject)
+        {
+            return _customSavePersistentAssetType == typeof(DefaultSavePersistentAsset) && parentObject is ISavePersistentAsset parentCreateAsset
+                ? parentCreateAsset
+                : (ISavePersistentAsset)Activator.CreateInstance(_customSavePersistentAssetType);
+        }
+    }
+
+    public interface ICreateAsset
+    {
+        bool CanCreateAsset(Object parentObject, Type type);
+        Object CreateInstance(Object parentObject, Type type);
+    }
+
+    public interface ISavePersistentAsset
+    {
+        void SaveAsset(Object parent, Object createdInstance);
+    }
+
+    public struct DefaultCreateScriptableObjectInstance : ICreateAsset
+    {
+        public bool CanCreateAsset(Object parentObject, Type type)
+        {
+            return typeof(ScriptableObject).IsAssignableFrom(type);
+        }
+
+        public Object CreateInstance(Object parentObject, Type type)
+        {
+            switch ( type )
+            {
+                case var t when typeof(ScriptableObject).IsAssignableFrom(t):
+                {
+                    var createdInstance = ScriptableObject.CreateInstance(type);
+                    createdInstance.name = $"{parentObject.name}_{createdInstance.GetType().Name}";
+                    return createdInstance;
+                }
+
+                default:
+                    throw new NotSupportedException($"Default implementation of {nameof(ICreateAsset)} does not support creating instances of {type.Name}. Please provide a custom implementation.");
+            }
+        }
+    }
+
+    public struct DefaultSavePersistentAsset : ISavePersistentAsset
+    {
+        public void SaveAsset(Object parentObject, Object createdInstance)
+        {
+            string assetPath = AssetDatabase.GetAssetPath(parentObject);
+            SaveCreatedInstanceToDatabase(parentObject, createdInstance, Path.GetDirectoryName(assetPath));
+        }
+
+        public static void SaveCreatedInstanceToDatabase<T>(Object parentObject, T newInstance, string assetPath, string fileExtension = "asset")
+            where T : Object
+        {
+            AssetDatabase.CreateAsset(newInstance, Path.Combine(assetPath, $"{newInstance.name}.{fileExtension}"));
+            EditorUtility.SetDirty(parentObject);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+            EditorGUIUtility.PingObject(newInstance);
+        }
+    }
+}

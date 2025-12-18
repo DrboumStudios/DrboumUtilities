@@ -1,7 +1,7 @@
-﻿#if UNITY_EDITOR
-using Drboum.Utilities.Runtime.Attributes;
+﻿using Drboum.Utilities.Runtime.Attributes;
 using UnityEditor;
 using UnityEngine;
+
 namespace Drboum.Utilities.Editor.Attributes {
 
     /// <summary>
@@ -77,5 +77,3 @@ namespace Drboum.Utilities.Editor.Attributes {
         }
     }
 }
-
-#endif

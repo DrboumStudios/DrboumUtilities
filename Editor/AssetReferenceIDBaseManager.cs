@@ -54,8 +54,11 @@ namespace Drboum.Utilities.Editor
         internal void GenerateAndAssignNewGuid(TAssetInstance instance)
         {
             GuidWrapper generateGuid = instance.GenerateGuid();
+            if ( !instance.Guid.IsValid )
+            {
+                instance.OnCreateAsset();
+            }
             instance.Guid = generateGuid;
-            instance.OnCreateAsset();
             instance.SetDirtySafe();
         }
 
