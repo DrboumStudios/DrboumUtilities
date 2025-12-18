@@ -31,10 +31,6 @@ namespace Drboum.Utilities.Editor
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
             Object parentObject = GetPropertyData(property, out var field, out var createButtonAttribute);
-            if ( this.GetType() == typeof(CreateAssetFromPropertyDrawer) && typeof(ScriptableObject).IsAssignableFrom(field.FieldType) )
-            {
-                return new();
-            }
             ICreateAsset createAssetImplem = createButtonAttribute.GetInstanceCreator(parentObject);
             ISavePersistentAsset iSavePersistentAsset = createButtonAttribute.GetConfigurePersistentAsset(parentObject);
 
@@ -54,7 +50,7 @@ namespace Drboum.Utilities.Editor
             return parentObject;
         }
 
-        protected static VisualElement BuildVisualElements<TCreateAsset, TSaveAsset>(SerializedProperty property, Object parentObject, Type fieldType, TCreateAsset createAssetImplem, TSaveAsset iSavePersistentAsset)
+        protected static VisualElement BuildVisualElements<TCreateAsset, TSaveAsset>(SerializedProperty property, Object parentObject, Type fieldType, TCreateAsset createAssetImplem, TSaveAsset iSavePersistentAsset,bool displayButton=true)
             where TCreateAsset : ICreateAsset
             where TSaveAsset : ISavePersistentAsset
         {
@@ -71,26 +67,29 @@ namespace Drboum.Utilities.Editor
             };
             objectField.Bind(property.serializedObject);
             container.Add(objectField);
-            var createButton = new Button(() =>
+            if ( displayButton )
             {
-                CreateNewInstance(property, parentObject, fieldType, createAssetImplem, iSavePersistentAsset);
-            }) {
-                text = "+",
-                style = { width = 30, marginLeft = 2 },
-                name = "create-asset-button"
-            };
+                var createButton = new Button(() =>
+                {
+                    CreateNewInstance(property, parentObject, fieldType, createAssetImplem, iSavePersistentAsset);
+                }) {
+                    text = "+",
+                    style = { width = 30, marginLeft = 2 },
+                    name = "unity-input-unlockableAsset",
+                };
 
-            void UpdateButtonVisibility()
-            {
-                property.serializedObject.Update();
-                createButton.style.display = (property.objectReferenceValue == null) && createAssetImplem.CanCreateAsset(parentObject, fieldType)
-                    ? DisplayStyle.Flex
-                    : DisplayStyle.None;
+                void UpdateButtonVisibility()
+                {
+                    property.serializedObject.Update();
+                    createButton.style.display = (property.objectReferenceValue == null) && createAssetImplem.CanCreateAsset(parentObject, fieldType)
+                        ? DisplayStyle.Flex
+                        : DisplayStyle.None;
+                }
+
+                UpdateButtonVisibility();
+                container.Add(createButton);
+                container.TrackPropertyValue(property, prop => UpdateButtonVisibility());
             }
-
-            UpdateButtonVisibility();
-            container.Add(createButton);
-            container.TrackPropertyValue(property, prop => UpdateButtonVisibility());
             return container;
         }
 
