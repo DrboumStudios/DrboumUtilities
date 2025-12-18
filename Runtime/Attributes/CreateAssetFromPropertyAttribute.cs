@@ -13,7 +13,7 @@ namespace Drboum.Utilities.Attributes
     /// Adds a create button for ScriptableObject fields
     /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
-    [Conditional( "UNITY_EDITOR")]
+    [Conditional("UNITY_EDITOR")]
     public class CreateAssetFromPropertyAttribute : PropertyAttribute
     {
         private readonly Type _customSavePersistentAssetType;
@@ -45,16 +45,20 @@ namespace Drboum.Utilities.Attributes
 
         public ICreateAsset GetInstanceCreator(Object parentObject)
         {
-            return _customAssetCreatorType == typeof(DefaultCreateScriptableObjectInstance) && parentObject is ICreateAsset parentCreateAsset
-                ? parentCreateAsset
-                : (ICreateAsset)Activator.CreateInstance(_customAssetCreatorType);
+            return GetCustomImplementationIfNotDefault<ICreateAsset, DefaultCreateScriptableObjectInstance>(_customAssetCreatorType, parentObject);
         }
 
         public ISavePersistentAsset GetConfigurePersistentAsset(Object parentObject)
         {
-            return _customSavePersistentAssetType == typeof(DefaultSavePersistentAsset) && parentObject is ISavePersistentAsset parentCreateAsset
+            return GetCustomImplementationIfNotDefault<ISavePersistentAsset, DefaultSavePersistentAsset>(_customSavePersistentAssetType, parentObject);
+        }
+
+        public static TInterface GetCustomImplementationIfNotDefault<TInterface, TDefaultImplementation>(Type customAssetCreatorType, Object parentObject)
+            where TDefaultImplementation : TInterface
+        {
+            return customAssetCreatorType == typeof(TDefaultImplementation) && parentObject is TInterface parentCreateAsset
                 ? parentCreateAsset
-                : (ISavePersistentAsset)Activator.CreateInstance(_customSavePersistentAssetType);
+                : (TInterface)Activator.CreateInstance(customAssetCreatorType);
         }
     }
 
