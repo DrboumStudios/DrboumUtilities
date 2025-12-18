@@ -45,7 +45,7 @@ namespace Drboum.Utilities.Editor
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Instance);
 
-            createButtonAttribute = propertyFieldInfo.FieldType.GetCustomAttribute<CreateAssetFromPropertyAttribute>();
+            createButtonAttribute = propertyFieldInfo.GetCustomAttribute<CreateAssetFromPropertyAttribute>();
             return parentObject;
         }
 
