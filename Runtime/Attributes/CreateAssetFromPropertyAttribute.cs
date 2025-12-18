@@ -1,16 +1,19 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
+using Drboum.Utilities.Interfaces;
 using JetBrains.Annotations;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Drboum.Utilities.Editor.Attributes
+namespace Drboum.Utilities.Attributes
 {
     /// <summary>
     /// Adds a create button for ScriptableObject fields
     /// </summary>
     [AttributeUsage(AttributeTargets.Field)]
+    [Conditional( "UNITY_EDITOR")]
     public class CreateAssetFromPropertyAttribute : PropertyAttribute
     {
         private readonly Type _customSavePersistentAssetType;
@@ -53,17 +56,6 @@ namespace Drboum.Utilities.Editor.Attributes
                 ? parentCreateAsset
                 : (ISavePersistentAsset)Activator.CreateInstance(_customSavePersistentAssetType);
         }
-    }
-
-    public interface ICreateAsset
-    {
-        bool CanCreateAsset(Object parentObject, Type type);
-        Object CreateInstance(Object parentObject, Type type);
-    }
-
-    public interface ISavePersistentAsset
-    {
-        void SaveAsset(Object parent, Object createdInstance);
     }
 
     public struct DefaultCreateScriptableObjectInstance : ICreateAsset
