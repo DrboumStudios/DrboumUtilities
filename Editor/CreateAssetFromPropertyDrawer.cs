@@ -18,7 +18,9 @@ namespace Drboum.Utilities.Editor
             Object parentObject = GetPropertyData(property, out var propertyFieldInfo, out var createButtonAttribute);
             // we have an attribute that overrides the default behavior -> let the other drawer do its job
             if ( createButtonAttribute != null )
-                return null;
+                return new VisualElement {
+                    style = { display = DisplayStyle.None }
+                };
 
             return BuildVisualElements(property, parentObject, propertyFieldInfo.FieldType, default(DefaultCreateScriptableObjectInstance), default(DefaultSavePersistentAsset));
         }
