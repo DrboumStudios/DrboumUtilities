@@ -38,6 +38,29 @@ namespace Unity.Entities.Extensions
             return hasComponent;
         }
 
+        public static bool TryGetComponentObject<TComponent>(this EntityManager em, Entity entity, out TComponent component)
+            where TComponent : class, IComponentData
+        {
+            bool hasComponent = em.HasComponent<TComponent>(entity);
+            if ( hasComponent )
+                component = em.GetComponentObject<TComponent>(entity);
+            else
+                component = default;
+            return hasComponent;
+        }
+
+        public static bool TryGetComponent<TComponent>(this EntityManager em, SystemHandle entity, out TComponent component)
+            where TComponent : unmanaged, IComponentData
+        {
+            return TryGetComponent(em, entity.m_Entity, out component);
+        }
+
+        public static bool TryGetComponentObject<TComponent>(this EntityManager em, SystemHandle entity, out TComponent component)
+            where TComponent : class, IComponentData
+        {
+            return TryGetComponentObject(em, entity.m_Entity, out component);
+        }
+
         /// <summary>
         /// will only set <see cref="component"/> ref if the component exists
         /// </summary>
