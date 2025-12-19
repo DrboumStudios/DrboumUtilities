@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Drboum.Utilities.Attributes;
 using Drboum.Utilities.Interfaces;
@@ -40,13 +42,55 @@ namespace Drboum.Utilities.Editor
         {
             Object parentObject = property.serializedObject.targetObject;
 
-            propertyFieldInfo = parentObject.GetType().GetField(property.propertyPath,
-                System.Reflection.BindingFlags.Public |
-                System.Reflection.BindingFlags.NonPublic |
-                System.Reflection.BindingFlags.Instance);
-
+            propertyFieldInfo = GetFieldInfoFromProperty(property);
             createButtonAttribute = propertyFieldInfo?.GetCustomAttribute<CreateAssetFromPropertyAttribute>();
+
             return parentObject;
+        }
+
+        private static FieldInfo GetFieldInfoFromProperty(SerializedProperty property)
+        {
+            Type parentType = property.serializedObject.targetObject.GetType();
+            string[] pathComponents = property.propertyPath.Split('.');
+
+            FieldInfo fieldInfo = null;
+            Type currentType = parentType;
+
+            foreach ( string component in pathComponents )
+            {
+                // Handle array elements: "Array.data[0]" becomes just checking the array type
+                if ( component == "Array" )
+                    continue;
+
+                if ( component.StartsWith("data[") )
+                {
+                    // We're accessing an array element, get the element type
+                    if ( currentType.IsArray )
+                    {
+                        currentType = currentType.GetElementType();
+                    }
+                    else if ( currentType.IsGenericType &&
+                              (currentType.GetGenericTypeDefinition() == typeof(List<>) ||
+                               currentType.GetGenericTypeDefinition().GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IReadOnlyList<>))) )
+                    {
+                        currentType = currentType.GetGenericArguments()[0];
+                    }
+                    continue;
+                }
+
+                // Get the field from the current type
+                fieldInfo = currentType.GetField(component,
+                    System.Reflection.BindingFlags.Public |
+                    System.Reflection.BindingFlags.NonPublic |
+                    System.Reflection.BindingFlags.Instance);
+
+                if ( fieldInfo == null )
+                    return null;
+
+                currentType = fieldInfo.FieldType;
+            }
+
+            return fieldInfo;
         }
 
         protected static VisualElement BuildVisualElements<TCreateAsset, TSaveAsset>(SerializedProperty property, Object parentObject, Type fieldType, TCreateAsset createAssetImplem, TSaveAsset iSavePersistentAsset, bool displayButton = true)
