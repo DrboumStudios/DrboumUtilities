@@ -33,7 +33,7 @@ namespace Drboum.Utilities.Editor
             ICreateAsset createAssetImplem = createButtonAttribute.GetInstanceCreator(parentObject);
             ISavePersistentAsset iSavePersistentAsset = createButtonAttribute.GetConfigurePersistentAsset(parentObject);
 
-            return BuildVisualElements(property, parentObject, field.FieldType, createAssetImplem, iSavePersistentAsset, !(typeof(ScriptableObject).IsAssignableFrom(field.FieldType) && GetType() == typeof(CreateAssetFromPropertyDrawer)));
+            return BuildVisualElements(property, parentObject, field?.FieldType, createAssetImplem, iSavePersistentAsset, !(typeof(ScriptableObject).IsAssignableFrom(field.FieldType) && GetType() == typeof(CreateAssetFromPropertyDrawer)));
         }
 
         protected static Object GetPropertyData(SerializedProperty property, out FieldInfo propertyFieldInfo, out CreateAssetFromPropertyAttribute createButtonAttribute)
@@ -45,7 +45,7 @@ namespace Drboum.Utilities.Editor
                 System.Reflection.BindingFlags.NonPublic |
                 System.Reflection.BindingFlags.Instance);
 
-            createButtonAttribute = propertyFieldInfo.GetCustomAttribute<CreateAssetFromPropertyAttribute>();
+            createButtonAttribute = propertyFieldInfo?.GetCustomAttribute<CreateAssetFromPropertyAttribute>();
             return parentObject;
         }
 
@@ -66,7 +66,7 @@ namespace Drboum.Utilities.Editor
             };
             objectField.Bind(property.serializedObject);
             container.Add(objectField);
-            if ( displayButton )
+            if ( displayButton && fieldType != null )
             {
                 var createButton = new Button(() =>
                 {
