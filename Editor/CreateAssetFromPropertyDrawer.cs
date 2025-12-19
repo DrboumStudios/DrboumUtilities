@@ -15,7 +15,6 @@ namespace Drboum.Utilities.Editor
     {
         public override VisualElement CreatePropertyGUI(SerializedProperty property)
         {
-            FromBaseClass = false;
             Object parentObject = GetPropertyData(property, out var propertyFieldInfo, out var createButtonAttribute);
             // we have an attribute that overrides the default behavior -> let the other drawer do its job
             if ( createButtonAttribute != null )
@@ -34,7 +33,7 @@ namespace Drboum.Utilities.Editor
             ICreateAsset createAssetImplem = createButtonAttribute.GetInstanceCreator(parentObject);
             ISavePersistentAsset iSavePersistentAsset = createButtonAttribute.GetConfigurePersistentAsset(parentObject);
 
-            return BuildVisualElements(property, parentObject, field.FieldType, createAssetImplem, iSavePersistentAsset);
+            return BuildVisualElements(property, parentObject, field.FieldType, createAssetImplem, iSavePersistentAsset, !(typeof(ScriptableObject).IsAssignableFrom(field.FieldType) && GetType() == typeof(CreateAssetFromPropertyDrawer)));
         }
 
         protected static Object GetPropertyData(SerializedProperty property, out FieldInfo propertyFieldInfo, out CreateAssetFromPropertyAttribute createButtonAttribute)
@@ -50,7 +49,7 @@ namespace Drboum.Utilities.Editor
             return parentObject;
         }
 
-        protected static VisualElement BuildVisualElements<TCreateAsset, TSaveAsset>(SerializedProperty property, Object parentObject, Type fieldType, TCreateAsset createAssetImplem, TSaveAsset iSavePersistentAsset,bool displayButton=true)
+        protected static VisualElement BuildVisualElements<TCreateAsset, TSaveAsset>(SerializedProperty property, Object parentObject, Type fieldType, TCreateAsset createAssetImplem, TSaveAsset iSavePersistentAsset, bool displayButton = true)
             where TCreateAsset : ICreateAsset
             where TSaveAsset : ISavePersistentAsset
         {
