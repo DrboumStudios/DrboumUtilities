@@ -20,7 +20,7 @@ namespace Drboum.Utilities.Editor
             if ( createButtonAttribute != null )
                 return base.CreatePropertyGUI(property);
 
-            return BuildVisualElements(property, parentObject, propertyFieldInfo.FieldType, default(DefaultCreateScriptableObjectInstance), default(DefaultSavePersistentAsset));
+            return BuildVisualElements(property, parentObject, propertyFieldInfo?.FieldType, default(DefaultCreateScriptableObjectInstance), default(DefaultSavePersistentAsset));
         }
     }
 
