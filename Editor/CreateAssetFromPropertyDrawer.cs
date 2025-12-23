@@ -48,7 +48,10 @@ namespace Drboum.Utilities.Editor
             Rect fieldRect = new Rect(position.x, position.y, position.width - (_ADD_BTN_WIDTH + 5), position.height);
             Rect buttonRect = new Rect(position.x + position.width - _ADD_BTN_WIDTH, position.y, _ADD_BTN_WIDTH, position.height);
             EditorGUI.PropertyField(fieldRect, property, label);
-            if ( shouldDisplayButtonInBaseClass && createAssetImplem.CanCreateAsset(parentObject, field?.FieldType) && GUI.Button(buttonRect, "+") )
+            if ( shouldDisplayButtonInBaseClass 
+                 && (property.objectReferenceValue == null) 
+                 && createAssetImplem.CanCreateAsset(parentObject, field?.FieldType) 
+                 && GUI.Button(buttonRect, "+") )
             {
                 CreateNewInstance(property, parentObject, field?.FieldType, createAssetImplem, iSavePersistentAsset);
             }
