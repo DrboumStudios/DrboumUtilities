@@ -22,13 +22,24 @@ public static class ISavePersistentAssetExtensions
         return parentAssetDirectoryAssetPath;
     }
 
+    public static string GetPreferredDirectoryPath<T>(this T createdInstance, string defaultDirectoryPath = "Assets/")
+        where T : Object, IAssetFactorySettings
+    {
+        if ( createdInstance && createdInstance.AssetFactorySettings != null )
+        {
+            string fromAssetFactorySettings = AssetDatabase.GetAssetPath(createdInstance.AssetFactorySettings.TargetFolder);
+            return fromAssetFactorySettings;
+        }
+        return defaultDirectoryPath;
+    }
+
     [Conditional("UNITY_EDITOR")]
     public static void SaveCreatedInstanceToDatabase<T>(this T savePersistentAsset, Object parentObject, Object newInstance, string assetPath, string fileExtension = "asset")
         where T : ISavePersistentAsset
     {
 #if UNITY_EDITOR
-        AssetDatabase.CreateAsset(newInstance, Path.Combine(assetPath, $"{newInstance.name}.{fileExtension}"));
         EditorUtility.SetDirty(parentObject);
+        AssetDatabase.CreateAsset(newInstance, Path.Combine(assetPath, $"{newInstance.name}.{fileExtension}"));
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         EditorGUIUtility.PingObject(newInstance);
