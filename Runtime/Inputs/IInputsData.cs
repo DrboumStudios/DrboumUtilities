@@ -1,4 +1,4 @@
-﻿namespace Drboum.Utilities.Runtime.Inputs {
+﻿namespace Drboum.Utilities.Inputs {
     public interface IInputsData {
         void Initialize();
         /// <summary>

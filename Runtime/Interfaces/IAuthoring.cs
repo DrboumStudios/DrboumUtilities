@@ -1,3 +1,3 @@
-﻿namespace Drboum.Utilities.Runtime.Interfaces {
+﻿namespace Drboum.Utilities.Interfaces {
     public interface IAuthoring { }
 }

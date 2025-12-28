@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Drboum.Utilities.Runtime.Attributes;
+using Drboum.Utilities.Attributes;
 using UnityEngine;
 
-namespace Drboum.Utilities.Runtime.EditorHybrid
+namespace Drboum.Utilities.EditorHybrid
 {
     /// <summary>
     ///     Detect if a gameobject is being copied or duplicated while identifying it uniquely.

@@ -1,5 +1,6 @@
 using UnityEngine;
-namespace Drboum.Utilities.Runtime.EditorHybrid {
+
+namespace Drboum.Utilities.EditorHybrid {
     public abstract class EditorCallBackScriptableObject<T> : ScriptableObject where T : EditorCallBackScriptableObject<T>
     {
         protected T self => this as T; 

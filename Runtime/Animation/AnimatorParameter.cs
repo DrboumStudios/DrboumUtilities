@@ -1,11 +1,11 @@
 ﻿using System;
-using Drboum.Utilities.Runtime.Attributes;
-#if UNITY_EDITOR
+using Drboum.Utilities.Attributes;
 using UnityEditor.Animations;
-#endif
 using UnityEngine;
+#if UNITY_EDITOR
+#endif
 
-namespace Drboum.Utilities.Runtime.Animation
+namespace Drboum.Utilities.Animation
 {
 #if UNITY_EDITOR
     [CreateAssetMenu(fileName = nameof(AnimatorParameter), menuName = nameof(Drboum) + "/" + nameof(Utilities) + "/" + nameof(Animation) + "/" + nameof(AnimatorParameter))]

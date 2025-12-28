@@ -1,7 +1,8 @@
 ﻿#if UNITY_EDITOR
 using System.Collections.Generic;
 using System.IO;
-using Drboum.Utilities.Runtime.Animation;
+using Drboum.Utilities.Animation;
+using Drboum.Utilities.EditorHybrid;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;

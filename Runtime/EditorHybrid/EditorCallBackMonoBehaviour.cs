@@ -1,5 +1,6 @@
 using UnityEngine;
-namespace Drboum.Utilities.Runtime.EditorHybrid {
+
+namespace Drboum.Utilities.EditorHybrid {
     public abstract class EditorCallBackMonoBehaviour<T> : MonoBehaviour where T : EditorCallBackMonoBehaviour<T>
     {
         protected T self => this as T;

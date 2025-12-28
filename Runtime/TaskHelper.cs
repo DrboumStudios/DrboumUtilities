@@ -2,30 +2,33 @@
 using System.Threading.Tasks;
 using UnityEngine;
 
-public static class TaskHelper
+namespace Drboum.Utilities
 {
-    public static Task LogException(this Task task)
+    public static class TaskHelper
     {
-        task.ContinueWith(LogTaskException);
-        return task;
-    }
-
-    public static Task<T> LogException<T>(this Task<T> task)
-    {
-        task.ContinueWith(LogTaskException);
-        return task;
-    }
-
-    private static void LogTaskException(Task t)
-    {
-        if ( t.IsFaulted && t.Exception != null )
+        public static Task LogException(this Task task)
         {
-            Exception exception = t.Exception;
-            while ( exception.InnerException != null )
+            task.ContinueWith(LogTaskException);
+            return task;
+        }
+
+        public static Task<T> LogException<T>(this Task<T> task)
+        {
+            task.ContinueWith(LogTaskException);
+            return task;
+        }
+
+        private static void LogTaskException(Task t)
+        {
+            if ( t.IsFaulted && t.Exception != null )
             {
-                exception = exception.InnerException;
+                Exception exception = t.Exception;
+                while ( exception.InnerException != null )
+                {
+                    exception = exception.InnerException;
+                }
+                Debug.LogException(exception);
             }
-            Debug.LogException(exception);
         }
     }
 }

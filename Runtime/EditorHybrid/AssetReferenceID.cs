@@ -1,11 +1,17 @@
 ﻿using System;
-using Drboum.Utilities.Runtime.Attributes;
-using Unity.Mathematics;
+using Drboum.Utilities.Attributes;
 using UnityEngine;
 
-namespace Drboum.Utilities.Runtime.EditorHybrid
+namespace Drboum.Utilities.EditorHybrid
 {
-    public interface IAssetReferenceID
+    public interface IAssetFactorySettings
+    {
+#if UNITY_EDITOR
+        AssetFactorySettings AssetFactorySettings { get; }
+#endif
+    }
+
+    public interface IAssetReferenceID : IAssetFactorySettings
     {
         GuidWrapper Guid {
             get;
@@ -21,7 +27,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
         void OnCreateAsset();
 
         GuidWrapper GenerateGuid();
-        
+
         public static GuidWrapper GenerateGuidFromAsset<TAssetInstance>(TAssetInstance instance)
             where TAssetInstance : UnityEngine.Object, IAssetReferenceID
         {
@@ -38,6 +44,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
         public const string ASSET_REFERENCE_EXTENSION = ".asset";
 
         [SerializeField, InspectorReadOnly] internal GuidWrapper _guid;
+        [SerializeField] private AssetFactorySettings assetFactorySettings;
 
         internal bool IsValidGuid => _guid.IsValid;
         public virtual bool IsValid => IsValidGuid;
@@ -75,6 +82,7 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
 
         public override int GetHashCode() => Guid.GetHashCode();
 
-      
+
+        public AssetFactorySettings AssetFactorySettings => assetFactorySettings;
     }
 }

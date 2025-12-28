@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
-namespace Drboum.Utilities.Runtime.Attributes {
+
+namespace Drboum.Utilities.Attributes {
 
     public class InspectorMessageAttribute : PropertyAttribute {
 

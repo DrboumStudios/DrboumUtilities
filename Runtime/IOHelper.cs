@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Unity.Collections;
 
-namespace Drboum.Utilities.Runtime
+namespace Drboum.Utilities
 {
     public static class IOHelper
     {

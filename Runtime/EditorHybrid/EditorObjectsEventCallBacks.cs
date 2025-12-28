@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
-namespace Drboum.Utilities.Runtime.EditorHybrid {
+
+namespace Drboum.Utilities.EditorHybrid {
     public static class EditorObjectsEventCallBacks<T> {
         public delegate void ObjectInstanceCallBack(T instance);
 

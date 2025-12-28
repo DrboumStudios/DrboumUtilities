@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
-namespace Drboum.Utilities.Runtime {
+
+namespace Drboum.Utilities {
     public class WaitForSeconds : IEnumerator {
         private float _waitTime;
         private float _waitUntilTime;

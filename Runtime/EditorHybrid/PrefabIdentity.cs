@@ -1,12 +1,13 @@
-using Drboum.Utilities.Runtime.Attributes;
+using Drboum.Utilities.Attributes;
 using Unity.Properties;
 using UnityEngine;
 
-namespace Drboum.Utilities.Runtime.EditorHybrid
+namespace Drboum.Utilities.EditorHybrid
 {
     public class PrefabIdentity : MonoBehaviour, IAssetReferenceID
     {
         [SerializeField, InspectorReadOnly, DontCreateProperty] internal GuidWrapper _guid;
+        [SerializeField] private AssetFactorySettings _assetFactorySettings;
 
         public GuidWrapper Guid {
             get => _guid;
@@ -19,11 +20,13 @@ namespace Drboum.Utilities.Runtime.EditorHybrid
         }
 
         public bool IsValid => _guid.IsValid;
+        public AssetFactorySettings AssetFactorySettings => _assetFactorySettings;
         public virtual void OnCreateAsset() { }
 
         public virtual GuidWrapper GenerateGuid()
         {
             return IAssetReferenceID.GenerateGuidFromAsset(this);
         }
+
     }
 }

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Drboum.Utilities.Runtime.Attributes;
+using Drboum.Utilities.Attributes;
 using UnityEngine;
-namespace Drboum.Utilities.Runtime.Animation {
+
+namespace Drboum.Utilities.Animation {
     public abstract class AnimationStateEvent : StateMachineBehaviour {
         private static readonly Dictionary<int, int> _animationStateEventMap = new Dictionary<int, int>();
         private static readonly List<string>         _animatorCheckedList    = new List<string>();

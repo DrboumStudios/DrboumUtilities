@@ -2,7 +2,7 @@
 using Unity.Collections;
 using Unity.Properties;
 
-namespace Drboum.Utilities.Runtime.Inputs
+namespace Drboum.Utilities.Inputs
 {
     [Serializable]
     public struct ButtonInput

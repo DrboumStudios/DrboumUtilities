@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using static Drboum.Utilities.Runtime.CsharpHelper;
+using static Drboum.Utilities.CsharpHelper;
 
-namespace Drboum.Utilities.Runtime {
+namespace Drboum.Utilities {
     public class SceneInitializer : MonoBehaviour {
 
         private void Awake()

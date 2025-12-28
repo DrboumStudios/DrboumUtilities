@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using Unity.Collections;
-namespace Drboum.Utilities.Runtime {
+
+namespace Drboum.Utilities {
     public static class SerializationUtils {
         public const byte COMPRESSION_MAX_VALUE = 200;
         public const byte COMPRESSION_MIN_VALUE = 0;

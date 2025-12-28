@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
-namespace Drboum.Utilities.Runtime.Animation {
+
+namespace Drboum.Utilities.Animation {
     [StructLayout(LayoutKind.Explicit)]
     public struct AnimatorParameterValue {
 

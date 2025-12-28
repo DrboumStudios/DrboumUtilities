@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
-namespace Drboum.Utilities.Runtime.EditorHybrid {
+
+namespace Drboum.Utilities.EditorHybrid {
     public class EditableScriptableObject : ScriptableObject { }
 }

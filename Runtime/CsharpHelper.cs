@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Drboum.Utilities.Runtime {
+namespace Drboum.Utilities {
     public static class CsharpHelper {
         public delegate void   FireAndForgetEvent(FireAndForgetEvent notifierToUnsubscribeFrom);
         public static Action EmptyDelegate { get; } = delegate { };

@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
-using Drboum.Utilities.Runtime.NativeLinq;
+using Drboum.Utilities.NativeLinq;
 using NUnit.Framework;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
 using Unity.Mathematics;
-using static NativeLinqExtensions;
-using static CollectionCustomHelper;
+using static Drboum.Utilities.NativeLinq.NativeLinqExtensions;
+using static Drboum.Utilities.Collections.CollectionCustomHelper;
 namespace Drboum.Utilities.Tests.Editor {
     public class NativeLinqTests {
         private const int INITIAL_DEFAULT_LENGTH = 10;

@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.InputSystem.InputAction;
 
-namespace Drboum.Utilities.Runtime.Inputs {
+namespace Drboum.Utilities.Inputs {
     [Flags]
     public enum SubscribeToInputActionPhase : uint {
         All       = uint.MaxValue,

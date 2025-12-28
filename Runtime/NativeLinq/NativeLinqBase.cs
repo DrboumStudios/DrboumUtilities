@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using JetBrains.Annotations;
-using Unity.Burst;
 
-namespace Drboum.Utilities.Runtime.NativeLinq
+namespace Drboum.Utilities.NativeLinq
 {
 
     public interface INativePredicate<T>

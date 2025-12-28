@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
-namespace Drboum.Utilities.Runtime.Animation {
+
+namespace Drboum.Utilities.Animation {
 
     public class AnimationStateReceiver : IAnimationStateReceiver {
         private bool                  _isPlaying;

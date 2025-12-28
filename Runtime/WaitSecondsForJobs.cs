@@ -1,4 +1,4 @@
-﻿namespace Drboum.Utilities.Runtime {
+﻿namespace Drboum.Utilities {
     public static class WaitSecondsForJobs {
         private const double _currentTimeDefault   = -2d;
         private const double _waitUntilTimeDefault = -1d;

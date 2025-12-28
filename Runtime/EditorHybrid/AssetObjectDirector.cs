@@ -1,7 +1,8 @@
-﻿using Drboum.Utilities.Runtime.Attributes;
-using Drboum.Utilities.Runtime.Interfaces;
+﻿using Drboum.Utilities.Attributes;
+using Drboum.Utilities.Interfaces;
 using UnityEngine;
-namespace Drboum.Utilities.Runtime.EditorHybrid {
+
+namespace Drboum.Utilities.EditorHybrid {
 
     [DisallowMultipleComponent]
     [RequireComponent(typeof(EditorObjectTracker))]

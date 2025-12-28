@@ -1,18 +1,18 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+#endif
+using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Drboum.Utilities.Collections;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Mathematics;
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
 using UnityEngine;
 using UnityEngine.Assertions;
 using Debug = UnityEngine.Debug;
 
-namespace Drboum.Utilities.Runtime
+namespace Drboum.Utilities
 {
     [StructLayout(LayoutKind.Explicit, Size = 16)]
     [Serializable]
