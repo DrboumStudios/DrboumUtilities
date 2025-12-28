@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using Drboum.Utilities;
+using Drboum.Utilities.Collections;
 using Drboum.Utilities.Interfaces;
 using JetBrains.Annotations;
 using Unity.Burst;

@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using static Drboum.Utilities.CsharpHelper;
+using static CsharpHelper;
 
 namespace Drboum.Utilities {
     public class SceneInitializer : MonoBehaviour {
