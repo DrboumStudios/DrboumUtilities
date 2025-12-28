@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 
-namespace Drboum.Utilities {
     public static class CameraExtensions {
         public static Texture2D RenderTextureImage(this Camera camera)
         {
@@ -23,4 +22,3 @@ namespace Drboum.Utilities {
             return image;
         }
     }
-}

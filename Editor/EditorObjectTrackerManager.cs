@@ -7,7 +7,6 @@ namespace Drboum.Utilities.Editor
 {
     public static class EditorObjectTrackerManager
     {
-
         [InitializeOnLoadMethod]
         static void Init()
         {
