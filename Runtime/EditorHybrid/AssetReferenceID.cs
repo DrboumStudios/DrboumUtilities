@@ -11,7 +11,7 @@ namespace Drboum.Utilities.EditorHybrid
 #endif
     }
 
-    public interface IAssetReferenceID : IAssetFactorySettings
+    public interface IAssetReferenceID
     {
         GuidWrapper Guid {
             get;
@@ -39,12 +39,12 @@ namespace Drboum.Utilities.EditorHybrid
         }
     }
 
-    public abstract class AssetReferenceID : EditorCallBackScriptableObject<AssetReferenceID>, IAssetReferenceID, IEquatable<AssetReferenceID>
+    public abstract class AssetReferenceID : EditorCallBackScriptableObject<AssetReferenceID>, IAssetFactorySettings, IAssetReferenceID, IEquatable<AssetReferenceID>
     {
         public const string ASSET_REFERENCE_EXTENSION = ".asset";
 
+        [SerializeField, InspectorReadOnly] protected AssetFactorySettings assetFactorySettings;
         [SerializeField, InspectorReadOnly] internal GuidWrapper _guid;
-        [SerializeField] private AssetFactorySettings assetFactorySettings;
 
         internal bool IsValidGuid => _guid.IsValid;
         public virtual bool IsValid => IsValidGuid;

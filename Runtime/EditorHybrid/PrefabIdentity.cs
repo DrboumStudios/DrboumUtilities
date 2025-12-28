@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace Drboum.Utilities.EditorHybrid
 {
-    public class PrefabIdentity : MonoBehaviour, IAssetReferenceID
+    public class PrefabIdentity : MonoBehaviour, IAssetReferenceID, IAssetFactorySettings
     {
+        [SerializeField, InspectorReadOnly] protected AssetFactorySettings _assetFactorySettings;
         [SerializeField, InspectorReadOnly, DontCreateProperty] internal GuidWrapper _guid;
-        [SerializeField] private AssetFactorySettings _assetFactorySettings;
 
         public GuidWrapper Guid {
             get => _guid;
